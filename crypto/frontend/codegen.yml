@@ -1,0 +1,9 @@
+schema: http://ccc-workshop-eu-web.azurewebsites.net/graphql
+generates:
+  schema/server.graphql:
+    plugins:
+      - schema-ast
+
+hooks:
+  afterOneFileWrite:
+    - prettier --write
