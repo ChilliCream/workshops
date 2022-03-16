@@ -16,11 +16,11 @@ const Root = styled(Stack)`
     display: none;
   }
 
-  & > :first-child {
+  & > a:first-of-type {
     margin-left: 10%;
   }
 
-  & > :last-child {
+  & > a:last-of-type {
     margin-right: 10%;
   }
 
