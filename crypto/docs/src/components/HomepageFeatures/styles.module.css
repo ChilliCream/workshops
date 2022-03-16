@@ -1,0 +1,17 @@
+.features {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.featureImage {
+  padding: 2rem;
+  display: inline-flex;
+  gap: 1rem;
+}
+
+.featureImage > svg {
+  height: 100px;
+  width: 100px;
+}
