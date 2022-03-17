@@ -1,0 +1,43 @@
+# Hello, world!
+
+The most common way to start any programming course is to display the text "Hello, world!". Continuing with this tradition, we'll use React/Relay to display the famous text.
+
+## Create the scene and page host
+
+1. Create a file at `/scenes/greetings.js`.
+
+   ```jsx title="/scenes/greetings.js"
+   export default function Greetings() {
+     return <>Hello, world!</>;
+   }
+   ```
+
+1. Create a file at `/pages/index.js`.
+
+   ```jsx title="/pages/index.js"
+   import {default as Greetings} from '@/scenes/greetings';
+
+   export default function Main() {
+     return <Greetings />;
+   }
+   ```
+
+## Check it out
+
+Now that we've created our code, let's see our app in action!
+
+1. Open the integrated terminal in Visual Studio Code by selecting `View > Terminal` or by selecting `Ctrl+`. On a Mac, select `Cmd+` instead.
+
+1. Use the following command to start Netx's development server:
+
+```sh
+yarn dev
+```
+
+1. A new page is now available at [http://localhost:3000](http://localhost:3000).
+
+   :::note You should now see your page!
+
+   Your default browser should automatically open and display your page. If the page doesn't appear automatically, open your browser and go to [http://localhost:3000](http://localhost:3000).
+
+   :::
