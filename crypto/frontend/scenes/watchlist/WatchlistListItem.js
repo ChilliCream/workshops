@@ -8,7 +8,12 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import {memo, useCallback} from 'react';
-import {graphql, useFragment, useMutation} from 'react-relay';
+import {
+  ConnectionHandler,
+  graphql,
+  useFragment,
+  useMutation,
+} from 'react-relay';
 
 import {CryptoIcon, WatchIcon, WatchedIcon} from '@/icons';
 import {
@@ -33,13 +38,35 @@ const useRemoveFromWatchlist = () => {
 
   const execute = useCallback(
     ({id, symbol}) => {
+      const updater = (store) => {
+        const asset = store.get(id);
+
+        if (asset) {
+          asset.setValue(false, 'isInWatchlist');
+        }
+
+        const me = store.getRoot().getLinkedRecord('me');
+
+        if (me) {
+          const watchlist = me.getLinkedRecord('watchlist');
+
+          if (watchlist) {
+            const assets = ConnectionHandler.getConnection(
+              watchlist,
+              'WatchlistList_assets',
+            );
+
+            if (assets) {
+              ConnectionHandler.deleteNode(assets, id);
+            }
+          }
+        }
+      };
+
       commit({
         variables: {input: {symbol}},
-        optimisticUpdater: (store) => {
-          const record = store.get(id);
-
-          record.setValue(false, 'isInWatchlist');
-        },
+        optimisticUpdater: updater,
+        updater,
         onCompleted: () => {
           console.log(`${symbol} was removed from the watchlist`);
         },

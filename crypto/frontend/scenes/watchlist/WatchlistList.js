@@ -41,13 +41,10 @@ export default memo(function WatchlistList({fragmentRef}) {
     `,
     fragmentRef,
   );
+  const assets = data.me?.watchlist?.assets?.edges;
 
   const [tableRef, size] = useSize();
   const extended = size?.width > 400;
-
-  const assets = data.me?.watchlist?.assets?.edges?.filter(
-    ({node}) => node.isInWatchlist,
-  );
 
   return (
     <Stack px={4}>
