@@ -1,10 +1,8 @@
 # A Developer’s Guide to GraphQL
 
-_Introduction: Why Relay_
-
 ## Why use GraphQL?
 
-GraphQL is a query language that sits on top of multiple APIs and provides a complete description of data requested by an application.
+GraphQL is a data query language designed for API. The language is meant to be declarative, strongly typed and exhaustive.
 
 With GraphQL, an app can specify the exact data it needs, aggregate the data from multiple sources and return only what was requested, resulting in highly performant and robust APIs.
 
