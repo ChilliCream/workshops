@@ -273,8 +273,12 @@ export default function Greetings({lang}) {
 return <div>{data.greetings}</div>;
 ```
 
-Now we are able to pass the language into the query. Somewhere in our code we can do something like:
+Now we are able to pass the language into the query, allowing us to something like:
 
 ```jsx
 <Greetings lang="es" />
 ```
+
+### Recap
+
+We explored how to get started with Relay, although in a naive way, there is nothing wrong about it, but we will continue introducing other concepts and possibilities.
