@@ -1,6 +1,11 @@
 import {Button, List, Stack} from '@mui/material';
 import {memo, useCallback} from 'react';
-import {graphql, useMutation, usePaginationFragment} from 'react-relay';
+import {
+  ConnectionHandler,
+  graphql,
+  useMutation,
+  usePaginationFragment,
+} from 'react-relay';
 
 import {LoadMoreButton, NoData} from '@/components';
 import {ReadIcon} from '@/icons';
@@ -20,15 +25,28 @@ const useMarkNotificationsRead = () => {
 
   const execute = useCallback(
     ({ids}) => {
+      const updater = (store) => {
+        const me = store.getRoot().getLinkedRecord('me');
+
+        if (me) {
+          const notifications = ConnectionHandler.getConnection(
+            me,
+            'NotificationsList_notifications',
+            {status: 'UNREAD'},
+          );
+
+          if (notifications) {
+            ids.forEach((id) => {
+              ConnectionHandler.deleteNode(notifications, id);
+            });
+          }
+        }
+      };
+
       commit({
         variables: {input: {notificationIds: ids}},
-        optimisticUpdater: (store) => {
-          ids.forEach((id) => {
-            const record = store.get(id);
-
-            record.setValue(true, 'read');
-          });
-        },
+        optimisticUpdater: updater,
+        updater,
         onCompleted: () => {
           console.log(`notifications were marked as read`);
         },
@@ -70,9 +88,7 @@ export default memo(function NotificationsList({fragmentRef}) {
     `,
     fragmentRef,
   );
-  const notifications = data.me?.notifications?.edges?.filter(
-    ({node}) => !node.read,
-  );
+  const notifications = data.me?.notifications?.edges;
 
   const [markNotifications] = useMarkNotificationsRead();
 

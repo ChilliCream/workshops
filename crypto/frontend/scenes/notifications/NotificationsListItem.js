@@ -8,7 +8,12 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import {memo, useCallback} from 'react';
-import {graphql, useFragment, useMutation} from 'react-relay';
+import {
+  ConnectionHandler,
+  graphql,
+  useFragment,
+  useMutation,
+} from 'react-relay';
 
 import {CryptoIcon, UnreadIcon} from '@/icons';
 
@@ -27,13 +32,26 @@ const useMarkNotificationRead = () => {
 
   const execute = useCallback(
     ({id}) => {
+      const updater = (store) => {
+        const me = store.getRoot().getLinkedRecord('me');
+
+        if (me) {
+          const notifications = ConnectionHandler.getConnection(
+            me,
+            'NotificationsList_notifications',
+            {status: 'UNREAD'},
+          );
+
+          if (notifications) {
+            ConnectionHandler.deleteNode(notifications, id);
+          }
+        }
+      };
+
       commit({
         variables: {input: {notificationId: id}},
-        optimisticUpdater: (store) => {
-          const record = store.get(id);
-
-          record.setValue(true, 'read');
-        },
+        optimisticUpdater: updater,
+        updater,
         onCompleted: () => {
           console.log(`notification was marked as read`);
         },
