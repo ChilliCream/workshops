@@ -126,4 +126,50 @@ code .
 
 ![Visual Studio Code - Program.cs](images/code-2.png)
 
-![Banana Cake Pop - Greeting Screen](images/code-3.png)
+![Visual Studio Code - Query.cs](images/code-3.png)
+
+```csharp title="/Query.cs"
+namespace BasicServer;
+
+public class Query
+{
+    public string Greetings(string name = "Luke")
+        => $"Hello, {name}!";
+}
+```
+
+```bash
+dotnet run
+```
+
+![Banana Cake Pop - Operations](images/bcp-7.png)
+
+![Banana Cake Pop - Operations](images/bcp-8.png)
+
+```graphql
+query {
+  greetings
+}
+```
+
+```json
+{
+  "data": {
+    "greetings": "Hello, Luke!"
+  }
+}
+```
+
+```graphql
+query {
+  greetings(name: "MyName")
+}
+```
+
+```json
+{
+  "data": {
+    "greetings": "Hello, MyName!"
+  }
+}
+```
