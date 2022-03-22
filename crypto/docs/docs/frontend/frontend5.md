@@ -43,3 +43,125 @@ export default memo(function DashboardTickerItem({fragmentRef}) {
 Relay uses `Fragments` to declare data requirements for components, and compose data requirements together.
 
 :::
+
+## Lazily Fetching Queries
+
+To fetch a query lazily, you can use the `useLazyLoadQuery` hook:
+
+```jsx title="/scenes/dashboard/DashboardTicker.js"
+import {memo} from 'react';
+import {graphql, useLazyLoadQuery} from 'react-relay';
+
+import {Ticker} from '@/components';
+
+import DashboardTickerItem from './DashboardTickerItem';
+
+export default memo(function DashboardTicker() {
+  const data = useLazyLoadQuery(
+    graphql`
+      query DashboardTickerQuery {
+        assets(first: 10, order: {price: {tradableMarketCapRank: ASC}}) {
+          nodes {
+            symbol
+            ...DashboardTickerItemFragment_asset
+          }
+        }
+      }
+    `,
+    {},
+  );
+  const assets = data.ticker?.nodes;
+
+  return (
+    <Ticker>
+      {assets?.map((asset) => (
+        <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
+      ))}
+    </Ticker>
+  );
+});
+```
+
+:::note
+
+The example above is a teaser. Usually we want to have one or a few queries that accumulate all the data required to render the screen.
+
+:::
+
+Here how we can compose fragments at scale:
+
+```jsx title="/scenes/dashboard/DashboardContainer.js"
+import {Divider, Stack} from '@mui/material';
+import ErrorPage from 'next/error';
+import {memo} from 'react';
+import {graphql, useLazyLoadQuery} from 'react-relay';
+
+import DashboardFeatured from './DashboardFeatured';
+import DashboardSpotlight from './DashboardSpotlight';
+import DashboardTicker from './DashboardTicker';
+
+export default memo(function DashboardContainer({cacheBuster}) {
+  const data = useLazyLoadQuery(
+    graphql`
+      query DashboardContainerQuery {
+        ...DashboardTickerFragment_query
+        ...DashboardFeaturedFragment_query
+        ...DashboardSpotlightFragment_query @defer(label: "spotlight")
+      }
+    `,
+    {},
+    {fetchKey: cacheBuster},
+  );
+
+  if (!data) {
+    return <ErrorPage statusCode={404} title="Out of service" />;
+  }
+
+  return (
+    <Stack gap={2}>
+      <DashboardTicker fragmentRef={data} />
+      <Divider />
+      <DashboardFeatured fragmentRef={data} />
+      <Divider />
+      <DashboardSpotlight fragmentRef={data} />
+    </Stack>
+  );
+});
+```
+
+```jsx title="/scenes/dashboard/DashboardTicker.js"
+import {memo} from 'react';
+import {graphql, useFragment} from 'react-relay';
+
+import {Ticker} from '@/components';
+
+import DashboardTickerItem from './DashboardTickerItem';
+
+export default memo(function DashboardTicker({fragmentRef}) {
+  const data = useFragment(
+    graphql`
+      fragment DashboardTickerFragment_query on Query {
+        ticker: assets(
+          first: 10
+          order: {price: {tradableMarketCapRank: ASC}}
+        ) {
+          nodes {
+            symbol
+            ...DashboardTickerItemFragment_asset
+          }
+        }
+      }
+    `,
+    fragmentRef,
+  );
+  const assets = data.ticker?.nodes;
+
+  return (
+    <Ticker>
+      {assets?.map((asset) => (
+        <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
+      ))}
+    </Ticker>
+  );
+});
+```

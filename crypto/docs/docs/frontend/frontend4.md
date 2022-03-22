@@ -4,7 +4,13 @@ Yes, our last step was just kinda "fake", because we are doing a data driven app
 
 ## Fetch GraphQL (without Relay)
 
-We'll start with a common approach to fetching data in React, calling our fetch function after the component mounts (note: later we'll see some limitations of this approach and a better alternative that works with React Concurrent Mode and Suspense).
+We'll start with a common approach to fetching data in React, calling our fetch function after the component mounts.
+
+:::caution
+
+Later we'll see some limitations of this approach and a better alternative that works with React Concurrent Mode and Suspense.
+
+:::
 
 1. Modify the `/scenes/greetings.js'. Just replace the existing code by this enhanced version.
 
@@ -221,6 +227,7 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
 
    Did you see that we have renamed the file `greetings` into `Greetings`?
    It is because we must follow some naming conventions required by the compiler in order to generate our graphql artifacts.
+   This is a bit contribed specially when it is maintream to use `kebab-case` for file naming by other best practices.
 
    :::
 
@@ -278,6 +285,14 @@ Now we are able to pass the language into the query, allowing us to something li
 ```jsx
 <Greetings lang="es" />
 ```
+
+Lets see what's going on here:
+
+- By default, when the component renders, Relay will fetch the data for this query (if it isn't already cached), and return it as a the result of the `useLazyLoadQuery` call.
+
+- Note that if you re-render your component and pass different query variables than the ones originally used, it will cause the query to be fetched again with the new variables, and potentially re-render with different data.
+
+- Finally, make sure you're providing a Relay environment using a [Relay Environment Provider](https://relay.dev/docs/api-reference/relay-environment-provider/) at the root of your app before trying to render a query.
 
 ### Recap
 
