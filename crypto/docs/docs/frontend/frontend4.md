@@ -266,24 +266,24 @@ The `useLazyLoadQuery` hook allow us to pass `variables` and `options`. In the e
 ```jsx title="/scenes/Greetings.js"
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
-export default function Greetings({lang}) {
+export default function Greetings({name}) {
   const data = useLazyLoadQuery(
     graphql`
-      query GreetingsQuery @argumentDefinitions(lang: {type: "String"}) {
-        greetings(language: $lang)
+      query GreetingsQuery @argumentDefinitions(name: {type: "String"}) {
+        greetings(name: $name)
       }
     `,
-    {lang},
+    {name},
   );
 }
 
 return <div>{data.greetings}</div>;
 ```
 
-Now we are able to pass the language into the query, allowing us to something like:
+Now we are able to pass the name into the query, allowing us to something like:
 
 ```jsx
-<Greetings lang="es" />
+<Greetings name="Luke" />
 ```
 
 Lets see what's going on here:
