@@ -165,3 +165,87 @@ export default memo(function DashboardTicker({fragmentRef}) {
   );
 });
 ```
+
+## Refreshing
+
+When referring to "refreshing a query", we mean fetching the exact same data that was originally rendered by the query, in order to get the most up-to-date version of that data from the server.
+
+If we want to keep our data up to date with the latest version from the server, the first thing to consider is if it appropriate to use any real-time features, which can make it easier to automatically keep the data up to date without manually refreshing the data periodically.
+
+One example of this is using [GraphQL Subscriptions](https://relay.dev/docs/guided-tour/updating-data/graphql-subscriptions), which will require additional configuration on your server and [network layer](https://relay.dev/docs/guided-tour/updating-data/graphql-subscriptions/#configuring-the-network-layer).
+
+To refresh a query using the [useLazyLoadQuery](https://relay.dev/docs/api-reference/use-lazy-load-query/) hook, we can use the following options:
+
+- `fetchKey`: A new fetchKey will ensure that the query is fully re-evaluated and refetched.
+
+- `fetchPolicy`: to ensure that we always fetch from the network and skip the local data cache.
+
+```jsx title="/scenes/Greetings.js"
+import {graphql, useLazyLoadQuery} from 'react-relay';
+
+export default function Greetings({name, fetchOptions}) {
+  const data = useLazyLoadQuery(
+    graphql`
+      query GreetingsQuery @argumentDefinitions(name: {type: "String"}) {
+        greetings(name: $name)
+      }
+    `,
+    {name},
+    fetchOptions,
+  );
+}
+
+return <div>{data.greetings}</div>;
+```
+
+Now we are able to force a query refresh:
+
+```jsx
+const [fetchOptions, setOptions] = useState(null);
+
+// ...
+
+<>
+  <button
+    onClick={() => {
+      setOptions((prev) => ({
+        fetchKey: (prev?.fetchKey ?? 0) + 1,
+        fetchPolicy: 'network-only',
+      }));
+    }}
+  >
+    refresh
+  </button>
+
+  <Greetings name="Luke" fetchOptions={fetchOptions} />
+</>;
+```
+
+## Refetching
+
+When referring to "refetching a query", we mean fetching the query again for different data than was originally rendered by the query. For example, this might be to change a currently selected item, to render a different list of items than the one being shown, or more generally to transition the currently rendered content to show new or different content.
+
+```jsx
+const [name, setName] = useState(null);
+
+// ...
+
+<>
+  <button
+    onClick={() => {
+      setName('Luke');
+    }}
+  >
+    Luke
+  </button>
+  <button
+    onClick={() => {
+      setName(John');
+    }}
+  >
+    John
+  </button>
+
+  <Greetings name={name} />
+</>;
+```
