@@ -1,130 +1,88 @@
-# Mutations
+# Pagination
 
-In GraphQL, data in the server is updated using [GraphQL Mutations](https://graphql.org/learn/queries/#mutations). Mutations are _read-write_ server operations, which both modify data on the backend, and allow querying for the modified data from the server in the same request.
+To actually perform pagination over the connection, we need use the `loadNext` function to fetch the next page of items, which is available from `usePaginationFragment`:
 
-## Writing Mutations
-
-A GraphQL mutation looks very similar to a query, with the exception that it uses the `mutation` keyword:
-
-```graphql
-mutation ViewerHeaderAATWMutation($input: AddAssetToWatchlistInput!) {
-  addAssetToWatchlist(input: $input) {
-    watchlist {
-      assets {
-        nodes {
-          isInWatchlist
-        }
-      }
-    }
-  }
-}
-```
-
-In order to execute a mutation against the server in Relay, we can use the `commitMutation` and `useMutation` APIs. Let's take a look at an example using the [useMutation](https://relay.dev/docs/api-reference/use-mutation/) hook:
-
-```jsx title="@/scenes/viewer/ViewerHeader.js"
+```jsx title="@/scenes/screener/ScreenerList.js"
 // ...
-import {memo, useCallback} from 'react';
-import {graphql, useFragment, useMutation} from 'react-relay';
+import {graphql, usePaginationFragment} from 'react-relay';
+// ...
 
-const useAddToWatchlist = () => {
-  const [commit, isInFlight] = useMutation(graphql`
-    mutation ViewerHeaderAATWMutation($input: AddAssetToWatchlistInput!) {
-      addAssetToWatchlist(input: $input) {
-        watchlist {
-          assets {
-            nodes {
-              isInWatchlist
+export default memo(function ScreenerList({fragmentRef}) {
+  const {data, hasNext, loadNext, isLoadingNext, refetch} =
+    usePaginationFragment(
+      graphql`
+        fragment ScreenerListFragment_query on Query
+        @argumentDefinitions(
+          cursor: {type: "String"}
+          count: {type: "Int", defaultValue: 10}
+          where: {type: "AssetFilterInput"}
+          order: {
+            type: "[AssetSortInput!]"
+            defaultValue: {price: {marketCap: DESC}}
+          }
+        )
+        @refetchable(queryName: "ScreenerListRefetchableQuery") {
+          assets(after: $cursor, first: $count, where: $where, order: $order)
+            @connection(key: "ScreenerList_assets") {
+            edges {
+              node {
+                id
+                ...ScreenerListItemFragment_asset
+              }
             }
           }
         }
-      }
-    }
-  `);
-
-  const execute = useCallback(
-    ({id, symbol}) => {
-      commit({
-        variables: {input: {symbol}},
-        optimisticUpdater(store) {
-          const record = store.get(id);
-
-          record.setValue(true, 'isInWatchlist');
-        },
-        onCompleted() {
-          console.log(`${symbol} was added to the watchlist`);
-        },
-        onError() {
-          console.log(
-            `there was a problem with ${symbol} while adding to the watchlist`,
-          );
-        },
-      });
-    },
-    [commit],
-  );
-
-  return [execute, isInFlight];
-};
-
-// ...
-
-export default memo(function ViewerHeader({fragmentRef}) {
-  const asset = useFragment(
-    graphql`
-      fragment ViewerHeaderFragment_asset on Asset {
-        id
-        symbol
-        name
-        imageUrl
-        isInWatchlist
-        hasAlerts
-      }
-    `,
-    fragmentRef,
-  );
-
-  const [addToWatchlist] = useAddToWatchlist();
-  const [removeFromWatchlist] = useRemoveFromWatchlist();
+      `,
+      fragmentRef,
+    );
 
   // ...
 
-  return (
-    <Checkbox
-      color="primary"
-      icon={<WatchIcon />}
-      checkedIcon={<WatchedIcon />}
-      checked={!!asset.isInWatchlist}
-      disabled={asset.isInWatchlist === null}
-      inputProps={{
-        'aria-label': 'watch',
-      }}
-      onChange={(event) => {
-        if (event.target.checked) {
-          addToWatchlist(asset);
-        } else {
-          removeFromWatchlist(asset);
-        }
-      }}
-    />
-  );
+  {
+    assets?.length || hasNext ? (
+      <TransitionIndicator in={busy}>
+        <Table ref={tableRef} size="medium">
+          <TableBody>
+            {assets.map(({node}) => (
+              <ScreenerListItem
+                key={node.id}
+                fragmentRef={node}
+                extended={extended}
+              />
+            ))}
+          </TableBody>
+          {hasNext && (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <LoadMoreButton busy={isLoadingNext} onClick={loadNext} />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
+      </TransitionIndicator>
+    ) : (
+      <NoData message="Hmm, we can't find that asset." />
+    );
+  }
+
+  // ...
 });
 ```
 
-We pass into the hook the following arguments:
+## Behavior
 
-- `mutation`: GraphQL mutation specified using a `graphql` template literal.
+- The component is automatically subscribed to updates to the fragment data: if the data required is updated anywhere in the app (e.g. via fetching new data, or mutating existing data), the component will automatically re-render with the latest updated data.
 
-- `commitMutationFn`: An optional function with the same signature as [commitMutation](https://relay.dev/docs/api-reference/commit-mutation/), which will be called in its stead. Defaults to `commitMutation`.
+- The component will suspend if any data for that specific fragment is missing, and the data is currently being fetched by a parent query.
 
-And it returns:
+- Note that pagination (`loadNext` or `loadPrevious`), will not cause the component to suspend.
 
-- `commitMutation`: The function that will execute the mutation.
+:::note
 
-- `areMutationsInFlight`: Will be `true` if any mutation triggered by calling `commitMutation` is still in flight. If you call `commitMutation` multiple times, there can be multiple mutations in flight at once.
+Calling `loadNext` _will not_ cause the component to suspend. Instead, the `isLoadingNext` value will be set to `true` while the request is in flight, and the new items from the pagination request will be added to the connection, causing the component to re-render.
 
-:::info
-
-There are several ways to implement `optimistic` updates, to provide a better UX. In the example above, we have used `optimisticUpdater`: a function used to optimistically update the local in-memory store, i.e. immediately, before the mutation request has completed. If an error occurs during the mutation request, the optimistic update will be rolled back.
+You might use `isLoadingNext` to display some progress indicator.
 
 :::
