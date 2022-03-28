@@ -62,7 +62,7 @@ const config = {
             title: 'Docs',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Workshop',
                 to: '/docs/intro',
               },
             ],
@@ -72,15 +72,11 @@ const config = {
             items: [
               {
                 label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/crypto-workshop',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/crypto-workshop',
+                href: 'https://stackoverflow.com/questions/tagged/hotchocolate',
               },
               {
                 label: 'Twitter',
-                href: 'https://twitter.com/crypto-workshop',
+                href: 'https://twitter.com/Chilli_Cream',
               },
             ],
           },
