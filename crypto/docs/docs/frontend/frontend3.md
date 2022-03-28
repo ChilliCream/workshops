@@ -6,7 +6,7 @@ The most common way to start any programming course is to display the text "Hell
 
 1. Create a file at `/scenes/greetings.js`.
 
-   ```jsx title="/scenes/greetings.js"
+   ```jsx title="@/scenes/greetings.js"
    export default function Greetings() {
      return <>Hello, world!</>;
    }
