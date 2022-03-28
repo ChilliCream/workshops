@@ -1,123 +1,130 @@
-# Subscriptions
+# Mutations
 
-GraphQL Subscriptions (GQLS) are a mechanism which allow clients to subscribe to changes in a piece of data from the server, and get notified whenever that data changes.
+In GraphQL, data in the server is updated using [GraphQL Mutations](https://graphql.org/learn/queries/#mutations). Mutations are _read-write_ server operations, which both modify data on the backend, and allow querying for the modified data from the server in the same request.
 
-## Writing Subscriptions
+## Writing Mutations
 
-A GraphQL Subscription looks very similar to a query, with the exception that it uses the subscription keyword:
+A GraphQL mutation looks very similar to a query, with the exception that it uses the `mutation` keyword:
 
 ```graphql
-subscription DashboardTickerSubscription($symbols: [String!]!) {
-  onPriceChange(symbols: $symbols) {
-    currency
-    lastPrice
-    change24Hour
+mutation ViewerHeaderAATWMutation($input: AddAssetToWatchlistInput!) {
+  addAssetToWatchlist(input: $input) {
+    watchlist {
+      assets {
+        nodes {
+          isInWatchlist
+        }
+      }
+    }
   }
 }
 ```
 
-In order to execute a subscription against the server in Relay, we can use the `requestSubscription` and `useSubscription` APIs. Let's take a look at an example using the [useSubscription](https://relay.dev/docs/api-reference/use-subscription/) hook:
+In order to execute a mutation against the server in Relay, we can use the `commitMutation` and `useMutation` APIs. Let's take a look at an example using the [useMutation](https://relay.dev/docs/api-reference/use-mutation/) hook:
 
-```jsx title="@/scenes/dashboard/DashboardTicker.js"
-import {memo, useMemo} from 'react';
-import {graphql, useFragment, useSubscription} from 'react-relay';
+```jsx title="@/scenes/viewer/ViewerHeader.js"
+// ...
+import {memo, useCallback} from 'react';
+import {graphql, useFragment, useMutation} from 'react-relay';
 
-import {Ticker} from '@/components';
-
-import DashboardTickerItem from './DashboardTickerItem';
-
-export default memo(function DashboardTicker({fragmentRef}) {
-  const data = useFragment(
-    graphql`
-      fragment DashboardTickerFragment_query on Query {
-        ticker: assets(
-          first: 10
-          order: {price: {tradableMarketCapRank: ASC}}
-        ) {
-          nodes {
-            symbol
-            ...DashboardTickerItemFragment_asset
+const useAddToWatchlist = () => {
+  const [commit, isInFlight] = useMutation(graphql`
+    mutation ViewerHeaderAATWMutation($input: AddAssetToWatchlistInput!) {
+      addAssetToWatchlist(input: $input) {
+        watchlist {
+          assets {
+            nodes {
+              isInWatchlist
+            }
           }
         }
+      }
+    }
+  `);
+
+  const execute = useCallback(
+    ({id, symbol}) => {
+      commit({
+        variables: {input: {symbol}},
+        optimisticUpdater(store) {
+          const record = store.get(id);
+
+          record.setValue(true, 'isInWatchlist');
+        },
+        onCompleted() {
+          console.log(`${symbol} was added to the watchlist`);
+        },
+        onError() {
+          console.log(
+            `there was a problem with ${symbol} while adding to the watchlist`,
+          );
+        },
+      });
+    },
+    [commit],
+  );
+
+  return [execute, isInFlight];
+};
+
+// ...
+
+export default memo(function ViewerHeader({fragmentRef}) {
+  const asset = useFragment(
+    graphql`
+      fragment ViewerHeaderFragment_asset on Asset {
+        id
+        symbol
+        name
+        imageUrl
+        isInWatchlist
+        hasAlerts
       }
     `,
     fragmentRef,
   );
-  const assets = data.ticker?.nodes;
 
-  useSubscription(
-    useMemo(
-      () => ({
-        subscription: graphql`
-          subscription DashboardTickerSubscription($symbols: [String!]!) {
-            onPriceChange(symbols: $symbols) {
-              currency
-              lastPrice
-              change24Hour
-            }
-          }
-        `,
-        variables: {symbols: assets?.map(({symbol}) => symbol) ?? []},
-      }),
-      [assets],
-    ),
-  );
+  const [addToWatchlist] = useAddToWatchlist();
+  const [removeFromWatchlist] = useRemoveFromWatchlist();
+
+  // ...
 
   return (
-    <Ticker>
-      {assets?.map((asset) => (
-        <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
-      ))}
-    </Ticker>
+    <Checkbox
+      color="primary"
+      icon={<WatchIcon />}
+      checkedIcon={<WatchedIcon />}
+      checked={!!asset.isInWatchlist}
+      disabled={asset.isInWatchlist === null}
+      inputProps={{
+        'aria-label': 'watch',
+      }}
+      onChange={(event) => {
+        if (event.target.checked) {
+          addToWatchlist(asset);
+        } else {
+          removeFromWatchlist(asset);
+        }
+      }}
+    />
   );
 });
 ```
 
 We pass into the hook the following arguments:
 
-- `config`: a config of type [GraphQLSubscriptionConfig](https://relay.dev/docs/api-reference/use-subscription/#type-graphqlsubscriptionconfigtsubscriptionpayload).
+- `mutation`: GraphQL mutation specified using a `graphql` template literal.
 
-- `requestSubscriptionFn`: An optional function with the same signature as [requestSubscription](https://relay.dev/docs/api-reference/request-subscription/), which will be called in its stead. Defaults to `requestSubscription`.
+- `commitMutationFn`: An optional function with the same signature as [commitMutation](https://relay.dev/docs/api-reference/commit-mutation/), which will be called in its stead. Defaults to `commitMutation`.
 
-Behavior, it will:
+And it returns:
 
-- Subscribe when the component is mounted with the given config.
+- `commitMutation`: The function that will execute the mutation.
 
-- Unsubscribe when the component is unmounted.
+- `areMutationsInFlight`: Will be `true` if any mutation triggered by calling `commitMutation` is still in flight. If you call `commitMutation` multiple times, there can be multiple mutations in flight at once.
 
-- Unsubscribe and resubscribe with new values if the environment, config or `requestSubscriptionFn` changes.
+:::info
 
-:::note
-
-You will need to Configure your [Network layer](https://relay.dev/docs/guides/network-layer/) to handle subscriptions.
+There are several ways to implement `optimistic` updates, to provide a better UX. In the example above, we have used `optimisticUpdater`: a function used to optimistically update the local in-memory store, i.e. immediately, before the mutation request has completed. If an error occurs during the mutation request, the optimistic update will be rolled back.
 
 :::
-
-## Configuring the Network Layer
-
-Usually GraphQL subscriptions are communicated over [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API), here's an example using [graphql-ws](https://github.com/enisdenjo/graphql-ws):
-
-```js
-import {Network, Observable} from 'relay-runtime';
-import {createClient} from 'graphql-ws';
-
-// ...
-
-const wsClient = createClient({
-  url: 'ws://localhost:5000',
-});
-
-const subscribeFn = (operation, variables) =>
-  Observable.create((sink) =>
-    wsClient.subscribe(
-      {
-        operationName: operation.name,
-        query: operation.text,
-        variables,
-      },
-      sink,
-    ),
-  );
-
-const network = Network.create(fetchFn, subscribeFn);
-```
