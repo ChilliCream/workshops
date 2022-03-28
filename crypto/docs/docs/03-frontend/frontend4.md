@@ -217,9 +217,9 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
        `,
        {},
      );
-   }
 
-   return <div>{data.greetings}</div>;
+     return <div>{data.greetings}</div>;
+   }
    ```
 
    :::caution
@@ -274,9 +274,9 @@ export default function Greetings({name}) {
     `,
     {name},
   );
-}
 
-return <div>{data.greetings}</div>;
+  return <div>{data.greetings}</div>;
+}
 ```
 
 Now we are able to pass the name into the query, allowing us to something like:

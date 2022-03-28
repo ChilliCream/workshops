@@ -193,9 +193,9 @@ export default function Greetings({name, fetchOptions}) {
     {name},
     fetchOptions,
   );
-}
 
-return <div>{data.greetings}</div>;
+  return <div>{data.greetings}</div>;
+}
 ```
 
 Now we are able to force a query refresh:
