@@ -90,7 +90,7 @@ const Main = styled.div(
 `,
 );
 
-export const Content = ({children}) => {
+export const Content = ({variant = 'unknown', children}) => {
   const router = useRouter();
   const {mode, toggleMode} = useMode();
   const {menubar: menubarRef, statusbar: statusbarRef} = useSlots();
@@ -108,6 +108,18 @@ export const Content = ({children}) => {
     },
     {childList: true},
   );
+
+  if (variant === 'unknown') {
+    return (
+      <Root>
+        <Main>
+          <NoSSR>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </NoSSR>
+        </Main>
+      </Root>
+    );
+  }
 
   return (
     <Root>
