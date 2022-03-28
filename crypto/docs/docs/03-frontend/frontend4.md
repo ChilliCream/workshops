@@ -157,7 +157,7 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
    Now that the compiler is configured we can set up the runtime - we have to tell Relay how to connect to our GraphQL server.
    An Environment encapsulates how to talk to our server (a Relay Network) with a cache of data retrieved from that server.
 
-   ```jsx title="/pages/index.js"
+   ```jsx title="@/pages/index.js"
    import {Environment, Network, RecordSource, Store} from 'relay-runtime';
    import {RelayEnvironmentProvider} from 'react-relay';
    import {Suspense} from 'react';
