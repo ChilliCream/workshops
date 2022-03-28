@@ -166,6 +166,46 @@ export default memo(function DashboardTicker({fragmentRef}) {
 });
 ```
 
+## Data Flow
+
+```text
+
+               ┌───────────────────────┐
+               │         Query         │
+               └───────────────────────┘
+                           │
+                           ▼
+                                             ┌ ─ ─ ─ ┐
+                         fetch ◀────────────▶ Server
+                                             └ ─ ─ ─ ┘
+                           │
+                     ┌─────┴───────┐
+                     ▼             ▼
+               ┌──────────┐  ┌──────────┐
+               │  Query   │  │ Response │
+               └──────────┘  └──────────┘
+                     │             │
+                     └─────┬───────┘
+                           │
+                           ▼
+                       normalize
+                           │
+                           ▼
+               ┌───────────────────────┐
+               │     RecordSource      │
+               │                       │
+               │┌──────┐┌──────┐┌─────┐│
+               ││Record││Record││ ... ││
+               │└──────┘└──────┘└─────┘│
+               └───────────────────────┘
+```
+
+1. The query is fetched from the network.
+
+1. The query and response are traversed together, extracting the results into `Record` objects which are added to a fresh `RecordSource`.
+
+1. This fresh `RecordSource` would then be published to the store, that later on will notify any subscribers whose results have changed.
+
 ## Refreshing
 
 When referring to "refreshing a query", we mean fetching the exact same data that was originally rendered by the query, in order to get the most up-to-date version of that data from the server.
@@ -249,3 +289,40 @@ const [name, setName] = useState(null);
   <Greetings name={name} />
 </>;
 ```
+
+## Improving Latency with @defer
+
+One of the disadvantages of GraphQL’s request/response model is that the GraphQL response is not returned to clients until the entire request has finished processing. However, not all requested data may be of equal importance, and in some use cases it may be possible for applications to act on a subset of the requested data. An application can speed up its time-to-interactive if the GraphQL server can send the most important data as soon as it’s ready.
+
+The `@defer` directive can be applied to fragment spreads and inline fragments to allow GraphQL servers to do exactly that by returning multiple payloads from a single GraphQL response.
+
+```jsx title="@/scenes/dashboard/DashboardSpotlight.js"
+// ...
+
+const Gainers = ({fragmentRef}) => {
+  const data = useFragment(
+    graphql`
+      fragment DashboardSpotlightGainersFragment_query on Query {
+        gainers: assets(
+          first: 5
+          where: {price: {change24Hour: {gt: 0}}}
+          order: {price: {change24Hour: DESC}}
+        ) {
+          ...DashboardSpotlightCardFragment_asset @defer(label: "gainers")
+        }
+      }
+    `,
+    fragmentRef,
+  );
+
+  return (
+    <DashboardSpotlightCard
+      fragmentRef={data.gainers}
+      title="Top Gainers"
+      avatar={<BullishIcon />}
+    />
+  );
+};
+```
+
+When the GraphQL execution engine encounters the `@defer` directive, it will fork execution and begin to resolve those fields asynchronously. While the deferred payload is still being prepared, the client can receive and act on the initial payload. This is most useful when the deferred data is large, expensive to load, or not on the critical path for interactivity.
