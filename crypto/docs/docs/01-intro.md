@@ -14,7 +14,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Transitioning to GraphQL native
 - GraphQL server ecosystem in .NET
 - GraphQL client ecosystem in .NET and JavaScript (Apollo vs Relay)
-- Exploring Facebooks Relay client?
+- Exploring Facebook's Relay client?
 - Query and Mutation
 - Fragments and Composability
 - GraphQL Syntax
