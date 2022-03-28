@@ -179,11 +179,10 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
      return await response.json();
    };
 
-   const fetchRelay = (params, variables) =>
-     fetchGraphQL(params.text, variables);
+   const fetchFn = (params, variables) => fetchGraphQL(params.text, variables);
 
    const environment = new Environment({
-     network: Network.create(fetchRelay),
+     network: Network.create(fetchFn),
      store: new Store(new RecordSource()),
    });
 
