@@ -1,1 +1,1 @@
-export {Dashboard as default} from '@/scenes';
+export {Dummy as default} from '@/components';
