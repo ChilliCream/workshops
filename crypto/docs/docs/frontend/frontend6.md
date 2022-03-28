@@ -115,7 +115,7 @@ We pass into the hook the following arguments:
 
 - `mutation`: GraphQL mutation specified using a `graphql` template literal.
 
-- `commitMutationFn`: _[Optional]_ A function with the same signature as [commitMutation](https://relay.dev/docs/api-reference/commit-mutation/), which will be called in its stead. Defaults to `commitMutation`.
+- `commitMutationFn`: An optional function with the same signature as [commitMutation](https://relay.dev/docs/api-reference/commit-mutation/), which will be called in its stead. Defaults to `commitMutation`.
 
 And it returns:
 
