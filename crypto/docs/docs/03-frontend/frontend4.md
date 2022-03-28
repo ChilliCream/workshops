@@ -12,7 +12,7 @@ Later we'll see some limitations of this approach and a better alternative that 
 
 :::
 
-1. Modify the `@/scenes/Greetings.js'. Just replace the existing code by this enhanced version.
+1. Modify the `/scenes/Greetings.js'. Just replace the existing code by this enhanced version.
 
    ```jsx title="@/scenes/Greetings.js"
    import {useEffect, useState} from 'react';
