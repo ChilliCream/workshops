@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # Creating a GraphQL Server
 
 In this chapter we will create a basic GraphQL server with Hot Chocolate and write our first GraphQL query to ensure that our server works properly.
@@ -11,7 +7,7 @@ In this chapter we will create a basic GraphQL server with Hot Chocolate and wri
 Before we can start lets ensure that out computer is setup properly.
 
 1. Install .NET 6 (https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-3. Install Visual Studio Code (https://code.visualstudio.com)
+2. Install Visual Studio Code (https://code.visualstudio.com)
 
 ## Creating a GraphQL Server from Template
 
@@ -76,7 +72,7 @@ Click on `Apply` in the connection details dialog for accepting the server defau
 
 ![Banana Cake Pop - Schema Reference](images/bcp-3.png)
 
-Lets, first explore the schema by clicking on the `Schema Reference` tab. In the `Schema Reference` tab we are greeted with the documentation of the `Query` type. The `Query` root type as we already learned contains the root fields to read data when we execute a query operation. 
+Lets, first explore the schema by clicking on the `Schema Reference` tab. In the `Schema Reference` tab we are greeted with the documentation of the `Query` type. The `Query` root type as we already learned contains the root fields to read data when we execute a query operation.
 
 > Note: Query operations in GraphQL are expected to be side-effect free, which means that executing GraphQL queries will not alter the state of the server.
 
