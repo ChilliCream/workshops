@@ -17,7 +17,7 @@ The second parameter (`fragmentRef`) is a fragment reference are obtained by spr
 
 Fragments cannot be fetched by themselves; instead, they must ultimately be included in a parent query. The Relay compiler will then ensure that the data dependencies declared in such fragments are fetched as part of that parent query.
 
-```jsx title="/scenes/dashboard/DashboardTickerItem.js"
+```jsx title="@/scenes/dashboard/DashboardTickerItem.js"
 export default memo(function DashboardTickerItem({fragmentRef}) {
   const asset = useFragment(
     graphql`
@@ -48,7 +48,7 @@ Relay uses `Fragments` to declare data requirements for components, and compose 
 
 To fetch a query lazily, you can use the `useLazyLoadQuery` hook:
 
-```jsx title="/scenes/dashboard/DashboardTicker.js"
+```jsx title="@/scenes/dashboard/DashboardTicker.js"
 import {memo} from 'react';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
@@ -90,7 +90,7 @@ The example above is a teaser. Usually we want to have one or a few queries that
 
 Here how we can compose fragments at scale:
 
-```jsx title="/scenes/dashboard/DashboardContainer.js"
+```jsx title="@/scenes/dashboard/DashboardContainer.js"
 import {Divider, Stack} from '@mui/material';
 import ErrorPage from 'next/error';
 import {memo} from 'react';
@@ -129,7 +129,7 @@ export default memo(function DashboardContainer({cacheBuster}) {
 });
 ```
 
-```jsx title="/scenes/dashboard/DashboardTicker.js"
+```jsx title="@/scenes/dashboard/DashboardTicker.js"
 import {memo} from 'react';
 import {graphql, useFragment} from 'react-relay';
 
@@ -180,7 +180,7 @@ To refresh a query using the [useLazyLoadQuery](https://relay.dev/docs/api-refer
 
 - `fetchPolicy`: to ensure that we always fetch from the network and skip the local data cache.
 
-```jsx title="/scenes/Greetings.js"
+```jsx title="@/scenes/Greetings.js"
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 export default function Greetings({name, fetchOptions}) {

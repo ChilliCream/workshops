@@ -12,9 +12,9 @@ Later we'll see some limitations of this approach and a better alternative that 
 
 :::
 
-1. Modify the `/scenes/greetings.js'. Just replace the existing code by this enhanced version.
+1. Modify the `@/scenes/greetings.js'. Just replace the existing code by this enhanced version.
 
-   ```jsx title="/scenes/greetings.js"
+   ```jsx title="@/scenes/greetings.js"
    import {useEffect, useState} from 'react';
 
    const fetchGraphQL = async (query, variables) => {
@@ -206,7 +206,7 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
 
    Note that `graphql` template tags are **never executed at runtime**. Instead, they are compiled ahead of time by the Relay compiler into generated artifacts that live alongside your source code, and which Relay requires to operate at runtime.
 
-   ```jsx title="/scenes/Greetings.js"
+   ```jsx title="@/scenes/Greetings.js"
    import {graphql, useLazyLoadQuery} from 'react-relay';
 
    export default function Greetings() {
@@ -263,7 +263,7 @@ The browser should automatically refresh and display the updated page.
 
 The `useLazyLoadQuery` hook allow us to pass `variables` and `options`. In the example above we just passed `{}` which means kinda "no vars" and we could use it to do more interesting things.
 
-```jsx title="/scenes/Greetings.js"
+```jsx title="@/scenes/Greetings.js"
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 export default function Greetings({name}) {
