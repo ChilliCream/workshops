@@ -12,9 +12,9 @@ Later we'll see some limitations of this approach and a better alternative that 
 
 :::
 
-1. Modify the `@/scenes/greetings.js'. Just replace the existing code by this enhanced version.
+1. Modify the `@/scenes/Greetings.js'. Just replace the existing code by this enhanced version.
 
-   ```jsx title="@/scenes/greetings.js"
+   ```jsx title="@/scenes/Greetings.js"
    import {useEffect, useState} from 'react';
 
    const fetchGraphQL = async (query, variables) => {
@@ -224,7 +224,7 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
 
    :::caution
 
-   Did you see that we have renamed the file `greetings` into `Greetings`?
+   Did you see that we have named the file `Greetings` in place of lowercase `greetings`?
    It is because we must follow some naming conventions required by the compiler in order to generate our graphql artifacts.
    This is a bit contribed specially when it is maintream to use `kebab-case` for file naming by other best practices.
 

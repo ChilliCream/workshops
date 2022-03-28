@@ -4,9 +4,9 @@ The most common way to start any programming course is to display the text "Hell
 
 ## Create the scene and page host
 
-1. Create a file at `/scenes/greetings.js`.
+1. Create a file at `/scenes/Greetings.js`.
 
-   ```jsx title="@/scenes/greetings.js"
+   ```jsx title="@/scenes/Greetings.js"
    export default function Greetings() {
      return <>Hello, world!</>;
    }
@@ -15,11 +15,7 @@ The most common way to start any programming course is to display the text "Hell
 1. Create a file at `/pages/index.js`.
 
    ```jsx title="/pages/index.js"
-   import {default as Greetings} from '@/scenes/greetings';
-
-   export default function Main() {
-     return <Greetings />;
-   }
+   export default from '@/scenes/Greetings';
    ```
 
 ## Check it out
