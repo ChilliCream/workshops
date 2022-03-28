@@ -86,3 +86,38 @@ Behavior, it will:
 - Unsubscribe when the component is unmounted.
 
 - Unsubscribe and resubscribe with new values if the environment, config or `requestSubscriptionFn` changes.
+
+:::note
+
+You will need to Configure your [Network layer](https://relay.dev/docs/guides/network-layer/) to handle subscriptions.
+
+:::
+
+## Configuring the Network Layer
+
+Usually GraphQL subscriptions are communicated over [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API), here's an example using [graphql-ws](https://github.com/enisdenjo/graphql-ws):
+
+```js
+import {Network, Observable} from 'relay-runtime';
+import {createClient} from 'graphql-ws';
+
+// ...
+
+const wsClient = createClient({
+  url: 'ws://localhost:5000',
+});
+
+const subscribeFn = (operation, variables) =>
+  Observable.create((sink) =>
+    wsClient.subscribe(
+      {
+        operationName: operation.name,
+        query: operation.text,
+        variables,
+      },
+      sink,
+    ),
+  );
+
+const network = Network.create(fetchFn, subscribeFn);
+```
