@@ -83,6 +83,6 @@ export default memo(function ScreenerList({fragmentRef}) {
 
 Calling `loadNext` _will not_ cause the component to suspend. Instead, the `isLoadingNext` value will be set to `true` while the request is in flight, and the new items from the pagination request will be added to the connection, causing the component to re-render.
 
-You might use `isLoadingNext` to display some progress indicator,
+You might use `isLoadingNext` to display some progress indicator.
 
 :::
