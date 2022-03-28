@@ -14,8 +14,8 @@ The most common way to start any programming course is to display the text "Hell
 
 1. Create a file at `/pages/index.js`.
 
-   ```jsx title="/pages/index.js"
-   export default from '@/scenes/Greetings';
+   ```jsx title="@/pages/index.js"
+   export {default} from '@/scenes/Greetings';
    ```
 
 ## Check it out
