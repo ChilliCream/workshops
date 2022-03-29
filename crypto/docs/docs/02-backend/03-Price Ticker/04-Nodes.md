@@ -6,11 +6,11 @@ So far, we can fetch all assets with pagination activated. This allows us to fet
 
 We need to introduce a new resolver to our `Query` type to fetch an asset by its identifier. 
 
-First we will create a new DataLoader called `AssetByIdDataLoader`.
+First, we will create a new DataLoader called `AssetByIdDataLoader`.
 
 Create a new file in the `DataLoader` directory and call it `AssetByIdDataLoader.cs`.
 
-Next copy the following code into the file.
+Next, copy the following code into the file.
 
 ```csharp title="/DataLoader/AssetByIdDataLoader.cs"
 namespace Demo.DataLoader;
@@ -96,7 +96,7 @@ query {
 
 ## Global Object Identification
 
-With the new resolver in place we are able to fetch a single `Asset` by its identifier. This is good for us human beings but not so good for tools. For tools or clients we need something that is more generic. The relay server specification introduced for this the `Global Object Identification` specification. 
+With the new resolver in place, we can fetch a single `Asset` by its identifier. This is good for us human beings but not good for GraphQL tools and GraphQL clients. For tools or clients, we need something more generic. The relay team introduced the `Global Object Identification` specification for this purpose. 
 
 :::info
 
@@ -104,9 +104,9 @@ The Global Object Identification specification can be found here: https://relay.
 
 :::
 
-The specification defines an interface called `Node` that contains a single field called `id` which must be of the type `ID`. The `ID` scalar serializes to a `String` or `Int` and represents and identifier. The `id` field of a node must be schema unique and allow the server to resolve the `Node` by only the identifier. The identifier by default is serialized as a base64 string containing the GraphQL typename and the identifier.
+The specification defines an interface called `Node` that contains a single field called `id` which must be of the type `ID`. The `ID` scalar serializes to `String` or `Int` and represents an identifier. The `id` field of a `Node` must return a schema-unique identifier and allow the server to resolve the `Node` by only the identifier. The identifier by default is serialized as a base64 string containing the GraphQL type name and the identifier.
 
-In order to opt into the `Global Object Identification` specification we need to change the GraphQL server configuration. For this head over to the `Program.cs`.
+To opt in to the `Global Object Identification` specification, we need to change the GraphQL server configuration. For this, head over to the `Program.cs`.
 
 ```csharp
 builder.Services
@@ -145,7 +145,7 @@ app.MapGraphQL();
 app.Run();
 ```
 
-Now that we have enabled support for the specification we need to implement the node interface with the `Asset` entity. We do not want to change the `Asset` class itself. We already introduced the object type extension `AssetNode` in the last part of this chapter.
+Now that we have enabled support for the specification, we need to implement the node interface with the `Asset` entity. We do not want to change the `Asset` class itself. We already introduced the object type extension `AssetNode` in the last part of this chapter.
 
 What we essentially want to do in this part is the following.
 
@@ -155,7 +155,7 @@ extend type Asset implements Node {
 }
 ```
 
-For this we will annotate the `AssetNode` class located in the `Types` directory with the `NodeAttribute`.
+For this, we will annotate the `AssetNode` class located in the `Types` directory with the `NodeAttribute`.
 
 ```csharp
 [Node]
@@ -163,7 +163,7 @@ For this we will annotate the `AssetNode` class located in the `Types` directory
 public sealed class AssetNode
 ```
 
-Next we need to introduce a node resolver, which can resolve the entity by its identifier.
+Next, we need to introduce a node resolver, which can resolve the entity by its identifier.
 
 ```csharp
 [NodeResolver]
@@ -199,7 +199,7 @@ public sealed class AssetNode
 
 ```
 
-With this in place lets explore the schema a bit and explore how this changed the execution behavior.
+With this in place, let's explore the schema a bit and explore how this changed the execution behavior.
 
 ```bash
 dotnet run
@@ -213,9 +213,9 @@ Now select the `Schema Reference` tab to explore the schema.
 
 ![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp3.png)
 
-We can see that we have now two new fields on the `Query` type called `node` and `nodes`. These fields allow us to fetch any node just by its identifier.
+We now have two new fields on the `Query` type called `node` and `nodes`. These fields allow us to fetch any node just by its identifier.
 
-For this let us fetch an `Asset` first to get the newly encoded identifier.
+Let us fetch an `Asset` first to get the newly encoded identifier.
 
 ```graphql
 query {
@@ -256,9 +256,10 @@ query {
   }
 }
 ```
-The node interface itself only exposes the `id` field and we can additionally ask for the actual type with the `__typename`.
 
-In order to query the other fields of the `Asset` we need to use a **Fragment** or an **InlineFragment**. For this example we will use an **InlineFragment**.
+The node interface itself only exposes the `id` field, and we can additionally ask for the actual type with the `__typename`.
+
+To query the other fields of the `Asset`, we need to use a **Fragment** or an **InlineFragment**. For this example, we will use an **InlineFragment**.
 
 ```graphql
 query {
@@ -284,11 +285,11 @@ if(node is Asset asset)
 }
 ```
 
-Essentially it will return the the fields within the inline fragment if the returned type is an `Asset`.
+Essentially it will return the fields within the inline fragment if the returned type is an `Asset`.
 
 ## Cleanup
 
-Let us tidy up the schema a bit. With the **Global Object Identification** specification we want to be consistent with the `Asset` id so that the consumer does not need to figure out when to pass an encoded ID and when to use the internal ID.
+Let us tidy up the schema a bit. With the **Global Object Identification** specification, we want to be consistent with the `Asset` id. The consumer does not need to figure out when to pass an encoded ID and when to use the internal ID.
 
 Head over to the `Query` class and add the `IdAttribute` to the `id` parameter in our `GetAssetByIdAsync` resolver.
 
@@ -325,7 +326,7 @@ public class Query
 }
 ```
 
-With this in place we now have to pass in the encoded ID to the `assetById` field.
+With the above in place, we now have to pass in the encoded ID to the `assetById` field.
 
 ```graphql
 query {
@@ -335,7 +336,7 @@ query {
 }
 ```
 
-In order to complete our schema we will make the `AssetPrice` entity a `Node` as well. In general not every time has to be a node. But parts of the graph that you want to be refetchable you need to make a node.
+To complete our schema, we will also make the `AssetPrice` entity a `Node`. In general, not every object type has to be a node. But for parts of the graph that you want to be refetchable, you need to implement the node interface.
 
 Create a new file called `AssetBySymbolDataLoader.cs` in the `DataLoader` directory and add the following code.
 
@@ -395,7 +396,7 @@ public sealed class AssetPriceByIdDataLoader : BatchDataLoader<int, AssetPrice>
 }
 ```
 
-With these two new `DataLoader` in place we can finally create a new file called `AssetPriceNode.cs` in the `Types` directory and add the following code.
+With these two new `DataLoader` in place, we can finally create a new file called `AssetPriceNode.cs` in the `Types` directory and add the following code.
 
 ```csharp title="/Types/AssetPriceNode.cs"
 namespace Demo.Types.Assets;
@@ -419,9 +420,9 @@ public sealed class AssetPriceNode
 }
 ```
 
-With the `AssetPriceNode` class we have made the `AssetPrice` and node but also at the same time introduced a way to get from the node to the `Asset`.
+With the addition of the `AssetPriceNode` class, we have made the `AssetPrice` type a node. We also introduced a way to get from the `AssetPriceNode` to the `Asset` by adding the `GetAssetAsync` resolver to the `AssetPriceNode` class.
 
-This allows us to refetch the `AssetPrice` and the the `Asset` at the same time from both angles.
+This allows us to refetch the `AssetPrice` and the `Asset` simultaneously from and from both angles.
 
 ```graphql
 query {
@@ -452,4 +453,4 @@ query {
 
 ## Summary
 
-In this part of the chapter we have introduced the **Global Object Identification** specification to our schema, which allows clients to refetch parts of the schema through a generic field called `node` by only knowing the identifier.
+In this part of the chapter, we introduced the **Global Object Identification** specification to our schema, allowing GraphQL tools and GraphQL clients to refetch parts of the schema through a generic field called `node` by only providing the identifier.
