@@ -32,7 +32,7 @@ Now that we've created our code, let's see our app in action!
 
 1. Open the integrated terminal in Visual Studio Code by selecting `View > Terminal` or by selecting `Ctrl+`. On a Mac, select `Cmd+` instead.
 
-1. Use the following command to start Netx's development server:
+1. Use the following command to start Next's development server:
 
 ```sh
 yarn dev
