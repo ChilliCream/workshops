@@ -1,0 +1,63 @@
+diff --git a/crypto/frontend/pages/index.js b/crypto/frontend/pages/index.js
+index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..b85b77e7e8d3d7aa6b9d8e488d4525737b0c09b0 100644
+--- a/crypto/frontend/pages/index.js
++++ b/crypto/frontend/pages/index.js
+@@ -1 +1,37 @@
+-export {Dummy as default} from '@/components';
++import {Suspense} from 'react';
++import {RelayEnvironmentProvider} from 'react-relay';
++import {Environment, Network, RecordSource, Store} from 'relay-runtime';
++
++import {default as Greetings} from '@/scenes/Greetings';
++
++const fetchGraphQL = async (query, variables) => {
++  const response = await fetch('http://localhost:5000/graphql', {
++    method: 'POST',
++    headers: {
++      'Content-Type': 'application/json',
++    },
++    body: JSON.stringify({
++      query,
++      variables,
++    }),
++  });
++
++  return await response.json();
++};
++
++const fetchFn = (params, variables) => fetchGraphQL(params.text, variables);
++
++const environment = new Environment({
++  network: Network.create(fetchFn),
++  store: new Store(new RecordSource()),
++});
++
++export default function Main() {
++  return (
++    <RelayEnvironmentProvider environment={environment}>
++      <Suspense fallback="Loading...">
++        <Greetings name="Luke" />
++      </Suspense>
++    </RelayEnvironmentProvider>
++  );
++}
+diff --git a/crypto/frontend/scenes/Greetings.js b/crypto/frontend/scenes/Greetings.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..458caa56fbfb105a26356633eafe6cf6c3fc9b17
+--- /dev/null
++++ b/crypto/frontend/scenes/Greetings.js
+@@ -0,0 +1,14 @@
++import {graphql, useLazyLoadQuery} from 'react-relay';
++
++export default function Greetings({name}) {
++  const data = useLazyLoadQuery(
++    graphql`
++      query GreetingsQuery @argumentDefinitions(name: {type: "String"}) {
++        greetings(name: $name)
++      }
++    `,
++    {name},
++  );
++
++  return <div>{data.greetings}</div>;
++}
