@@ -13,7 +13,10 @@ builder.Services
     .AddQueryType<Query>()
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
+    .AddFiltering()
+    .AddSorting()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+
 var app = builder.Build();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
