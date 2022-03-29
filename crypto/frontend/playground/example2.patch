@@ -1,31 +1,224 @@
-diff --git a/crypto/frontend/scenes/dashboard/index.js b/crypto/frontend/scenes/dashboard/index.js
+diff --git a/crypto/frontend/scenes/dashboard/DashboardTicker.js b/crypto/frontend/scenes/dashboard/DashboardTicker.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..312b9c8e79235017f7e38340d94ce7d54a77e940
+index 0000000000000000000000000000000000000000..fa89bb808ff2ac39bcbd5f9fd14e817b7546021f
 --- /dev/null
-+++ b/crypto/frontend/scenes/dashboard/index.js
-@@ -0,0 +1,15 @@
-+import {Suspense} from 'react';
++++ b/crypto/frontend/scenes/dashboard/DashboardTicker.js
+@@ -0,0 +1,31 @@
++import {memo} from 'react';
++import {graphql, useFragment} from 'react-relay';
 +
-+import {ActivityIndicator, ErrorBoundaryWithRetry} from '@/components';
++import {Ticker} from '@/components';
 +
-+import DashboardContainer from './DashboardContainer';
++import DashboardTickerItem from './DashboardTickerItem';
 +
-+export const Dashboard = () => (
-+  <ErrorBoundaryWithRetry>
-+    {({cacheBuster}) => (
-+      <Suspense fallback={<ActivityIndicator />}>
-+        <DashboardContainer cacheBuster={cacheBuster} />
-+      </Suspense>
-+    )}
-+  </ErrorBoundaryWithRetry>
-+);
-diff --git a/crypto/frontend/pages/index.js b/crypto/frontend/pages/index.js
-index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..f5b3bfcc5a809b3d23c30b8a2d16fc34f5eabf4a 100644
---- a/crypto/frontend/pages/index.js
-+++ b/crypto/frontend/pages/index.js
-@@ -1 +1 @@
--export {Dummy as default} from '@/components';
++export default memo(function DashboardTicker({fragmentRef}) {
++  const data = useFragment(
++    graphql`
++      fragment DashboardTickerFragment_query on Query {
++        ticker: assets(first: 10) {
++          nodes {
++            symbol
++            ...DashboardTickerItemFragment_asset
++          }
++        }
++      }
++    `,
++    fragmentRef,
++  );
++  const assets = data.ticker?.nodes;
++
++  return (
++    <Ticker>
++      {assets?.map((asset) => (
++        <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
++      ))}
++    </Ticker>
++  );
++});
+diff --git a/crypto/frontend/pages/dashboard.js b/crypto/frontend/pages/dashboard.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..f5b3bfcc5a809b3d23c30b8a2d16fc34f5eabf4a
+--- /dev/null
++++ b/crypto/frontend/pages/dashboard.js
+@@ -0,0 +1 @@
 +export {Dashboard as default} from '@/scenes';
+diff --git a/crypto/frontend/scenes/dashboard/DashboardTickerItem.js b/crypto/frontend/scenes/dashboard/DashboardTickerItem.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..d826184545a625bbc196a4bec406e6740ad67967
+--- /dev/null
++++ b/crypto/frontend/scenes/dashboard/DashboardTickerItem.js
+@@ -0,0 +1,79 @@
++import {Link, Stack, Typography} from '@mui/material';
++import NextLink from 'next/link';
++import {memo} from 'react';
++import {graphql, useFragment} from 'react-relay';
++
++import {
++  direction,
++  findClosestAccessibleColor,
++  formatCurrency,
++  formatPercent,
++} from '@/utils';
++
++const Symbol = memo(function Symbol({value, color}) {
++  return (
++    <Typography
++      variant="caption"
++      sx={(theme) => ({
++        color: findClosestAccessibleColor(
++          color,
++          theme.palette.background.default,
++          3,
++        ),
++        fontSize: theme.typography.fontSizeTiny,
++        fontWeight: theme.typography.fontWeightMedium,
++        lineHeight: 1,
++      })}
++    >
++      {value}
++    </Typography>
++  );
++});
++
++const Price = ({value, options, locales}) => (
++  <Typography
++    variant="caption"
++    sx={(theme) => ({
++      color: theme.palette.text.primary,
++      fontSize: theme.typography.fontSizeMedium,
++      fontWeight: theme.typography.fontWeightMedium,
++      lineHeight: 1,
++    })}
++  >
++    {formatCurrency(value, options, locales)}
++  </Typography>
++);
++
++const Change = ({value, options, locales}) => (
++  <Typography
++    variant="caption"
++    sx={(theme) => ({
++      color: theme.palette.trend[direction(value)],
++      fontSize: theme.typography.fontSizeTiny,
++      fontWeight: theme.typography.fontWeightMedium,
++      lineHeight: 1,
++    })}
++  >
++    {formatPercent(value, options, locales)}
++  </Typography>
++);
++
++export default memo(function DashboardTickerItem({fragmentRef}) {
++  // ... ?
++  //
++  // return (
++  //   <NextLink
++  //     href="/currencies/[symbol]"
++  //     as={`/currencies/${asset.symbol}`}
++  //     passHref
++  //   >
++  //     <Link underline="none">
++  //       <Stack direction="column" spacing={1} minWidth={100}>
++  //         <Symbol value={asset.symbol} color={asset.color} />
++  //         <Price value={price.lastPrice} options={{currency: price.currency}} />
++  //         <Change value={price.change24Hour} />
++  //       </Stack>
++  //     </Link>
++  //   </NextLink>
++  // );
++});
+diff --git a/crypto/frontend/scenes/settings/SettingsCredentials.js b/crypto/frontend/scenes/settings/SettingsCredentials.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..e513581d7c84842de5a2bcdb6d8428b3343ee5f0
+--- /dev/null
++++ b/crypto/frontend/scenes/settings/SettingsCredentials.js
+@@ -0,0 +1,78 @@
++import {
++  AccordionActions,
++  AccordionDetails,
++  Button,
++  Stack,
++  TextField,
++} from '@mui/material';
++import {memo, useRef} from 'react';
++
++import {PasswordField} from '@/components';
++import {Config, syncWithStorage} from '@/config';
++import {CredentialsIcon} from '@/icons';
++
++import {Group} from './Group';
++
++export default memo(function SettingsCredentials({active, onChange}) {
++  const usernameRef = useRef(null);
++  const passwordRef = useRef(null);
++
++  return (
++    <Group
++      id="credentials"
++      icon={CredentialsIcon}
++      title="Credentials"
++      active={active}
++      onChange={onChange}
++    >
++      <form
++        name="credentials"
++        onSubmit={(e) => {
++          e.preventDefault();
++
++          const username = usernameRef.current?.value?.trim();
++          const password = passwordRef.current?.value?.trim();
++          const token =
++            username && password
++              ? Buffer.from(`${username}:${password}`).toString('base64')
++              : null;
++
++          syncWithStorage({
++            USERNAME: username,
++            PASSWORD: password,
++            AUTH_TOKEN: token,
++          });
++        }}
++      >
++        <AccordionDetails id="panel-credentials-content" sx={{p: 6}}>
++          <Stack direction="column" gap={8}>
++            <TextField
++              inputRef={usernameRef}
++              label="Username"
++              defaultValue={Config.USERNAME}
++              autoComplete="username"
++              fullWidth
++            />
++            <PasswordField
++              inputRef={passwordRef}
++              label="Password"
++              defaultValue={Config.PASSWORD}
++              autoComplete="current-password"
++              fullWidth
++            />
++          </Stack>
++        </AccordionDetails>
++        <AccordionActions
++          sx={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}
++        >
++          <Button type="submit" color="primary">
++            Save
++          </Button>
++          <Button type="reset" color="secondary">
++            Cancel
++          </Button>
++        </AccordionActions>
++      </form>
++    </Group>
++  );
++});
+diff --git a/crypto/frontend/scenes/index.js b/crypto/frontend/scenes/index.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..1bf359a678d71f0f3c9d18a81f4f9a146ae64db2
+--- /dev/null
++++ b/crypto/frontend/scenes/index.js
+@@ -0,0 +1,2 @@
++export * from './dashboard';
++export * from './settings';
 diff --git a/crypto/frontend/schema/server.graphql b/crypto/frontend/schema/server.graphql
 new file mode 100644
 index 0000000000000000000000000000000000000000..00445f2105c0f48d9fcb8b073182e2292d5414ba
@@ -1031,91 +1224,27 @@ index 0000000000000000000000000000000000000000..00445f2105c0f48d9fcb8b073182e229
 +  id: ID!
 +  user: User!
 +}
-diff --git a/crypto/frontend/scenes/dashboard/DashboardTickerItem.js b/crypto/frontend/scenes/dashboard/DashboardTickerItem.js
+diff --git a/crypto/frontend/scenes/dashboard/index.js b/crypto/frontend/scenes/dashboard/index.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..d826184545a625bbc196a4bec406e6740ad67967
+index 0000000000000000000000000000000000000000..312b9c8e79235017f7e38340d94ce7d54a77e940
 --- /dev/null
-+++ b/crypto/frontend/scenes/dashboard/DashboardTickerItem.js
-@@ -0,0 +1,79 @@
-+import {Link, Stack, Typography} from '@mui/material';
-+import NextLink from 'next/link';
-+import {memo} from 'react';
-+import {graphql, useFragment} from 'react-relay';
++++ b/crypto/frontend/scenes/dashboard/index.js
+@@ -0,0 +1,15 @@
++import {Suspense} from 'react';
 +
-+import {
-+  direction,
-+  findClosestAccessibleColor,
-+  formatCurrency,
-+  formatPercent,
-+} from '@/utils';
++import {ActivityIndicator, ErrorBoundaryWithRetry} from '@/components';
 +
-+const Symbol = memo(function Symbol({value, color}) {
-+  return (
-+    <Typography
-+      variant="caption"
-+      sx={(theme) => ({
-+        color: findClosestAccessibleColor(
-+          color,
-+          theme.palette.background.default,
-+          3,
-+        ),
-+        fontSize: theme.typography.fontSizeTiny,
-+        fontWeight: theme.typography.fontWeightMedium,
-+        lineHeight: 1,
-+      })}
-+    >
-+      {value}
-+    </Typography>
-+  );
-+});
++import DashboardContainer from './DashboardContainer';
 +
-+const Price = ({value, options, locales}) => (
-+  <Typography
-+    variant="caption"
-+    sx={(theme) => ({
-+      color: theme.palette.text.primary,
-+      fontSize: theme.typography.fontSizeMedium,
-+      fontWeight: theme.typography.fontWeightMedium,
-+      lineHeight: 1,
-+    })}
-+  >
-+    {formatCurrency(value, options, locales)}
-+  </Typography>
++export const Dashboard = () => (
++  <ErrorBoundaryWithRetry>
++    {({cacheBuster}) => (
++      <Suspense fallback={<ActivityIndicator />}>
++        <DashboardContainer cacheBuster={cacheBuster} />
++      </Suspense>
++    )}
++  </ErrorBoundaryWithRetry>
 +);
-+
-+const Change = ({value, options, locales}) => (
-+  <Typography
-+    variant="caption"
-+    sx={(theme) => ({
-+      color: theme.palette.trend[direction(value)],
-+      fontSize: theme.typography.fontSizeTiny,
-+      fontWeight: theme.typography.fontWeightMedium,
-+      lineHeight: 1,
-+    })}
-+  >
-+    {formatPercent(value, options, locales)}
-+  </Typography>
-+);
-+
-+export default memo(function DashboardTickerItem({fragmentRef}) {
-+  // ... ?
-+  //
-+  // return (
-+  //   <NextLink
-+  //     href="/currencies/[symbol]"
-+  //     as={`/currencies/${asset.symbol}`}
-+  //     passHref
-+  //   >
-+  //     <Link underline="none">
-+  //       <Stack direction="column" spacing={1} minWidth={100}>
-+  //         <Symbol value={asset.symbol} color={asset.color} />
-+  //         <Price value={price.lastPrice} options={{currency: price.currency}} />
-+  //         <Change value={price.change24Hour} />
-+  //       </Stack>
-+  //     </Link>
-+  //   </NextLink>
-+  // );
-+});
 diff --git a/crypto/frontend/pages/_app.js b/crypto/frontend/pages/_app.js
 index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c6123554c3745c 100644
 --- a/crypto/frontend/pages/_app.js
@@ -1174,203 +1303,6 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
 +    </RelayEnvironmentProvider>
    );
  }
-diff --git a/crypto/frontend/scenes/settings/SettingsCredentials.js b/crypto/frontend/scenes/settings/SettingsCredentials.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..e513581d7c84842de5a2bcdb6d8428b3343ee5f0
---- /dev/null
-+++ b/crypto/frontend/scenes/settings/SettingsCredentials.js
-@@ -0,0 +1,78 @@
-+import {
-+  AccordionActions,
-+  AccordionDetails,
-+  Button,
-+  Stack,
-+  TextField,
-+} from '@mui/material';
-+import {memo, useRef} from 'react';
-+
-+import {PasswordField} from '@/components';
-+import {Config, syncWithStorage} from '@/config';
-+import {CredentialsIcon} from '@/icons';
-+
-+import {Group} from './Group';
-+
-+export default memo(function SettingsCredentials({active, onChange}) {
-+  const usernameRef = useRef(null);
-+  const passwordRef = useRef(null);
-+
-+  return (
-+    <Group
-+      id="credentials"
-+      icon={CredentialsIcon}
-+      title="Credentials"
-+      active={active}
-+      onChange={onChange}
-+    >
-+      <form
-+        name="credentials"
-+        onSubmit={(e) => {
-+          e.preventDefault();
-+
-+          const username = usernameRef.current?.value?.trim();
-+          const password = passwordRef.current?.value?.trim();
-+          const token =
-+            username && password
-+              ? Buffer.from(`${username}:${password}`).toString('base64')
-+              : null;
-+
-+          syncWithStorage({
-+            USERNAME: username,
-+            PASSWORD: password,
-+            AUTH_TOKEN: token,
-+          });
-+        }}
-+      >
-+        <AccordionDetails id="panel-credentials-content" sx={{p: 6}}>
-+          <Stack direction="column" gap={8}>
-+            <TextField
-+              inputRef={usernameRef}
-+              label="Username"
-+              defaultValue={Config.USERNAME}
-+              autoComplete="username"
-+              fullWidth
-+            />
-+            <PasswordField
-+              inputRef={passwordRef}
-+              label="Password"
-+              defaultValue={Config.PASSWORD}
-+              autoComplete="current-password"
-+              fullWidth
-+            />
-+          </Stack>
-+        </AccordionDetails>
-+        <AccordionActions
-+          sx={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}
-+        >
-+          <Button type="submit" color="primary">
-+            Save
-+          </Button>
-+          <Button type="reset" color="secondary">
-+            Cancel
-+          </Button>
-+        </AccordionActions>
-+      </form>
-+    </Group>
-+  );
-+});
-diff --git a/crypto/frontend/scenes/settings/index.js b/crypto/frontend/scenes/settings/index.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..decad83e3475289c4703057a581da1dbc0656752
---- /dev/null
-+++ b/crypto/frontend/scenes/settings/index.js
-@@ -0,0 +1,15 @@
-+import {Suspense} from 'react';
-+
-+import {ActivityIndicator, ErrorBoundaryWithRetry} from '@/components';
-+
-+import SettingsContainer from './SettingsContainer';
-+
-+export const Settings = ({symbol}) => (
-+  <ErrorBoundaryWithRetry key={symbol}>
-+    {({cacheBuster}) => (
-+      <Suspense fallback={<ActivityIndicator />}>
-+        <SettingsContainer cacheBuster={cacheBuster} />
-+      </Suspense>
-+    )}
-+  </ErrorBoundaryWithRetry>
-+);
-diff --git a/crypto/frontend/pages/settings.js b/crypto/frontend/pages/settings.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..09b0180341866eebce62d54a8c9e5f309e7e2426
---- /dev/null
-+++ b/crypto/frontend/pages/settings.js
-@@ -0,0 +1 @@
-+export {Settings as default} from '@/scenes';
-diff --git a/crypto/frontend/scenes/settings/Group.js b/crypto/frontend/scenes/settings/Group.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..e083eb6997c21d97d563bd374c8e00293506cc6c
---- /dev/null
-+++ b/crypto/frontend/scenes/settings/Group.js
-@@ -0,0 +1,35 @@
-+import {Accordion, AccordionSummary, Stack, Typography} from '@mui/material';
-+
-+import {ExpandLockedIcon, ExpandMoreIcon} from '@/icons';
-+
-+export const Group = ({
-+  id,
-+  icon: Icon,
-+  title,
-+  active,
-+  disabled,
-+  children,
-+  onChange,
-+}) => (
-+  <Accordion
-+    expanded={id === active}
-+    disabled={disabled}
-+    onChange={(event, expanded) => {
-+      onChange(expanded ? id : false);
-+    }}
-+  >
-+    <AccordionSummary
-+      id={`panel-${id}-header`}
-+      expandIcon={disabled ? <ExpandLockedIcon /> : <ExpandMoreIcon />}
-+      aria-controls={`panel-${id}-content`}
-+    >
-+      <Stack direction="row" alignItems="center" gap={2}>
-+        <Icon color="action" />
-+        <Typography id={id} variant="h3">
-+          {title}
-+        </Typography>
-+      </Stack>
-+    </AccordionSummary>
-+    {children}
-+  </Accordion>
-+);
-diff --git a/crypto/frontend/pages/dashboard.js b/crypto/frontend/pages/dashboard.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..f5b3bfcc5a809b3d23c30b8a2d16fc34f5eabf4a
---- /dev/null
-+++ b/crypto/frontend/pages/dashboard.js
-@@ -0,0 +1 @@
-+export {Dashboard as default} from '@/scenes';
-diff --git a/crypto/frontend/scenes/dashboard/DashboardTicker.js b/crypto/frontend/scenes/dashboard/DashboardTicker.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..fa89bb808ff2ac39bcbd5f9fd14e817b7546021f
---- /dev/null
-+++ b/crypto/frontend/scenes/dashboard/DashboardTicker.js
-@@ -0,0 +1,31 @@
-+import {memo} from 'react';
-+import {graphql, useFragment} from 'react-relay';
-+
-+import {Ticker} from '@/components';
-+
-+import DashboardTickerItem from './DashboardTickerItem';
-+
-+export default memo(function DashboardTicker({fragmentRef}) {
-+  const data = useFragment(
-+    graphql`
-+      fragment DashboardTickerFragment_query on Query {
-+        ticker: assets(first: 10) {
-+          nodes {
-+            symbol
-+            ...DashboardTickerItemFragment_asset
-+          }
-+        }
-+      }
-+    `,
-+    fragmentRef,
-+  );
-+  const assets = data.ticker?.nodes;
-+
-+  return (
-+    <Ticker>
-+      {assets?.map((asset) => (
-+        <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
-+      ))}
-+    </Ticker>
-+  );
-+});
 diff --git a/crypto/frontend/scenes/settings/SettingsLinks.js b/crypto/frontend/scenes/settings/SettingsLinks.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..dddbc6b955a09eb7629f54827e29b853f482e3fa
@@ -1453,219 +1385,47 @@ index 0000000000000000000000000000000000000000..dddbc6b955a09eb7629f54827e29b853
 +    </Group>
 +  );
 +});
-diff --git a/crypto/frontend/scenes/settings/SettingsProfile.js b/crypto/frontend/scenes/settings/SettingsProfile.js
+diff --git a/crypto/frontend/pages/settings.js b/crypto/frontend/pages/settings.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..8bb53a87c94978b5e7285eee838b04e6c5c13ec7
+index 0000000000000000000000000000000000000000..09b0180341866eebce62d54a8c9e5f309e7e2426
 --- /dev/null
-+++ b/crypto/frontend/scenes/settings/SettingsProfile.js
-@@ -0,0 +1,199 @@
-+import {
-+  AccordionActions,
-+  AccordionDetails,
-+  Avatar,
-+  Button,
-+  IconButton,
-+  Stack,
-+  TextField,
-+} from '@mui/material';
-+import {memo, useCallback, useEffect, useRef, useState} from 'react';
-+import {useDropzone} from 'react-dropzone';
-+import {graphql, useFragment, useMutation} from 'react-relay';
++++ b/crypto/frontend/pages/settings.js
+@@ -0,0 +1 @@
++export {Settings as default} from '@/scenes';
+diff --git a/crypto/frontend/scenes/dashboard/DashboardContainer.js b/crypto/frontend/scenes/dashboard/DashboardContainer.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..df4bb3b00bc1a4a5d5b71f71abe1adac35684f63
+--- /dev/null
++++ b/crypto/frontend/scenes/dashboard/DashboardContainer.js
+@@ -0,0 +1,28 @@
++import {Stack} from '@mui/material';
++import ErrorPage from 'next/error';
++import {memo} from 'react';
++import {graphql, useLazyLoadQuery} from 'react-relay';
 +
-+import {DeleteIcon, FileUploadIcon, ProfileIcon} from '@/icons';
++import DashboardTicker from './DashboardTicker';
 +
-+import {Group} from './Group';
-+
-+const useUpdateUserProfile = () => {
-+  const [commit, isInFlight] = useMutation(graphql`
-+    mutation SettingsProfileUUPMutation($input: UpdateUserProfileInput!) {
-+      updateUserProfile(input: $input) {
-+        updatedUser {
-+          displayName
-+          imageUrl
-+        }
-+      }
-+    }
-+  `);
-+
-+  const execute = useCallback(
-+    ({id, displayName, image, previewUrl}) => {
-+      commit({
-+        variables: {
-+          input: Object.assign({displayName}, image !== undefined && {image}),
-+        },
-+        optimisticUpdater(store) {
-+          const record = store.get(id);
-+
-+          record.setValue(displayName, 'displayName');
-+
-+          if (previewUrl !== undefined) {
-+            record.setValue(previewUrl, 'imageUrl');
-+          }
-+        },
-+        onCompleted() {
-+          console.log('profile was updated');
-+        },
-+        onError() {
-+          console.log('there was a problem while updating the profile');
-+        },
-+      });
-+    },
-+    [commit],
-+  );
-+
-+  return [execute, isInFlight];
-+};
-+
-+export default memo(function SettingsProfile({active, onChange, fragmentRef}) {
-+  const data = useFragment(
++export default memo(function DashboardContainer({cacheBuster}) {
++  const data = useLazyLoadQuery(
 +    graphql`
-+      fragment SettingsProfileFragment_query on Query {
-+        me {
-+          id
-+          name
-+          displayName
-+          imageUrl
-+        }
++      query DashboardContainerQuery {
++        ...DashboardTickerFragment_query
 +      }
 +    `,
-+    fragmentRef,
++    {},
++    {fetchKey: cacheBuster},
 +  );
-+  const me = data.me;
 +
-+  const [updateUserProfile] = useUpdateUserProfile();
-+
-+  const [[image, previewUrl], setAvatar] = useState([]);
-+
-+  const {getRootProps, getInputProps, open} = useDropzone({
-+    accept: 'image/*',
-+    multiple: false,
-+    maxFiles: 1,
-+    maxSize: 1_024_000,
-+    onDropAccepted: ([file]) => {
-+      console.log('image drop accepted');
-+
-+      setAvatar([file, URL.createObjectURL(file)]);
-+    },
-+    onDropRejected: (fileRejections) => {
-+      console.log('image drop rejected', fileRejections);
-+    },
-+  });
-+
-+  const displaynameRef = useRef(null);
-+
-+  useEffect(() => {
-+    if (previewUrl) {
-+      return () => {
-+        URL.revokeObjectURL(previewUrl);
-+      };
-+    }
-+  }, [previewUrl]);
++  if (!data) {
++    return <ErrorPage statusCode={404} title="Out of service" />;
++  }
 +
 +  return (
-+    <Group
-+      id="profile"
-+      icon={ProfileIcon}
-+      title="Profile"
-+      active={active}
-+      disabled={!me}
-+      onChange={onChange}
-+    >
-+      {me && (
-+        <form
-+          name="links"
-+          onSubmit={(e) => {
-+            e.preventDefault();
-+
-+            const displayName = displaynameRef.current?.value || null;
-+
-+            updateUserProfile({
-+              id: me.id,
-+              displayName,
-+              image,
-+              previewUrl,
-+            });
-+          }}
-+        >
-+          <AccordionDetails id="panel-profile-content" sx={{p: 6}}>
-+            <Stack direction="column" alignItems="center" gap={8}>
-+              <input {...getInputProps()} />
-+              <Avatar
-+                src={previewUrl === undefined ? me.imageUrl : previewUrl}
-+                sx={(theme) => ({
-+                  width: 192,
-+                  height: 192,
-+                  border: `1px solid ${theme.palette.action.focus}`,
-+                  backgroundColor: theme.palette.action.focus,
-+                  outline: 0,
-+                  '&:hover': {
-+                    borderColor: theme.palette.text.primary,
-+                  },
-+                  '&:focus': {
-+                    borderWidth: 2,
-+                    borderColor: theme.palette.primary.main,
-+                  },
-+                })}
-+                {...getRootProps()}
-+              />
-+              <Stack direction="row">
-+                <IconButton
-+                  size="medium"
-+                  aria-label="remove image"
-+                  disabled={!previewUrl && !me.imageUrl}
-+                  onClick={() => {
-+                    setAvatar([null, null]);
-+                  }}
-+                >
-+                  <DeleteIcon fontSize="inherit" />
-+                </IconButton>
-+                <IconButton
-+                  size="medium"
-+                  aria-label="upload image"
-+                  onClick={open}
-+                >
-+                  <FileUploadIcon fontSize="inherit" />
-+                </IconButton>
-+              </Stack>
-+              <TextField
-+                inputRef={displaynameRef}
-+                label="Displayname"
-+                defaultValue={me.displayName}
-+                autoComplete="displayname"
-+                helperText="Your name may appear around where you contribute or are mentioned. You can remove it at any time."
-+                fullWidth
-+              />
-+            </Stack>
-+          </AccordionDetails>
-+          <AccordionActions
-+            sx={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}
-+          >
-+            <Button type="submit" color="primary">
-+              Save
-+            </Button>
-+            <Button
-+              type="reset"
-+              color="secondary"
-+              onClick={() => {
-+                setAvatar([]);
-+              }}
-+            >
-+              Cancel
-+            </Button>
-+          </AccordionActions>
-+        </form>
-+      )}
-+    </Group>
++    <Stack gap={2}>
++      <DashboardTicker fragmentRef={data} />
++    </Stack>
 +  );
 +});
-diff --git a/crypto/frontend/scenes/index.js b/crypto/frontend/scenes/index.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..1bf359a678d71f0f3c9d18a81f4f9a146ae64db2
---- /dev/null
-+++ b/crypto/frontend/scenes/index.js
-@@ -0,0 +1,2 @@
-+export * from './dashboard';
-+export * from './settings';
 diff --git a/crypto/frontend/scenes/settings/SettingsContainer.js b/crypto/frontend/scenes/settings/SettingsContainer.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..0aaf8535e57544d4c3a176a64c43248195bce3f7
@@ -1705,6 +1465,34 @@ index 0000000000000000000000000000000000000000..0aaf8535e57544d4c3a176a64c432481
 +    </>
 +  );
 +});
+diff --git a/crypto/frontend/scenes/settings/index.js b/crypto/frontend/scenes/settings/index.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..decad83e3475289c4703057a581da1dbc0656752
+--- /dev/null
++++ b/crypto/frontend/scenes/settings/index.js
+@@ -0,0 +1,15 @@
++import {Suspense} from 'react';
++
++import {ActivityIndicator, ErrorBoundaryWithRetry} from '@/components';
++
++import SettingsContainer from './SettingsContainer';
++
++export const Settings = ({symbol}) => (
++  <ErrorBoundaryWithRetry key={symbol}>
++    {({cacheBuster}) => (
++      <Suspense fallback={<ActivityIndicator />}>
++        <SettingsContainer cacheBuster={cacheBuster} />
++      </Suspense>
++    )}
++  </ErrorBoundaryWithRetry>
++);
+diff --git a/crypto/frontend/pages/index.js b/crypto/frontend/pages/index.js
+index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..f5b3bfcc5a809b3d23c30b8a2d16fc34f5eabf4a 100644
+--- a/crypto/frontend/pages/index.js
++++ b/crypto/frontend/pages/index.js
+@@ -1 +1 @@
+-export {Dummy as default} from '@/components';
++export {Dashboard as default} from '@/scenes';
 diff --git a/crypto/frontend/client/index.js b/crypto/frontend/client/index.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..ba7f1d72553d0d6282bda51657fa7260a2aa6322
@@ -1997,37 +1785,249 @@ index 0000000000000000000000000000000000000000..ba7f1d72553d0d6282bda51657fa7260
 +
 +export const useEnvironment = (initialRecords) =>
 +  useMemo(() => initEnvironment(initialRecords), [initialRecords]);
-diff --git a/crypto/frontend/scenes/dashboard/DashboardContainer.js b/crypto/frontend/scenes/dashboard/DashboardContainer.js
+diff --git a/crypto/frontend/scenes/settings/Group.js b/crypto/frontend/scenes/settings/Group.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..df4bb3b00bc1a4a5d5b71f71abe1adac35684f63
+index 0000000000000000000000000000000000000000..e083eb6997c21d97d563bd374c8e00293506cc6c
 --- /dev/null
-+++ b/crypto/frontend/scenes/dashboard/DashboardContainer.js
-@@ -0,0 +1,28 @@
-+import {Stack} from '@mui/material';
-+import ErrorPage from 'next/error';
-+import {memo} from 'react';
-+import {graphql, useLazyLoadQuery} from 'react-relay';
++++ b/crypto/frontend/scenes/settings/Group.js
+@@ -0,0 +1,35 @@
++import {Accordion, AccordionSummary, Stack, Typography} from '@mui/material';
 +
-+import DashboardTicker from './DashboardTicker';
++import {ExpandLockedIcon, ExpandMoreIcon} from '@/icons';
 +
-+export default memo(function DashboardContainer({cacheBuster}) {
-+  const data = useLazyLoadQuery(
-+    graphql`
-+      query DashboardContainerQuery {
-+        ...DashboardTickerFragment_query
++export const Group = ({
++  id,
++  icon: Icon,
++  title,
++  active,
++  disabled,
++  children,
++  onChange,
++}) => (
++  <Accordion
++    expanded={id === active}
++    disabled={disabled}
++    onChange={(event, expanded) => {
++      onChange(expanded ? id : false);
++    }}
++  >
++    <AccordionSummary
++      id={`panel-${id}-header`}
++      expandIcon={disabled ? <ExpandLockedIcon /> : <ExpandMoreIcon />}
++      aria-controls={`panel-${id}-content`}
++    >
++      <Stack direction="row" alignItems="center" gap={2}>
++        <Icon color="action" />
++        <Typography id={id} variant="h3">
++          {title}
++        </Typography>
++      </Stack>
++    </AccordionSummary>
++    {children}
++  </Accordion>
++);
+diff --git a/crypto/frontend/scenes/settings/SettingsProfile.js b/crypto/frontend/scenes/settings/SettingsProfile.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..8bb53a87c94978b5e7285eee838b04e6c5c13ec7
+--- /dev/null
++++ b/crypto/frontend/scenes/settings/SettingsProfile.js
+@@ -0,0 +1,199 @@
++import {
++  AccordionActions,
++  AccordionDetails,
++  Avatar,
++  Button,
++  IconButton,
++  Stack,
++  TextField,
++} from '@mui/material';
++import {memo, useCallback, useEffect, useRef, useState} from 'react';
++import {useDropzone} from 'react-dropzone';
++import {graphql, useFragment, useMutation} from 'react-relay';
++
++import {DeleteIcon, FileUploadIcon, ProfileIcon} from '@/icons';
++
++import {Group} from './Group';
++
++const useUpdateUserProfile = () => {
++  const [commit, isInFlight] = useMutation(graphql`
++    mutation SettingsProfileUUPMutation($input: UpdateUserProfileInput!) {
++      updateUserProfile(input: $input) {
++        updatedUser {
++          displayName
++          imageUrl
++        }
 +      }
-+    `,
-+    {},
-+    {fetchKey: cacheBuster},
++    }
++  `);
++
++  const execute = useCallback(
++    ({id, displayName, image, previewUrl}) => {
++      commit({
++        variables: {
++          input: Object.assign({displayName}, image !== undefined && {image}),
++        },
++        optimisticUpdater(store) {
++          const record = store.get(id);
++
++          record.setValue(displayName, 'displayName');
++
++          if (previewUrl !== undefined) {
++            record.setValue(previewUrl, 'imageUrl');
++          }
++        },
++        onCompleted() {
++          console.log('profile was updated');
++        },
++        onError() {
++          console.log('there was a problem while updating the profile');
++        },
++      });
++    },
++    [commit],
 +  );
 +
-+  if (!data) {
-+    return <ErrorPage statusCode={404} title="Out of service" />;
-+  }
++  return [execute, isInFlight];
++};
++
++export default memo(function SettingsProfile({active, onChange, fragmentRef}) {
++  const data = useFragment(
++    graphql`
++      fragment SettingsProfileFragment_query on Query {
++        me {
++          id
++          name
++          displayName
++          imageUrl
++        }
++      }
++    `,
++    fragmentRef,
++  );
++  const me = data.me;
++
++  const [updateUserProfile] = useUpdateUserProfile();
++
++  const [[image, previewUrl], setAvatar] = useState([]);
++
++  const {getRootProps, getInputProps, open} = useDropzone({
++    accept: 'image/*',
++    multiple: false,
++    maxFiles: 1,
++    maxSize: 1_024_000,
++    onDropAccepted: ([file]) => {
++      console.log('image drop accepted');
++
++      setAvatar([file, URL.createObjectURL(file)]);
++    },
++    onDropRejected: (fileRejections) => {
++      console.log('image drop rejected', fileRejections);
++    },
++  });
++
++  const displaynameRef = useRef(null);
++
++  useEffect(() => {
++    if (previewUrl) {
++      return () => {
++        URL.revokeObjectURL(previewUrl);
++      };
++    }
++  }, [previewUrl]);
 +
 +  return (
-+    <Stack gap={2}>
-+      <DashboardTicker fragmentRef={data} />
-+    </Stack>
++    <Group
++      id="profile"
++      icon={ProfileIcon}
++      title="Profile"
++      active={active}
++      disabled={!me}
++      onChange={onChange}
++    >
++      {me && (
++        <form
++          name="links"
++          onSubmit={(e) => {
++            e.preventDefault();
++
++            const displayName = displaynameRef.current?.value || null;
++
++            updateUserProfile({
++              id: me.id,
++              displayName,
++              image,
++              previewUrl,
++            });
++          }}
++        >
++          <AccordionDetails id="panel-profile-content" sx={{p: 6}}>
++            <Stack direction="column" alignItems="center" gap={8}>
++              <input {...getInputProps()} />
++              <Avatar
++                src={previewUrl === undefined ? me.imageUrl : previewUrl}
++                sx={(theme) => ({
++                  width: 192,
++                  height: 192,
++                  border: `1px solid ${theme.palette.action.focus}`,
++                  backgroundColor: theme.palette.action.focus,
++                  outline: 0,
++                  '&:hover': {
++                    borderColor: theme.palette.text.primary,
++                  },
++                  '&:focus': {
++                    borderWidth: 2,
++                    borderColor: theme.palette.primary.main,
++                  },
++                })}
++                {...getRootProps()}
++              />
++              <Stack direction="row">
++                <IconButton
++                  size="medium"
++                  aria-label="remove image"
++                  disabled={!previewUrl && !me.imageUrl}
++                  onClick={() => {
++                    setAvatar([null, null]);
++                  }}
++                >
++                  <DeleteIcon fontSize="inherit" />
++                </IconButton>
++                <IconButton
++                  size="medium"
++                  aria-label="upload image"
++                  onClick={open}
++                >
++                  <FileUploadIcon fontSize="inherit" />
++                </IconButton>
++              </Stack>
++              <TextField
++                inputRef={displaynameRef}
++                label="Displayname"
++                defaultValue={me.displayName}
++                autoComplete="displayname"
++                helperText="Your name may appear around where you contribute or are mentioned. You can remove it at any time."
++                fullWidth
++              />
++            </Stack>
++          </AccordionDetails>
++          <AccordionActions
++            sx={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}
++          >
++            <Button type="submit" color="primary">
++              Save
++            </Button>
++            <Button
++              type="reset"
++              color="secondary"
++              onClick={() => {
++                setAvatar([]);
++              }}
++            >
++              Cancel
++            </Button>
++          </AccordionActions>
++        </form>
++      )}
++    </Group>
 +  );
 +});
