@@ -1,0 +1,57 @@
+diff --git a/crypto/frontend/pages/index.js b/crypto/frontend/pages/index.js
+index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..935a8df2b0f3a189e95f14f6350cd9234b896d36 100644
+--- a/crypto/frontend/pages/index.js
++++ b/crypto/frontend/pages/index.js
+@@ -1 +1 @@
+-export {Dummy as default} from '@/components';
++export {default} from '@/scenes/Greetings';
+diff --git a/crypto/frontend/scenes/Greetings.js b/crypto/frontend/scenes/Greetings.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..79a9efe2e921cfce4af279d686c6f599a40288da
+--- /dev/null
++++ b/crypto/frontend/scenes/Greetings.js
+@@ -0,0 +1,44 @@
++import {useEffect, useState} from 'react';
++
++const fetchGraphQL = async (query, variables) => {
++  const response = await fetch('http://localhost:5000/graphql', {
++    method: 'POST',
++    headers: {
++      'Content-Type': 'application/json',
++    },
++    body: JSON.stringify({
++      query,
++      variables,
++    }),
++  });
++
++  return await response.json();
++};
++
++export default function Greetings() {
++  const [greetings, setGreetings] = useState(null);
++
++  useEffect(() => {
++    let mounted = true;
++
++    fetchGraphQL(`
++      query GreetingsQuery {
++        greetings
++      }
++    `)
++      .then((response) => {
++        if (!mounted) {
++          setGreetings(response.data.greetings);
++        }
++      })
++      .catch((error) => {
++        console.error(error);
++      });
++
++    return () => {
++      mounted = false;
++    };
++  }, []);
++
++  return <div>{greetings}</div>;
++}
