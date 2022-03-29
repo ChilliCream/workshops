@@ -293,6 +293,14 @@ Lets see what's going on here:
 
 - Finally, make sure you're providing a Relay environment using a [Relay Environment Provider](https://relay.dev/docs/api-reference/relay-environment-provider/) at the root of your app before trying to render a query.
 
+:::tip Use the `patch`
+
+```sh
+git apply solutions/example1-5.patch
+```
+
+:::
+
 ### Recap
 
 We explored how to get started with Relay, although in a naive way, there is nothing wrong about it, but we will continue introducing other concepts and possibilities.

@@ -18,6 +18,14 @@ The most common way to start any programming course is to display the text "Hell
    export {default} from '@/scenes/Greetings';
    ```
 
+:::tip Use the `patch`
+
+```sh
+git apply playground/example1.patch
+```
+
+:::
+
 ## Check it out
 
 Now that we've created our code, let's see our app in action!
