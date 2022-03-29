@@ -1,1 +1,1 @@
-# Integrating REST Endpoints
+# REST Endpoints

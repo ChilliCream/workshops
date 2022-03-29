@@ -209,7 +209,14 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
     private async Task SeedAssetsAsync(CancellationToken cancellationToken)
     {
         using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        var map = await LoadAssetsAsync(_symbols, cancellationToken);
+
+        var storedSymbols = _symbols.Except(await context.Assets.Select(t => t.Symbol!).ToListAsync(cancellationToken)).ToArray();
+        if (storedSymbols.Length == 0)
+        {
+            return;
+        }
+
+        var map = await LoadAssetsAsync(storedSymbols, cancellationToken);
 
         foreach (Asset asset in map.Values)
         {
@@ -223,43 +230,42 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         IReadOnlyList<string> symbols,
         CancellationToken cancellationToken)
     {
-        using var client = new HttpClient();
-        client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
-
-        using var assetRequest = new HttpRequestMessage(HttpMethod.Get, $"api/asset?symbols={string.Join(",", symbols)}");
-        using var priceRequest = new HttpRequestMessage(HttpMethod.Get, $"api/asset/price?symbols={string.Join(",", symbols)}");
-        using var priceChangeRequest = new HttpRequestMessage(HttpMethod.Get, $"api/asset/price/change?symbols={string.Join(",", symbols)}&span=Day");
-
-        using var assetResponse = await client.SendAsync(assetRequest, cancellationToken);
-        assetResponse.EnsureSuccessStatusCode();
-
-        using var priceResponse = await client.SendAsync(priceRequest, cancellationToken);
-        priceResponse.EnsureSuccessStatusCode();
-
-        using var priceChangeResponse = await client.SendAsync(priceChangeRequest, cancellationToken);
-        priceChangeResponse.EnsureSuccessStatusCode();
-
         var map = new Dictionary<string, Asset>();
-        var content = await assetResponse.Content.ReadAsByteArrayAsync(cancellationToken);
-        var assets = JsonDocument.Parse(content).RootElement;
 
-        foreach (JsonElement assetInfo in assets.EnumerateArray())
+        try
         {
-            string symbol = assetInfo.GetProperty("symbol").GetString()!;
+            using var client = new HttpClient();
+            client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
 
-            var asset = new Asset
+            using var assetRequest = new HttpRequestMessage(HttpMethod.Get, $"api/asset?symbols={string.Join(",", symbols)}");
+            using var assetResponse = await client.SendAsync(assetRequest, cancellationToken);
+            assetResponse.EnsureSuccessStatusCode();
+
+            var content = await assetResponse.Content.ReadAsByteArrayAsync(cancellationToken);
+            var assets = JsonDocument.Parse(content).RootElement;
+
+            foreach (JsonElement assetInfo in assets.EnumerateArray())
             {
-                Symbol = symbol,
-                Name = assetInfo.GetProperty("name").GetString(),
-                Slug = assetInfo.GetProperty("slug").GetString(),
-                Description = assetInfo.GetProperty("description").GetString(),
-                Color = assetInfo.GetProperty("color").GetString(),
-                ImageKey = assetInfo.GetProperty("imageUrl").GetString(),
-                Website = assetInfo.GetProperty("website").GetString(),
-                WhitePaper = assetInfo.GetProperty("whitePaper").GetString(),
-            };
+                string symbol = assetInfo.GetProperty("symbol").GetString()!;
 
-            map.Add(symbol, asset);
+                var asset = new Asset
+                {
+                    Symbol = symbol,
+                    Name = assetInfo.GetProperty("name").GetString(),
+                    Slug = assetInfo.GetProperty("slug").GetString(),
+                    Description = assetInfo.GetProperty("description").GetString(),
+                    Color = assetInfo.GetProperty("color").GetString(),
+                    ImageKey = assetInfo.GetProperty("imageUrl").GetString(),
+                    Website = assetInfo.GetProperty("website").GetString(),
+                    WhitePaper = assetInfo.GetProperty("whitePaper").GetString(),
+                };
+
+                map.Add(symbol, asset);
+            }
+        }
+        catch
+        {
+            // ignore any errors.
         }
 
         return map;
