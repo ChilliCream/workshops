@@ -268,7 +268,7 @@ import {graphql, useLazyLoadQuery} from 'react-relay';
 export default function Greetings({name}) {
   const data = useLazyLoadQuery(
     graphql`
-      query GreetingsQuery @argumentDefinitions(name: {type: "String"}) {
+      query GreetingsQuery($name: String!) {
         greetings(name: $name)
       }
     `,
