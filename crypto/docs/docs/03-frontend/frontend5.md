@@ -60,7 +60,7 @@ export default memo(function DashboardTicker() {
   const data = useLazyLoadQuery(
     graphql`
       query DashboardTickerQuery {
-        assets(first: 10, order: {price: {tradableMarketCapRank: ASC}}) {
+        assets(first: 10) {
           nodes {
             symbol
             ...DashboardTickerItemFragment_asset
@@ -141,10 +141,7 @@ export default memo(function DashboardTicker({fragmentRef}) {
   const data = useFragment(
     graphql`
       fragment DashboardTickerFragment_query on Query {
-        ticker: assets(
-          first: 10
-          order: {price: {tradableMarketCapRank: ASC}}
-        ) {
+        ticker: assets(first: 10) {
           nodes {
             symbol
             ...DashboardTickerItemFragment_asset
