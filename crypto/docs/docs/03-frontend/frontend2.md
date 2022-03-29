@@ -11,7 +11,7 @@ Open a terminal or command window and run the following commands:
 1. Clone the repository.
 
    ```sh
-   git clone https://github.com/ ...
+   git clone https://github.com/ChilliCream/workshops.git
    ```
 
 1. Install the required packages.
