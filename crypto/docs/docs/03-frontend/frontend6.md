@@ -2,66 +2,6 @@
 
 There are several scenarios in which we'll want to query a list of data from the GraphQL server.
 
-## Filtering and Sorting
-
-Often times when querying for a list of data, you can provide different values in the query which serve as filters that change the result set, or sort it differently.
-
-Some examples of this are:
-
-- Building a search typeahead, where the list of results is a list filtered by the search term entered by the user.
-
-- Changing the ordering mode of the list, which could produce a completely different list of results from the server.
-
-Specifically, in GraphQL, connection fields can accept arguments to sort or filter the set of queried results:
-
-```graphql
-fragment ScreenerListFragment_query on Query {
-  assets(where: {symbol: {contains: 'BT'}}, order: {symbol: 'ASC'})
-    edges {
-      node {
-        id
-        ...ScreenerListItemFragment_asset
-      }
-    }
-  }
-}
-```
-
-In Relay, we can pass those arguments as usual using GraphQL [variables](https://relay.dev/docs/guided-tour/rendering/variables/).
-
-```jsx
-const {data, hasNext, loadNext, isLoadingNext, refetch} = usePaginationFragment(
-  graphql`
-    fragment ScreenerListFragment_query on Query
-    @argumentDefinitions(
-      cursor: {type: "String"}
-      count: {type: "Int", defaultValue: 10}
-      where: {type: "AssetFilterInput"}
-      order: {
-        type: "[AssetSortInput!]"
-        defaultValue: {price: {marketCap: DESC}}
-      }
-    )
-    @refetchable(queryName: "ScreenerListRefetchableQuery") {
-      assets(after: $cursor, first: $count, where: $where, order: $order)
-        @connection(key: "ScreenerList_assets") {
-        edges {
-          node {
-            id
-            ...ScreenerListItemFragment_asset
-          }
-        }
-      }
-    }
-  `,
-  fragmentRef,
-);
-
-// ...
-
-refetch({where: {symbol: {contains: 'BT'}}, order: {symbol: 'ASC'}});
-```
-
 ## Pagination
 
 Often times we don't want to query the entire set of data up front, but rather discrete sub-parts of the list, incrementally, usually in response to user input or other events. Querying a list of data in discrete parts is usually known as [Pagination](https://graphql.org/learn/pagination/).
@@ -83,14 +23,9 @@ export default memo(function ScreenerList({fragmentRef}) {
         @argumentDefinitions(
           cursor: {type: "String"}
           count: {type: "Int", defaultValue: 10}
-          where: {type: "AssetFilterInput"}
-          order: {
-            type: "[AssetSortInput!]"
-            defaultValue: {price: {marketCap: DESC}}
-          }
         )
         @refetchable(queryName: "ScreenerListRefetchableQuery") {
-          assets(after: $cursor, first: $count, where: $where, order: $order)
+          assets(after: $cursor, first: $count)
             @connection(key: "ScreenerList_assets") {
             edges {
               node {
@@ -154,3 +89,63 @@ Calling `loadNext` _will not_ cause the component to suspend. Instead, the `isLo
 You might use `isLoadingNext` to display some progress indicator.
 
 :::
+
+## Sorting and Filtering
+
+Often times when querying for a list of data, you can provide different values in the query which serve as filters that change the result set, or sort it differently.
+
+Some examples of this are:
+
+- Building a search typeahead, where the list of results is a list filtered by the search term entered by the user.
+
+- Changing the ordering mode of the list, which could produce a completely different list of results from the server.
+
+Specifically, in GraphQL, connection fields can accept arguments to sort or filter the set of queried results:
+
+```graphql
+fragment ScreenerListFragment_query on Query {
+  assets(where: {symbol: {contains: 'BT'}}, order: {symbol: 'ASC'})
+    edges {
+      node {
+        id
+        ...ScreenerListItemFragment_asset
+      }
+    }
+  }
+}
+```
+
+In Relay, we can pass those arguments as usual using GraphQL [variables](https://relay.dev/docs/guided-tour/rendering/variables/).
+
+```jsx
+const {data, hasNext, loadNext, isLoadingNext, refetch} = usePaginationFragment(
+  graphql`
+    fragment ScreenerListFragment_query on Query
+    @argumentDefinitions(
+      cursor: {type: "String"}
+      count: {type: "Int", defaultValue: 10}
+      where: {type: "AssetFilterInput"}
+      order: {
+        type: "[AssetSortInput!]"
+        defaultValue: {price: {marketCap: DESC}}
+      }
+    )
+    @refetchable(queryName: "ScreenerListRefetchableQuery") {
+      assets(after: $cursor, first: $count, where: $where, order: $order)
+        @connection(key: "ScreenerList_assets") {
+        edges {
+          node {
+            id
+            ...ScreenerListItemFragment_asset
+          }
+        }
+      }
+    }
+  `,
+  fragmentRef,
+);
+
+// ...
+
+refetch({where: {symbol: {contains: 'BT'}}, order: {symbol: 'ASC'}});
+```
