@@ -1,12 +1,12 @@
-# Asset Price Ticker - Part 1
+# Lists
 
 In this chapter, we will start with our crypto coin portal example. We will begin with a basic GraphQL server that exposes an `Asset` and an `AssetPrice` entity to allow the GraphQL portal to fetch the available crypto assets and price information.
 
 During this chapter, we will cover the following topics:
-Exposing lists of entities from a database
-Cursor pagination
-Global Object Identification
-DataLoader
+- Exposing lists of entities from a database
+- Cursor pagination
+- Global Object Identification
+- DataLoader
 
 ## Preparations
 
@@ -36,7 +36,11 @@ Further, we have a directory **Data** containing an Entity Framework `DbContext`
 
 First, we want to expose through GraphQL a simple list of assets. We will add a new `Query` class with a resolver to fetch the asset list.
 
-> Note: The `Query` class will represent the GraphQL root type for query operations. Queries operations in GraphQL represent side-effect-free read operations.
+:::note
+
+The `Query` class will represent the GraphQL root type for query operations. Queries operations in GraphQL represent side-effect-free read operations.
+
+:::
 
 Open your terminal within Visual Studio Code and create a new directory `Types`. The `Types` directory will be home to our GraphQL types.
 
@@ -46,17 +50,23 @@ mkdir Types
 
 Next, create the `Query.cs` file and add it to the `Types` directory. Copy the following code into the new file.
 
-```csharp title="/Query.cs"
+```csharp title="/Types/Query.cs"
 namespace Demo.Types;
 
 public class Query
 {
- public IQueryable<Asset> GetAssets(AssetContext context)
- => context.Assets;
+    public IQueryable<Asset> GetAssets(AssetContext context)
+        => context.Assets.OrderBy(t => t.Symbol);
 }
 ```
 
 The `GetAssets` method within the `Query` class represents a resolver for the GraphQL root field `assets` on the `Query` type.
+
+```graphql
+type Query {
+    assets : [Asset!]!
+}
+```
 
 To fetch the assets from our database, we need an `AssetContext`. With **Hot Chocolate**, we can ask for services required in our resolver by adding them as parameters. We call this resolver-level dependency injection.
 
@@ -64,9 +74,13 @@ In GraphQL, it has benefits to use resolver-level dependency injection since we 
 
 In this example, the execution engine will rent a pooled `DbContext` and return it after the resolver completes its work.
 
-> Note: By default, the execution engine will try to execute resolvers in parallel when executing queries. See: https://spec.graphql.org/October2021/#sec-Normal-and-Serial-Execution
+:::note
 
-## GraphQL Configuration
+By default, the execution engine will try to execute resolvers in parallel when executing queries. See: https://spec.graphql.org/October2021/#sec-Normal-and-Serial-Execution
+
+:::
+
+## Configuration
 
 Now that we have added our `Query` root type, we need to register it with our GraphQL configuration. Head over to the `Program.cs` where all our service configuration is located.
 
@@ -152,7 +166,7 @@ dotnet run
 
 Open `http://localhost:5000/graphql`. Reload the schema to ensure that Banana Cake Pop has the latest version of our schema in memory.
 
-->>> RELOAD SCREEN SHOT
+![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
 
 Now, execute the following GraphQL query.
 
@@ -164,111 +178,6 @@ query GetAllAssets {
 }
 ```
 
-## Pagination
-
-The server will return all `Asset` entities available in the database when executing the query since we did not specify any pagination logic. With **Hot Chocolate**, we can use the default paging middleware, which will rewrite the queryable only to fetch a certain amount of `Asset` entities.
-
-To use the paging middleware, annotate your `GetAssets` resolver with the `UsePagingAttribute`.
-
-```csharp title="/Query.cs"
-namespace Demo.Types;
-
-public class Query
-{
-    [UsePaging]
-    public IQueryable<Asset> GetAssets(AssetContext context)
-        => context.Assets;
-}
-```
-
-->>> MIDDLEWARE SCREENSHOT
-
-Now restart your server and refetch the schema with Banana Cake Pop.
-
-->>> RELOAD SCREENSHOT
-
-The query we formulated earlier now shows errors because the paging middleware has rewritten the type structure.
-
-Let's change the query to the following and execute it.
-
-```graphql
-query GetAllAssets {
-  assets {
-    nodes {
-      name
-    }
-  }
-}
-```
-
-->>> SLIDES
-
-We can now define how many items we want to fetch by passing in the `first` argument.
-
-```graphql
-query GetAllAssets {
-  assets(first: 2) {
-    nodes {
-      name
-    }
-  }
-}
-```
-
-To get information about the current page can fetch the `PageInfo`.
-
-```graphql
-query GetAllAssets {
-  assets(first: 2) {
-    nodes {
-      name
-    }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-    }
-  }
-}
-```
-
-Further, to navigate between pages, we need to use the cursors of the exposed edges. For convenience, we can get the cursor of the first and last element in our list through the `PageInfo`.
-
-```graphql
-query GetAllAssets {
-  assets(first: 2) {
-    nodes {
-      name
-    }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-    }
-  }
-}
-```
-
-In our dataset, we can pass the `endCurser` to the after argument of our `assets` field to move forward.
-
-```graphql
-query GetAllAssets {
-  assets(first: 2, after: "MA==") {
-    nodes {
-      name
-    }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-    }
-  }
-}
-```
-
-> Note: A curser defines the position of an element within a dataset. The position is usually not represented by an index but by an id, allowing one to pinpoint a specific object within the dataset.
-
 ## Summary
 
-In the first part, we have learned how to expose a list of database entities through GraphQL. We also explore resolver dependency injection and how to register the `DbContext` with the execution engine. Further, we dabbled our feet in cursor-based pagination.
+In the first part, we have learned how to expose a list of database entities through GraphQL. We also explore resolver dependency injection and how to register the `DbContext` with the execution engine.

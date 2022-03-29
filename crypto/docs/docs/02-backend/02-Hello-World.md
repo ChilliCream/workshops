@@ -1,4 +1,4 @@
-# Creating a GraphQL Server
+# Hello, world!
 
 In this chapter we will create a basic GraphQL server with Hot Chocolate and write our first GraphQL query to ensure that our server works properly.
 

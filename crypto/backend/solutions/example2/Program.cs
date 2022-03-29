@@ -1,3 +1,5 @@
+using HotChocolate.Types.Pagination;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -10,11 +12,10 @@ builder.Services
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
+    .AddQueryType<Query>()
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-
 var app = builder.Build();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
