@@ -1,4 +1,4 @@
-﻿namespace example1;
+﻿namespace Demo;
 
 public class Query
 {
