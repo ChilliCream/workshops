@@ -44,7 +44,7 @@ Later we'll see some limitations of this approach and a better alternative that 
          }
        `)
          .then((response) => {
-           if (!mounted) {
+           if (mounted) {
              setGreetings(response.data.greetings);
            }
          })
