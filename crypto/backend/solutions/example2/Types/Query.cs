@@ -6,9 +6,9 @@ public class Query
     public IQueryable<Asset> GetAssets(AssetContext context)
         => context.Assets.OrderBy(t => t.Symbol);
 
-    public async Task<Asset?> GetAssetById(
+    public async Task<Asset?> GetAssetByIdAsync(
         [ID(nameof(Asset))] int id,
-        AssetContext context,
+        AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
-        => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+        => await assetById.LoadAsync(id, cancellationToken);
 }

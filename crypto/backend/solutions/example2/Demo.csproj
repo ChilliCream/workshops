@@ -10,6 +10,7 @@
   <ItemGroup>
     <Using Include="Demo" />
     <Using Include="Demo.Data" />
+    <Using Include="Demo.DataLoader" />
     <Using Include="Demo.Helpers" />
     <Using Include="Demo.Types" />
     <Using Include="Microsoft.EntityFrameworkCore" />

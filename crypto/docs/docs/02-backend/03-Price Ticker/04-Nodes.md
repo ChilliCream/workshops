@@ -4,14 +4,49 @@ So far, we can fetch all assets with pagination activated. This allows us to fet
 
 ## Fetch single Asset
 
-We need to introduce a new resolver to our `Query` type to fetch an asset by its identifier. For this, head over to the `Query.cs` file. Now let's add a new method called `GetAssetById`.
+We need to introduce a new resolver to our `Query` type to fetch an asset by its identifier. 
+
+First we will create a new DataLoader called `AssetByIdDataLoader`.
+
+Create a new file in the `DataLoader` directory and call it `AssetByIdDataLoader.cs`.
+
+Next copy the following code into the file.
+
+```csharp title="/DataLoader/AssetByIdDataLoader.cs"
+namespace Demo.DataLoader;
+
+public sealed class AssetByIdDataLoader : BatchDataLoader<int, Asset>
+{
+    private readonly IDbContextFactory<AssetContext> _contextFactory;
+
+    public AssetByIdDataLoader(
+        IDbContextFactory<AssetContext> contextFactory,
+        IBatchScheduler batchScheduler,
+        DataLoaderOptions? options = null)
+        : base(batchScheduler, options)
+    {
+        _contextFactory = contextFactory ??
+            throw new ArgumentNullException(nameof(contextFactory));
+    }
+
+    protected override async Task<IReadOnlyDictionary<int, Asset>> LoadBatchAsync(
+        IReadOnlyList<int> keys,
+        CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Assets.Where(t => keys.Contains(t.Id)).ToDictionaryAsync(t => t.Id!, cancellationToken);
+    }
+}
+```
+
+Now that we have a DataLoader to fetch the `Asset` entity by its ID, head over to the `Query.cs` file and add a new method called `GetAssetByIdAsync`.
 
 ```csharp
-public async Task<Asset?> GetAssetById(
-    int id,
-    AssetContext context,
+public async Task<Asset?> GetAssetByIdAsync(
+    [ID(nameof(Asset))] int id,
+    AssetByIdDataLoader assetById,
     CancellationToken cancellationToken)
-    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+    => await assetById.LoadAsync(id, cancellationToken);
 ```
 
 :::note
@@ -31,11 +66,11 @@ public class Query
     public IQueryable<Asset> GetAssets(AssetContext context)
         => context.Assets.OrderBy(t => t.Symbol);
 
-    public async Task<Asset?> GetAssetById(
-        int id,
-        AssetContext context,
+    public async Task<Asset?> GetAssetByIdAsync(
+        [ID(nameof(Asset))] int id,
+        AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
-        => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+        => await assetById.LoadAsync(id, cancellationToken);
 }
 ```
 
@@ -59,24 +94,11 @@ query {
 }
 ```
 
-## Relations
-
-As of now we can fetch an asset by its ID or we can fetch multiple assets through the `assets` field. What we still cannot do is fetch the price information for an asset. GraphQL with its type system and the way we can write query is great for digging into relations. Types can be interconnected allowing to drill deeper into connections.
-
-For this next step we want to connect the `AssetPrice` entity with the 
-
-
-
-
-
-
-
-
 ## Global Object Identification
 
-With the new resolver in place we are able to fetch a single `Asset` by its identifier. This is good for us human beings but not so good for tools. For tools or clients we need something that can be used without knowing the field name for each entity. The relay server specification introduced for this the `Global Object Identification` specification. 
+With the new resolver in place we are able to fetch a single `Asset` by its identifier. This is good for us human beings but not so good for tools. For tools or clients we need something that is more generic. The relay server specification introduced for this the `Global Object Identification` specification. 
 
-:::note
+:::info
 
 The Global Object Identification specification can be found here: https://relay.dev/docs/guides/graphql-server-specification/#object-identification
 
@@ -90,6 +112,7 @@ In order to opt into the `Global Object Identification` specification we need to
 builder.Services
     .AddGraphQLServer()
     .AddQueryType<Query>()
+    .AddAssetTypes()
     .AddGlobalObjectIdentification()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
@@ -110,9 +133,9 @@ builder.Services
 builder.Services
     .AddGraphQLServer()
     .AddQueryType<Query>()
+    .AddAssetTypes()
     .AddGlobalObjectIdentification()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-
 var app = builder.Build();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
@@ -122,9 +145,36 @@ app.MapGraphQL();
 app.Run();
 ```
 
-Now that we have enabled support for the specification we need to implement the node interface with the `Asset` entity. We do not want to change the `Asset` type itself and this will create an object type extension.
+Now that we have enabled support for the specification we need to implement the node interface with the `Asset` entity. We do not want to change the `Asset` class itself. We already introduced the object type extension `AssetNode` in the last part of this chapter.
 
-For this create a new class in the `Types` directory called `AssetNode.cs` and add the following code.
+What we essentially want to do in this part is the following.
+
+```graphql
+extend type Asset implements Node {
+  id: ID!
+}
+```
+
+For this we will annotate the `AssetNode` class located in the `Types` directory with the `NodeAttribute`.
+
+```csharp
+[Node]
+[ExtendObjectType(typeof(Asset))]
+public sealed class AssetNode
+```
+
+Next we need to introduce a node resolver, which can resolve the entity by its identifier.
+
+```csharp
+[NodeResolver]
+public static async Task<Asset> GetByIdAsync(
+    int id, 
+    AssetByIdDataLoader assetById,
+    CancellationToken cancellationToken)
+    => await assetById.LoadAsync(id, cancellationToken);
+```
+
+The updated `AssetNode` class should look like the following.
 
 ```csharp title="/Types/AssetNode.cs"
 namespace Demo.Types;
@@ -133,58 +183,20 @@ namespace Demo.Types;
 [ExtendObjectType(typeof(Asset))]
 public sealed class AssetNode
 {
+    public async Task<AssetPrice> GetPriceAsync(
+        [Parent] Asset asset,
+        AssetPriceBySymbolDataLoader priceBySymbol,
+        CancellationToken cancellationToken)
+        => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
+
     [NodeResolver]
-    public static Task<Asset?> GetById(int id, AssetContext context)
-        => context.Assets.FirstOrDefaultAsync(a => a.Id == id);
+    public static async Task<Asset> GetByIdAsync(
+        int id, 
+        AssetByIdDataLoader assetById,
+        CancellationToken cancellationToken)
+        => await assetById.LoadAsync(id, cancellationToken);
 }
-```
 
-After adding this file the **Hot Chocolate** source generator will kick in and generate a new type module which we can register with the GraphQL configuration. The module name is declared in the `ModuleInfo.cs` file.
-
-:::note
-
-All new types that have a type attribute, implement a type or implement a DataLoader will automatically be registered with the type module.
-
-:::
-
-Head over to the `Program.cs` and register the module with the GraphQL configuration.
-
-```csharp
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-```
-
-The `Program.cs` should now look like the following.
-
-```csharp title="/Program.cs"
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddHttpContextAccessor()
-    .AddCors()
-    .AddHelperServices();
-
-builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
-
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-
-var app = builder.Build();
-
-app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-app.UseStaticFiles();
-app.MapGraphQL();
-
-app.Run();
 ```
 
 With this in place lets explore the schema a bit and explore how this changed the execution behavior.
@@ -197,7 +209,13 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
 
-Now select the 
+Now select the `Schema Reference` tab to explore the schema.
+
+![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp3.png)
+
+We can see that we have now two new fields on the `Query` type called `node` and `nodes`. These fields allow us to fetch any node just by its identifier.
+
+For this let us fetch an `Asset` first to get the newly encoded identifier.
 
 ```graphql
 query {
@@ -217,7 +235,80 @@ query {
 }
 ```
 
+With the identifier we can now call the `node` field like the following:
+
+```graphql
+query {
+  node(id: "QXNzZXQKaTE=") {
+    id
+    __typename
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "node": {
+      "id": "QXNzZXQKaTE=",
+      "__typename": "Asset"
+    }
+  }
+}
+```
+The node interface itself only exposes the `id` field and we can additionally ask for the actual type with the `__typename`.
+
+In order to query the other fields of the `Asset` we need to use a **Fragment** or an **InlineFragment**. For this example we will use an **InlineFragment**.
+
+```graphql
+query {
+  node(id: "QXNzZXQKaTE=") {
+    id
+    __typename
+    ... on Asset {
+      symbol
+      price {
+        lastPrice
+      }
+    }
+  }
+}
+```
+
+You could compare the **InlineFragment** to an is check in C#.
+
 ```csharp
+if(node is Asset asset) 
+{
+    Console.WriteLine(asset.Symbol);
+}
+```
+
+Essentially it will return the the fields within the inline fragment if the returned type is an `Asset`.
+
+## Cleanup
+
+Let us tidy up the schema a bit. With the **Global Object Identification** specification we want to be consistent with the `Asset` id so that the consumer does not need to figure out when to pass an encoded ID and when to use the internal ID.
+
+Head over to the `Query` class and add the `IdAttribute` to the `id` parameter in our `GetAssetByIdAsync` resolver.
+
+```csharp
+public async Task<Asset?> GetAssetByIdAsync(
+    [ID(nameof(Asset))] int id,
+    AssetByIdDataLoader assetById,
+    CancellationToken cancellationToken)
+    => await assetById.LoadAsync(id, cancellationToken);
+```
+
+:::note
+
+The `nameof(Asset)` argument into the attribute will ensure that only IDs are accepted that are encoded to be `Asset` ids.
+
+:::
+
+The complete `Query` class should look now like the following.
+
+```csharp title="/Types/Query.cs"
 namespace Demo.Types;
 
 public class Query
@@ -226,10 +317,139 @@ public class Query
     public IQueryable<Asset> GetAssets(AssetContext context)
         => context.Assets.OrderBy(t => t.Symbol);
 
-    public async Task<Asset?> GetAssetById(
+    public async Task<Asset?> GetAssetByIdAsync(
         [ID(nameof(Asset))] int id,
-        AssetContext context,
+        AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
-        => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+        => await assetById.LoadAsync(id, cancellationToken);
 }
 ```
+
+With this in place we now have to pass in the encoded ID to the `assetById` field.
+
+```graphql
+query {
+  assetById(id: "QXNzZXQKaTE=") {
+    id
+  }
+}
+```
+
+In order to complete our schema we will make the `AssetPrice` entity a `Node` as well. In general not every time has to be a node. But parts of the graph that you want to be refetchable you need to make a node.
+
+Create a new file called `AssetBySymbolDataLoader.cs` in the `DataLoader` directory and add the following code.
+
+```csharp title="/DataLoader/AssetBySymbolDataLoader.cs"
+namespace Demo.DataLoader;
+
+public sealed class AssetBySymbolDataLoader : BatchDataLoader<string, Asset>
+{
+    private readonly IDbContextFactory<AssetContext> _contextFactory;
+
+    public AssetBySymbolDataLoader(
+        IDbContextFactory<AssetContext> contextFactory,
+        IBatchScheduler batchScheduler,
+        DataLoaderOptions? options = null)
+        : base(batchScheduler, options)
+    {
+        _contextFactory = contextFactory ??
+            throw new ArgumentNullException(nameof(contextFactory));
+    }
+
+    protected override async Task<IReadOnlyDictionary<string, Asset>> LoadBatchAsync(
+        IReadOnlyList<string> keys,
+        CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Assets.Where(t => keys.Contains(t.Symbol)).ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+    }
+}
+```
+
+We need one more **DataLoader** to complete our schema, so we need to add another file called `AssetPriceByIdDataLoader.cs` to the `DataLoader` directory. 
+
+```csharp title="/DataLoader/AssetPriceByIdDataLoader.cs"
+namespace Demo.DataLoader;
+
+public sealed class AssetPriceByIdDataLoader : BatchDataLoader<int, AssetPrice>
+{
+    private readonly IDbContextFactory<AssetContext> _contextFactory;
+
+    public AssetPriceByIdDataLoader(
+        IDbContextFactory<AssetContext> contextFactory,
+        IBatchScheduler batchScheduler,
+        DataLoaderOptions? options = null)
+        : base(batchScheduler, options)
+    {
+        _contextFactory = contextFactory ??
+            throw new ArgumentNullException(nameof(contextFactory));
+    }
+
+    protected override async Task<IReadOnlyDictionary<int, AssetPrice>> LoadBatchAsync(
+        IReadOnlyList<int> keys,
+        CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.AssetPrices.Where(t => keys.Contains(t.Id)).ToDictionaryAsync(t => t.Id!, cancellationToken);
+    }
+}
+```
+
+With these two new `DataLoader` in place we can finally create a new file called `AssetPriceNode.cs` in the `Types` directory and add the following code.
+
+```csharp title="/Types/AssetPriceNode.cs"
+namespace Demo.Types.Assets;
+
+[Node]
+[ExtendObjectType(typeof(AssetPrice), IgnoreProperties = new[] { nameof(AssetPrice.AssetId) })]
+public sealed class AssetPriceNode
+{
+    public async Task<Asset> GetAssetAsync(
+        [Parent] AssetPrice parent,
+        AssetBySymbolDataLoader assetBySymbol,
+        CancellationToken cancellationToken) 
+        => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
+
+    [NodeResolver]
+    public static Task<AssetPrice> GetByIdAsyncAsync(
+        int id,
+        AssetPriceByIdDataLoader dataLoader,
+        CancellationToken cancellationToken)
+        => dataLoader.LoadAsync(id, cancellationToken);
+}
+```
+
+With the `AssetPriceNode` class we have made the `AssetPrice` and node but also at the same time introduced a way to get from the node to the `Asset`.
+
+This allows us to refetch the `AssetPrice` and the the `Asset` at the same time from both angles.
+
+```graphql
+query {
+  node(id: "QXNzZXRQcmljZQppODk=") {
+    ... on AssetPrice {
+      lastPrice
+      asset {
+        name
+      }
+    }
+  }
+}
+```
+
+
+```graphql
+query {
+  node(id: "QXNzZXQKaTE=") {
+    ... on Asset {
+      name
+      price {
+        lastPrice
+      }
+    }
+  }
+}
+```
+
+## Summary
+
+In this part of the chapter we have introduced the **Global Object Identification** specification to our schema, which allows clients to refetch parts of the schema through a generic field called `node` by only knowing the identifier.

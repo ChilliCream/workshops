@@ -1,5 +1,3 @@
-using Demo.DataLoader;
-
 namespace Demo.Types;
 
 [Node]
@@ -13,6 +11,9 @@ public sealed class AssetNode
         => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
 
     [NodeResolver]
-    public static Task<Asset?> GetById(int id, AssetContext context)
-        => context.Assets.FirstOrDefaultAsync(a => a.Id == id);
+    public static async Task<Asset> GetByIdAsync(
+        int id, 
+        AssetByIdDataLoader assetById,
+        CancellationToken cancellationToken)
+        => await assetById.LoadAsync(id, cancellationToken);
 }

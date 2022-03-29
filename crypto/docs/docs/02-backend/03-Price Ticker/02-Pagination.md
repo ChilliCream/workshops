@@ -128,4 +128,4 @@ A curser defines the position of an element within a dataset. The position is us
 
 ## Summary
 
-In the first part, we have learned how to expose a list of database entities through GraphQL. We also explore resolver dependency injection and how to register the `DbContext` with the execution engine. Further, we dabbled our feet in cursor-based pagination.
+In the second part, we have learned how to expose a list of database entities through GraphQL. We also explore resolver dependency injection and how to register the `DbContext` with the execution engine. Further, we dabbled our feet in cursor-based pagination.
