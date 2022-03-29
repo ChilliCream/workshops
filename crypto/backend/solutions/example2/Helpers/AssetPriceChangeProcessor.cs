@@ -6,6 +6,7 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly IDbContextFactory<AssetContext> _contextFactory;
+    private readonly IFileStorage _fileStorage;
     private bool _disposed;
 
     private readonly string[] _symbols = new[]
@@ -179,9 +180,10 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         "SYN"
     };
 
-    public AssetPriceChangeProcessor(IDbContextFactory<AssetContext> contextFactory)
+    public AssetPriceChangeProcessor(IDbContextFactory<AssetContext> contextFactory, IFileStorage fileStorage)
     {
         _contextFactory = contextFactory;
+        _fileStorage = fileStorage;
     }
 
     public async Task StartAsync(CancellationToken stoppingToken)
@@ -226,7 +228,7 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    private static async Task<IReadOnlyDictionary<string, Asset>> LoadAssetsAsync(
+    private async Task<IReadOnlyDictionary<string, Asset>> LoadAssetsAsync(
         IReadOnlyList<string> symbols,
         CancellationToken cancellationToken)
     {
@@ -259,6 +261,11 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
                     Website = assetInfo.GetProperty("website").GetString(),
                     WhitePaper = assetInfo.GetProperty("whitePaper").GetString(),
                 };
+
+                if (asset.ImageKey is not null)
+                {
+                    asset.ImageKey = await TryStoreImage(asset.ImageKey, _fileStorage, cancellationToken);
+                }
 
                 map.Add(symbol, asset);
             }
@@ -390,6 +397,18 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
             price.GetProperty("open24Hour").GetDouble(),
             price.GetProperty("tradingActivity").GetDouble(),
             priceChange.GetProperty("percentageChange").GetDouble());
+
+    private static async Task<string?> TryStoreImage(
+        string imageUrl,
+        IFileStorage storage,
+        CancellationToken cancellationToken)
+    {
+        using var client = new HttpClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, imageUrl);
+        using var response = await client.SendAsync(request, cancellationToken);
+        await using var stream = response.Content.ReadAsStream(cancellationToken);
+        return await storage.UploadAsync(stream, cancellationToken);
+    }
 
     public void Dispose()
     {
