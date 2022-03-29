@@ -1,3 +1,93 @@
+diff --git a/crypto/frontend/generated/GreetingsQuery.graphql.js b/crypto/frontend/generated/GreetingsQuery.graphql.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..7c5956fe3651dd396d39459bcc7415df2c4d269b
+--- /dev/null
++++ b/crypto/frontend/generated/GreetingsQuery.graphql.js
+@@ -0,0 +1,64 @@
++/**
++ * @generated SignedSource<<52c3f7b1fccc07efdf09533ea8dd6031>>
++ * @flow
++ * @lightSyntaxTransform
++ * @nogrep
++ */
++
++/* eslint-disable */
++
++'use strict';
++
++/*::
++import type { ConcreteRequest, Query } from 'relay-runtime';
++export type GreetingsQuery$variables = {||};
++export type GreetingsQuery$data = {|
++  +greetings: string,
++|};
++export type GreetingsQuery = {|
++  variables: GreetingsQuery$variables,
++  response: GreetingsQuery$data,
++|};
++*/
++
++var node/*: ConcreteRequest*/ = (function(){
++var v0 = [
++  {
++    "alias": null,
++    "args": null,
++    "kind": "ScalarField",
++    "name": "greetings",
++    "storageKey": null
++  }
++];
++return {
++  "fragment": {
++    "argumentDefinitions": [],
++    "kind": "Fragment",
++    "metadata": null,
++    "name": "GreetingsQuery",
++    "selections": (v0/*: any*/),
++    "type": "Query",
++    "abstractKey": null
++  },
++  "kind": "Request",
++  "operation": {
++    "argumentDefinitions": [],
++    "kind": "Operation",
++    "name": "GreetingsQuery",
++    "selections": (v0/*: any*/)
++  },
++  "params": {
++    "cacheID": "acbfaea45bca09685fc5691a1903f78a",
++    "id": null,
++    "metadata": {},
++    "name": "GreetingsQuery",
++    "operationKind": "query",
++    "text": "query GreetingsQuery {\n  greetings\n}\n"
++  }
++};
++})();
++
++(node/*: any*/).hash = "613f3ef79740dc8be3c71bb5b04d5e2f";
++
++export default node;
+diff --git a/crypto/frontend/scenes/Greetings.js b/crypto/frontend/scenes/Greetings.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..f9c304c239e2e56a2c32fe1b74ef835342278763
+--- /dev/null
++++ b/crypto/frontend/scenes/Greetings.js
+@@ -0,0 +1,14 @@
++import {graphql, useLazyLoadQuery} from 'react-relay';
++
++export default function Greetings() {
++  const data = useLazyLoadQuery(
++    graphql`
++      query GreetingsQuery {
++        greetings
++      }
++    `,
++    {},
++  );
++
++  return <div>{data.greetings}</div>;
++}
 diff --git a/crypto/frontend/pages/index.js b/crypto/frontend/pages/index.js
 index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..42d3e7af4acdbae8a74eb45f9365f5f5820562a4 100644
 --- a/crypto/frontend/pages/index.js
@@ -41,23 +131,47 @@ index 8b3e2fa25f805f5e59f6da3bc19b8f1365bbb124..42d3e7af4acdbae8a74eb45f9365f5f5
 +    </RelayEnvironmentProvider>
 +  );
 +}
-diff --git a/crypto/frontend/scenes/Greetings.js b/crypto/frontend/scenes/Greetings.js
+diff --git a/crypto/frontend/schema/server.graphql b/crypto/frontend/schema/server.graphql
 new file mode 100644
-index 0000000000000000000000000000000000000000..f9c304c239e2e56a2c32fe1b74ef835342278763
+index 0000000000000000000000000000000000000000..f8d6abc88acdb140458f0cf9dc13433ac41ba4c9
 --- /dev/null
-+++ b/crypto/frontend/scenes/Greetings.js
-@@ -0,0 +1,14 @@
-+import {graphql, useLazyLoadQuery} from 'react-relay';
++++ b/crypto/frontend/schema/server.graphql
+@@ -0,0 +1,38 @@
++"""
++The `@defer` directive may be provided for fragment spreads and inline fragments to inform the executor to delay the execution of the current fragment to indicate deprioritization of the current fragment. A query with `@defer` directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred is delivered in a subsequent response. `@include` and `@skip` take precedence over `@defer`.
++"""
++directive @defer(
++  """
++  Deferred when true.
++  """
++  if: Boolean
 +
-+export default function Greetings() {
-+  const data = useLazyLoadQuery(
-+    graphql`
-+      query GreetingsQuery {
-+        greetings
-+      }
-+    `,
-+    {},
-+  );
++  """
++  If this argument label has a value other than null, it will be passed on to the result of this defer directive. This label is intended to give client applications a way to identify to which fragment a deferred result belongs to.
++  """
++  label: String
++) on FRAGMENT_SPREAD | INLINE_FRAGMENT
 +
-+  return <div>{data.greetings}</div>;
++"""
++The `@stream` directive may be provided for a field of `List` type so that the backend can leverage technology such as asynchronous iterators to provide a partial list in the initial response, and additional list items in subsequent responses. `@include` and `@skip` take precedence over `@stream`.
++"""
++directive @stream(
++  """
++  Streamed when true.
++  """
++  if: Boolean
++
++  """
++  The initial elements that shall be send down to the consumer.
++  """
++  initialCount: Int! = 0
++
++  """
++  If this argument label has a value other than null, it will be passed on to the result of this stream directive. This label is intended to give client applications a way to identify to which fragment a streamed result belongs to.
++  """
++  label: String
++) on FIELD
++
++type Query {
++  greetings(name: String! = "Luke"): String!
 +}
