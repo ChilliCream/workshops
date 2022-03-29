@@ -1,7 +1,8 @@
 # Pagination
 
-In the first part we have exposed the `Asset` entity through GraphQL, but so far we exposed all the entities at once which would not scale in a real-world application.
-With **Hot Chocolate**, we can use the default paging middleware, which will rewrite the queryable to only fetch a certain amount of `Asset` entities.
+In the first part, we exposed the `Asset` entity through GraphQL. Fetching the `assets` field would return all of the elements in the table, which would not scale for a real-world application.
+ 
+With **Hot Chocolate**, we can use the default paging middleware, which will rewrite the queryable to only fetch a segment of the asset table.
 
 <img src="/img/backend/example2-part1-middleware.png" width="500" />
 
@@ -20,7 +21,7 @@ public class Query
 
 :::info
 
-If needed you can specify paging settings on the `UsePagingAttribute` for a specific field or we can specify global defaults on the GraphQL configuration.
+If needed, you can specify paging settings on the `UsePagingAttribute` for a specific field, or we can set global defaults on the GraphQL configuration.
 
 ```csharp
 builder.Services
@@ -42,7 +43,7 @@ Now restart your server and refetch the schema with Banana Cake Pop.
 
 ![Banana Cake Pop - Paging Fields](../images/example2-part1-bcp2.png)
 
-The query we formulated earlier now shows errors because the paging middleware has rewritten the type structure.
+The earlier query we formulated shows errors because the paging middleware has rewritten the type structure.
 
 Let's change the query to the following and execute it.
 
