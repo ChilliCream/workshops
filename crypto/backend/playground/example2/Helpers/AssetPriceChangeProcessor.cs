@@ -203,7 +203,11 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
 
     private void BeginUpdatePrices()
         => Task.Factory.StartNew(
-            () => UpdatePricesAsync(_cts.Token),
+            async () =>
+            {
+                await UpdateImagesAsync(_cts.Token);
+                await UpdatePricesAsync(_cts.Token);
+            },
             _cts.Token,
             TaskCreationOptions.LongRunning,
             TaskScheduler.Default);
@@ -228,7 +232,7 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    private async Task<IReadOnlyDictionary<string, Asset>> LoadAssetsAsync(
+    private static async Task<IReadOnlyDictionary<string, Asset>> LoadAssetsAsync(
         IReadOnlyList<string> symbols,
         CancellationToken cancellationToken)
     {
@@ -262,11 +266,6 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
                     WhitePaper = assetInfo.GetProperty("whitePaper").GetString(),
                 };
 
-                if (asset.ImageKey is not null)
-                {
-                    asset.ImageKey = await TryStoreImage(asset.ImageKey, _fileStorage, cancellationToken);
-                }
-
                 map.Add(symbol, asset);
             }
         }
@@ -276,6 +275,29 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         }
 
         return map;
+    }
+
+    private async Task UpdateImagesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            var assets = await context.Assets.ToListAsync(cancellationToken);
+
+            foreach (var asset in assets)
+            {
+                if (asset.ImageKey?.StartsWith("https://") == true)
+                {
+                    asset.ImageKey = await TryStoreImage(asset.ImageKey, _fileStorage, cancellationToken);
+                }
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch
+        {
+            // ignore any errors.
+        }
     }
 
     private async Task UpdatePricesAsync(CancellationToken cancellationToken)
