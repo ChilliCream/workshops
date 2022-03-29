@@ -1,29 +1,16 @@
-using Demo.Data;
-using Microsoft.EntityFrameworkCore;
+using Demo.DataLoader;
 
-namespace Demo.Types.Assets;
+namespace Demo.Types;
 
 [Node]
 [ExtendObjectType(typeof(Asset))]
 public sealed class AssetNode
 {
-    [BindMember(nameof(Asset.ImageKey))]
-    public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor httpContextAccessor)
-    {
-        if (asset.ImageKey is null)
-        {
-            return null;
-        }
-
-        string? scheme = httpContextAccessor.HttpContext?.Request.Scheme;
-        string? host = httpContextAccessor.HttpContext?.Request.Host.Value;
-        if (scheme is null || host is null)
-        {
-            return null;
-        }
-
-        return $"{scheme}://{host}/images/{asset.ImageKey}";
-    }
+    public async Task<AssetPrice> GetPriceAsync(
+        [Parent] Asset asset,
+        AssetPriceBySymbolDataLoader priceBySymbol,
+        CancellationToken cancellationToken)
+        => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
 
     [NodeResolver]
     public static Task<Asset?> GetById(int id, AssetContext context)

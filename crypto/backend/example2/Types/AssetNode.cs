@@ -17,7 +17,7 @@ public sealed class AssetNode
 
         string? scheme = httpContextAccessor.HttpContext?.Request.Scheme;
         string? host = httpContextAccessor.HttpContext?.Request.Host.Value;
-        if (scheme is null || hospaylt is null)
+        if (scheme is null || host is null)
         {
             return null;
         }

@@ -1,11 +1,10 @@
-namespace Demo.Types.Assets;
+namespace Demo.Types;
 
-[ExtendObjectType(OperationTypeNames.Query)]
-public sealed class AssetQueries
+public class Query
 {
     [UsePaging]
     public IQueryable<Asset> GetAssets(AssetContext context)
-        => context.Assets;
+        => context.Assets.OrderBy(t => t.Symbol);
 
     public async Task<Asset?> GetAssetById(
         [ID(nameof(Asset))] int id,
