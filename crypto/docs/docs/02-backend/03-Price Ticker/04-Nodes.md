@@ -43,7 +43,7 @@ Now that we have a DataLoader to fetch the `Asset` entity by its ID, head over t
 
 ```csharp
 public async Task<Asset?> GetAssetByIdAsync(
-    [ID(nameof(Asset))] int id,
+    int id,
     AssetByIdDataLoader assetById,
     CancellationToken cancellationToken)
     => await assetById.LoadAsync(id, cancellationToken);
@@ -67,7 +67,7 @@ public class Query
         => context.Assets.OrderBy(t => t.Symbol);
 
     public async Task<Asset?> GetAssetByIdAsync(
-        [ID(nameof(Asset))] int id,
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
