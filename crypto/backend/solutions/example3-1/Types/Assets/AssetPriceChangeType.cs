@@ -33,7 +33,7 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default, default!, default!, default))
+            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
     }
 
@@ -44,14 +44,12 @@ public sealed class AssetPriceChangeType : ObjectType
     private class Resolvers
     {
         public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] ChangeSpan span,
-            [Parent] JsonElement parent,
+            [ScopedState] KeyAndSpan keyAndSpan,
             AssetPriceHistoryDataLoader dataLoader,
             IResolverContext context,
             CancellationToken cancellationToken)
         {
-            string symbol = parent.GetProperty("symbol").GetString()!;
-            JsonElement history = await dataLoader.LoadAsync(new KeyAndSpan(symbol, span), cancellationToken);
+            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
             return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
         }
     }
