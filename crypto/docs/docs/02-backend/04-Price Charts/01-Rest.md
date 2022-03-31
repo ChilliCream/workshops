@@ -164,9 +164,9 @@ public sealed class AssetPriceChangeType : ObjectType
 }
 ```
 
-The above type class defines the `AssetPriceChange` type. We also added a method, `IsAssetPriceChangeType`, to check if a JSON structure is of this type. In this example, we are checking the structure of the JSON element that represents our `AssetPriceChange`; if the object contains a property `percentageChange`, we will assume it to be an `AssetPriceChange` object.
+The above type class defines the `AssetPriceChange` type. We also added a method, `IsAssetPriceChangeType`, to check if a JSON structure is this type. In this example, we are checking the structure of the JSON element that represents our `AssetPriceChange`; if the object contains a property `percentageChange`, we will assume it to be an `AssetPriceChange` object.
 
-With the type in place, we can start with fetching the data. Since we have a batching endpoint that allows us to fetch multiple price changes at once, we can use the batch **DataLoader**.
+With the type in place, we can start with fetching the data. Since we have a batching endpoint that allows us to fetch multiple price changes simultaneously, we can use the batch **DataLoader**.
 
 Because we have more than one REST service, let us introduce a base class to have less code duplication.
 
@@ -207,11 +207,13 @@ public abstract class HttpBatchDataLoader<TKey>
 }
 ```
 
-Our base class will just have some convenience added sp that we do not need to create the actual HTTP client everytime. Moreover, we fixed the result type to a `JsonElement`.
+Our base class will just have some convenience added sp that we do not need to create the actual HTTP client every time. Moreover, we fixed the result type to a `JsonElement`.
 
-With this in place we need to define the actual **DataLoader**. As we have learned in the previous chapter a **DataLoader** is a very simple utillity that will fetch an entity for a key, but in this case we need to pass along two information to our **DataLoader** which are the `span` and the `symbol`. We could approach this from different angles. One solution would be to have a **DataLoader** per span, but thinking about this already tells us that this would not scale very well. What we will do for our service is to introduce a new struct called `KeyAndSpan` which holds both information and represents our composit key.
+With this in place, we need to define the actual **DataLoader**. As we have learned in the previous chapter, a **DataLoader** is a straightforward utility that will fetch an entity for a key. 
 
-Let us first create an enum representing the `span`. For this create a new class called `ChangeSpan` in the `Types/Assets` directory and copy the code below.
+Still, in this case, we need to pass along two pieces of information to our **DataLoader**: the `span` and the `symbol`. We could approach this from different angles. One solution would be to have a **DataLoader** per span, but thinking about this already tells us that this would not scale very well. What we will do for our service is to introduce a new struct called `KeyAndSpan`, which holds both information and represents our composite key.
+
+Let us first create an enum representing the `span`. For this, create a new class called `ChangeSpan` in the `Types/Assets` directory and copy the code below.
 
 ```csharp title="/Types/Assets/ChangeSpan.cs"
 namespace Demo.Types.Assets;
@@ -227,9 +229,9 @@ public enum ChangeSpan
 }
 ```
 
-Next, we will introduce our `KeyAndSpan` struct. Since we need propper equavilence implemented for our key type we will use a `readonly record struct`. This take away all the complexity of implementing such a key type and reduces it really to one line of code.
+Next, we will introduce our `KeyAndSpan` struct. Since we need proper equivalence implemented for our key type, we will use a `readonly record struct`. This takes away all the complexity of implementing such a key type and reduces it to one line of code.
 
-Create a file called `KeyAndSpan.cs` in the `Types/Assets` directory and copy the code below.
+Create a `KeyAndSpan.cs` file in the `Types/Assets` directory and copy the code below.
 
 ```csharp title="/Types/Assets/HttpBatchDataLoader.cs"
 namespace Demo.Types.Assets;
@@ -237,7 +239,7 @@ namespace Demo.Types.Assets;
 public readonly record struct KeyAndSpan(string Symbol, ChangeSpan Span);
 ```
 
-Finally, we have everything in place to create our `AssetPriceChangeDataLoader` which we will add to the `DataLoader` directory.
+Finally, we have everything in place to create our `AssetPriceChangeDataLoader`, which we will add to the `DataLoader` directory.
 
 ```csharp title="/DataLoader/AssetPriceChangeDataLoader.cs"
 using System.Text.Json;
@@ -287,9 +289,9 @@ public sealed class AssetPriceChangeDataLoader : HttpBatchDataLoader<KeyAndSpan>
 }
 ```
 
-Our `AssetPriceChangeDataLoader` will essentially fetch a batch of price changes from our REST endpoint and then decompose the received JSON list into JSON object that represent the price change objects.
+Our `AssetPriceChangeDataLoader` will essentially fetch a batch of price changes from our REST endpoint and then decompose the received JSON list into a JSON object representing the price change objects.
 
-Lets integrate our new type into the existing `AssetPrice`. For this head over to the `AssetPriceNode` class and add the following resolver to it.
+Let's integrate our new type into the existing `AssetPrice`. For this, head over to the `AssetPriceNode` class and add the following resolver to it.
 
 ```csharp
 [GraphQLType(typeof(AssetPriceChangeType))]
@@ -349,16 +351,16 @@ public sealed class AssetPriceNode
 }
 ```
 
-We have one more step to do before we can try our newly integrated data and that is adding a configured HTTP connection to our server configuration.
+We have one more step to do before we can try our newly integrated data, and that is adding a configured HTTP connection to our server configuration.
 
-Head over to the `Program.cs` and add the following service registration to it.
+Head over to the `Program.cs` and add the following service registration.
 
 ```csharp
 builder.Services
     .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 ```
 
-Now, lets test if we can query the price change.
+Now, let's test if we can query the price change.
 
 ```bash
 dotnet run
@@ -389,7 +391,7 @@ query Asset {
 
 We have successfully integrated the price change. So let us take it up a notch by extending the previously integrated data structure with more external data.
 
-The history data structure itself is actually simpler. We essetially have two fields that are of the type `Int!` and `Float!` and we are done.
+The history data structure itself is simpler. We essentially have two fields of the type `Int!` and `Float!` and we are done.
 
 ```csharp title="/Types/Assets/AssetPriceHistoryType.cs"
 namespace Demo.Types.Assets;
@@ -416,7 +418,7 @@ public sealed class AssetPriceHistoryType : ObjectType
 
 :::info
 
-As mentioned before, we could also use the GraphQL SDL and schema-first to integrate this type. In this case we would use the `@fromJson` directive to signal to the execution engine that this data is coming from a JSON object.
+As mentioned before, we could also use the GraphQL SDL and schema-first to integrate this type. , we would use the `@fromJson` directive to signal to the execution engine that this data is coming from a JSON object.
 
 ```graphql
 type AssetPriceHistory {
@@ -427,7 +429,7 @@ type AssetPriceHistory {
 
 :::
 
-Next, as before we will use a **DataLoader** to fetch the data from the external service.
+Next, as before, we will use a **DataLoader** to fetch the data from the external service.
 The **DataLoader** will reuse the `KeyAndSpan` struct as the key type.
 
 Create a new file `AssetPriceHistoryDataLoader.cs` in the `DataLoader` directory and copy the code below.
@@ -480,26 +482,26 @@ public sealed class AssetPriceHistoryDataLoader : HttpBatchDataLoader<KeyAndSpan
 }
 ```
 
-This is the part where things become more tricky. We now need to integrate a new resolver with the `AssetPriceChange` type to fetch the history data. To fetch the history data we need the `ChangeSpan` and `Symbol` to which the history belongs to. We could preserve this information and store it on the execution context.
+This is the part where things become more tricky. To fetch the history data, we now need to integrate a new resolver with the `AssetPriceChange` type. To fetch the historical data, we need the `ChangeSpan` and `Symbol` to which the history belongs. We could preserve this information and store it in the execution context.
 
 :::info
 
-**Hot Chocolate** allows to store three different kinds of execution states in order to customize execution behavior.
+**Hot Chocolate** allows storing three different kinds of execution states to customize execution behavior.
 
 - Global Execution State
-  The global execution states can be accessed and mutated before the execution begins and after it ended. It can also be accessed and modified by request- and field-middleware and the resolver itself.
+ The global execution states can be accessed and mutated before the execution begins and after it ends. It can also be accessed and modified by request- and field-middleware and the resolver itself.
 
 - Scoped Execution State
-  The scoped execution state can be accessed and modified by the request- and field-middleware and also by the resolver. Modification to the scoped state are only accessible from the subtree where the change happened.
+ The scoped execution state can be accessed and modified by the request- and field-middleware and also by the resolver. Modifications to the scoped state are only accessible from the subtree where the change happened.
 
 - Local Execution State
-  The local execution state can only be accessed and modified within a field resolver pipeline.
+ The local execution state can only be accessed and modified within a field resolver pipeline.
 
 :::
 
-For our problem at hand we want to push the `keyAndSpan` we create in the `GetChangeAsync` resolver down to our `GetHistoryAsync` we still need to implement. **Hot Chocolate** provides for this a scoped execution state on which we can store data for our subtree.
+For our problem at hand, we want to push the `keyAndSpan` we create in the `GetChangeAsync` resolver down to our `GetHistoryAsync` we still need to implement. **Hot Chocolate** provides for this a scoped execution state on which we can store data for our subtree.
 
-First head over to the `AssetNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
+First, head over to the `AssetNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
 
 ```csharp
 [GraphQLType(typeof(AssetPriceChangeType))]
@@ -516,7 +518,7 @@ public async Task<JsonElement> GetChangeAsync(
 }
 ```
 
-We added a new `SetState<KeyAndSpan>` parameter to our resolver which is a delegate that allows us to set a `KeyAndSpan` on our scoped execution state. This state will be available to all resolvers in our subtree.
+We added a new `SetState<KeyAndSpan>` parameter to our resolver, a delegate that allows us to set a `KeyAndSpan` on our scoped execution state. This state will be available to all resolvers in our subtree.
 
 Next, head over to the `AssetPriceChangeType` and add a nested class `Resolvers`. You can copy & paste the code below for this.
 
@@ -538,7 +540,7 @@ private class Resolvers
 
 We can see that our `GetHistoryAsync` resolver injects the `keyAndSpan` parameter from our scoped execution state.
 
-With our resolver in place we now need to register a field in our `AssetPriceChangeType`. For this add the following code into the `Configure` method.
+With our resolver in place, we must register a field in our `AssetPriceChangeType`. For this, add the following code into the `Configure` method.
 
 ```csharp
 descriptor
@@ -593,7 +595,7 @@ public sealed class AssetPriceChangeType : ObjectType
 }
 ```
 
-With this done we have integrated both services with our GraphQL server and should start our server to test if we have done well.
+With this done, we have integrated both services with our GraphQL server and should start our server to test if we have done well.
 
 Also, we are using paging in a custom way by using the `ApplyCursorPaginationAsync` extension method on top of our JSON result object.
 
@@ -624,13 +626,13 @@ query Asset {
 
 ## Refinements
 
-We have one more requirement from our GUI. Within our GUI component we want to be able to refetch the price change data separate from our `AssetPrice`.
+We have one more requirement from our GUI. Within our GUI component, we want to be able to refetch the price change data separate from our `AssetPrice`.
 
-For this we need to implement the node interface with the `AssetPriceChange` type.
+For this, we need to implement the node interface with the `AssetPriceChange` type.
 
-Lets head over to the `AssetPriceChangeType.cs` file again and change the configuration a bit.
+Let's head over to the `AssetPriceChangeType.cs` file again and change the configuration.
 
-First we need to introduce a node resolver to our nested `Resolvers` class.
+First, we need to introduce a node resolver to our nested `Resolvers` class.
 
 ```csharp
 public async Task<JsonElement?> ResolveNodeAsync(
@@ -647,9 +649,9 @@ public async Task<JsonElement?> ResolveNodeAsync(
 }
 ```
 
-Next, we need to introduce a new `id` field to the type. The identifier must contain the span and the symbol so that we can correctly resolve the `AssetPriceChange` from the rest service.
+Next, we need to introduce a new `id` field to the type. The identifier must contain the span and the symbol to correctly resolve the `AssetPriceChange` from the REST service.
 
-For this we will introduce a new field configuration that aggregates data from our JSON object.
+For this, we will introduce a new field configuration that aggregates data from our JSON object.
 
 ```csharp
 descriptor
@@ -667,7 +669,7 @@ descriptor
     });
 ```
 
-Lastly we will introduce some type configuration that implements the node interface and binds the node resolver to the type.
+Lastly, we will introduce some type configuration that implements the node interface and binds the node resolver to the type.
 
 ```csharp
 descriptor
@@ -753,7 +755,7 @@ public sealed class AssetPriceChangeType : ObjectType
 }
 ```
 
-Lets test our server again.
+Let's test our server again.
 
 ```bash
 dotnet run
@@ -792,4 +794,4 @@ query RefetchData {
 
 ## Summary
 
-In this first part of our chapter to modify our backend to cater to the new use-cases that we face for our price charts we have learned how we can integrate data from different services. In most cases when you start with GraphQL you will not have the luxury to start fresh, often we have an existing infrastructure. With **HotChocolate** it is simple to integrate JSON data by just typing it, whether you prefer to use the GraphQL SDL or the fluent type API for this is up to you. Further we have leveraged **DataLoader** to interact with our REST services in a more efficient way. Last but not least we introduced refetchability to external data through the node interface.
+In this first part of our chapter, to modify our backend to cater to the new use-cases that we face for our price charts, we have learned how to integrate data from different services. When you start with GraphQL, you will not have the luxury to start fresh; often, we have an existing infrastructure. With **HotChocolate**, it is simple to integrate JSON data by just typing it. Whether you prefer to use the GraphQL SDL or the fluent type API is up to you. Further, we have leveraged **DataLoader** to interact with our REST services more efficiently. Last but not least, we introduced refetchability to external data through the node interface.
