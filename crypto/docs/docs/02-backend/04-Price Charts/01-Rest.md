@@ -480,53 +480,75 @@ public sealed class AssetPriceHistoryDataLoader : HttpBatchDataLoader<KeyAndSpan
 }
 ```
 
-This is the part where things become more tricky. We now need to integrate a new resolver with the `AssetPriceChange` type to fetch the history data. To fetch the history data we need the `ChangeSpan` and `Symbol` to which the histor belongs to. We could preservice this information and store it on the execution context.
+This is the part where things become more tricky. We now need to integrate a new resolver with the `AssetPriceChange` type to fetch the history data. To fetch the history data we need the `ChangeSpan` and `Symbol` to which the history belongs to. We could preserve this information and store it on the execution context.
 
 :::info
 
 **Hot Chocolate** allows to store three different kinds of execution states in order to customize execution behavior.
 
 - Global Execution State
-- Scoped Execut
+  The global execution states can be accessed and mutated before the execution begins and after it ended. It can also be accessed and modified by request- and field-middleware and the resolver itself.
+
+- Scoped Execution State
+  The scoped execution state can be accessed and modified by the request- and field-middleware and also by the resolver. Modification to the scoped state are only accessible from the subtree where the change happened.
+
+- Local Execution State
+  The local execution state can only be accessed and modified within a field resolver pipeline.
 
 :::
 
+For our problem at hand we want to push the `keyAndSpan` we create in the `GetChangeAsync` resolver down to our `GetHistoryAsync` we still need to implement. **Hot Chocolate** provides for this a scoped execution state on which we can store data for our subtree.
+
+First head over to the `AssetNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
 
 ```csharp
-    private class Resolvers
-    {
-        public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] KeyAndSpan keyAndSpan,
-            AssetPriceHistoryDataLoader dataLoader,
-            IResolverContext context,
-            CancellationToken cancellationToken)
-        {
-            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
-            return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
-        }
-    }
+[GraphQLType(typeof(AssetPriceChangeType))]
+public async Task<JsonElement> GetChangeAsync(
+    ChangeSpan span,
+    [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+    [Parent] AssetPrice parent,
+    AssetPriceChangeDataLoader assetPriceBySymbol,
+    CancellationToken cancellationToken)
+{
+    var key = new KeyAndSpan(parent.Symbol!, span);
+    setKey(key);
+    return await assetPriceBySymbol.LoadAsync(key, cancellationToken);
+}
 ```
 
-    [GraphQLType(typeof(AssetPriceChangeType))]
-    public async Task<JsonElement> GetChangeAsync(
-        ChangeSpan span,
-        [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
-        [Parent] AssetPrice parent,
-        AssetPriceChangeDataLoader assetPriceBySymbol,
+We added a new `SetState<KeyAndSpan>` parameter to our resolver which is a delegate that allows us to set a `KeyAndSpan` on our scoped execution state. This state will be available to all resolvers in our subtree.
+
+Next, head over to the `AssetPriceChangeType` and add a nested class `Resolvers`. You can copy & paste the code below for this.
+
+
+```csharp
+private class Resolvers
+{
+    public async Task<Connection<JsonElement>> GetHistoryAsync(
+        [ScopedState] KeyAndSpan keyAndSpan,
+        AssetPriceHistoryDataLoader dataLoader,
+        IResolverContext context,
         CancellationToken cancellationToken)
     {
-        var key = new KeyAndSpan(parent.Symbol!, span);
-        setKey(key);
-        return await assetPriceBySymbol.LoadAsync(key, cancellationToken);
+        JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
+        return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
     }
+}
+```
+
+We can see that our `GetHistoryAsync` resolver injects the `keyAndSpan` parameter from our scoped execution state.
+
+With our resolver in place we now need to register a field in our `AssetPriceChangeType`. For this add the following code into the `Configure` method.
 
 ```csharp
 descriptor
-    .Field<Resolvers>(t => t.GetHistoryAsync(default, default, default!, default!, default))
+    .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
     .UsePaging<AssetPriceHistoryType>();
 ```
 
-```csharp
+The completed `AssetPriceChangeType` should now look like the following.
+
+```csharp title="/Types/Assets/AssetPriceChangeType.cs"
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
@@ -541,6 +563,139 @@ public sealed class AssetPriceChangeType : ObjectType
         descriptor
             .Name("AssetPriceChange")
             .IsOfType(IsAssetPriceChangeType);
+
+        descriptor
+            .Field("percentageChange")
+            .Type<NonNullType<FloatType>>()
+            .FromJson();
+
+        descriptor
+            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
+            .UsePaging<AssetPriceHistoryType>();
+    }
+
+    private static bool IsAssetPriceChangeType(IResolverContext context, object resolverResult)
+        => resolverResult is JsonElement element &&
+            element.TryGetProperty("percentageChange", out _);
+
+    private class Resolvers
+    {
+        public async Task<Connection<JsonElement>> GetHistoryAsync(
+            [ScopedState] KeyAndSpan keyAndSpan,
+            AssetPriceHistoryDataLoader dataLoader,
+            IResolverContext context,
+            CancellationToken cancellationToken)
+        {
+            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
+            return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+        }
+    }
+}
+```
+
+With this done we have integrated both services with our GraphQL server and should start our server to test if we have done well.
+
+Also, we are using paging in a custom way by using the `ApplyCursorPaginationAsync` extension method on top of our JSON result object.
+
+![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
+
+Execute the following query to see if we have integrated our service correctly. 
+
+```graphql
+query Asset {
+  assetBySymbol(symbol: "BTC") {
+    id
+    name
+    price {
+      lastPrice
+      change(span: DAY) {
+        percentageChange
+        history {
+          nodes {
+            epoch
+            price
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Refinements
+
+We have one more requirement from our GUI. Within our GUI component we want to be able to refetch the price change data separate from our `AssetPrice`.
+
+For this we need to implement the node interface with the `AssetPriceChange` type.
+
+Lets head over to the `AssetPriceChangeType.cs` file again and change the configuration a bit.
+
+First we need to introduce a node resolver to our nested `Resolvers` class.
+
+```csharp
+public async Task<JsonElement?> ResolveNodeAsync(
+    string id,
+    [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+    AssetPriceChangeDataLoader dataLoader,
+    CancellationToken cancellationToken)
+{
+    string[] parts = id.Split(':');
+    ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+    var key = new KeyAndSpan(parts[0], span);
+    setKey(key);
+    return await dataLoader.LoadAsync(key, cancellationToken);
+}
+```
+
+Next, we need to introduce a new `id` field to the type. The identifier must contain the span and the symbol so that we can correctly resolve the `AssetPriceChange` from the rest service.
+
+For this we will introduce a new field configuration that aggregates data from our JSON object.
+
+```csharp
+descriptor
+    .Field("id")
+    .Type<NonNullType<IdType>>()
+    .FromJson(obj =>
+    {
+        if (obj.TryGetProperty("symbol", out var symbol) &&
+            obj.TryGetProperty("span", out var span))
+        {
+            return $"{symbol.GetString()}:{span.GetString()}";
+        }
+
+        return null;
+    });
+```
+
+Lastly we will introduce some type configuration that implements the node interface and binds the node resolver to the type.
+
+```csharp
+descriptor
+    .ImplementsNode()
+    .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+```
+
+The completed `AssetPriceChangeType` should look like the following.
+
+```csharp title="/Types/Assets/AssetPriceChangeType.cs"
+using System.Text.Json;
+using HotChocolate.Resolvers;
+using HotChocolate.Types.Pagination;
+using HotChocolate.Types.Pagination.Extensions;
+
+namespace Demo.Types.Assets;
+
+public sealed class AssetPriceChangeType : ObjectType
+{
+    protected override void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor
+            .Name("AssetPriceChange")
+            .IsOfType(IsAssetPriceChangeType);
+
+        descriptor
+            .ImplementsNode()
+            .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
 
         descriptor
             .Field("id")
@@ -562,7 +717,7 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default, default!, default!, default))
+            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
     }
 
@@ -573,66 +728,68 @@ public sealed class AssetPriceChangeType : ObjectType
     private class Resolvers
     {
         public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] ChangeSpan span,
-            [Parent] JsonElement parent,
+            [ScopedState] KeyAndSpan keyAndSpan,
             AssetPriceHistoryDataLoader dataLoader,
             IResolverContext context,
             CancellationToken cancellationToken)
         {
-            string symbol = parent.GetProperty("symbol").GetString()!;
-            JsonElement history = await dataLoader.LoadAsync(new KeyAndSpan(symbol, span), cancellationToken);
+            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
             return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+        }
+
+        public async Task<JsonElement?> ResolveNodeAsync(
+            string id,
+            [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+            AssetPriceChangeDataLoader dataLoader,
+            CancellationToken cancellationToken)
+        {
+            string[] parts = id.Split(':');
+            ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+            var key = new KeyAndSpan(parts[0], span);
+            setKey(key);
+            return await dataLoader.LoadAsync(key, cancellationToken);
         }
     }
 }
 ```
 
-```csharp
-[GraphQLType(typeof(AssetPriceChangeType))]
-public async Task<JsonElement> GetChangeAsync(
-    ChangeSpan span,
-    [ScopedState("span")] SetState<ChangeSpan> setSpan,
-    [Parent] AssetPrice parent,
-    AssetPriceChangeDataLoader assetPriceBySymbol,
-    CancellationToken cancellationToken)
-{
-    setSpan(span);
-    return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
-}
+Lets test our server again.
+
+```bash
+dotnet run
 ```
 
-```csharp
-using System.Text.Json;
+![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
 
-namespace Demo.Types.Assets;
+Execute the following query to see if we have integrated our service correctly. 
 
-[Node]
-[ExtendObjectType(typeof(AssetPrice), IgnoreProperties = new[] { nameof(AssetPrice.AssetId) })]
-public sealed class AssetPriceNode
-{
-    public async Task<Asset> GetAssetAsync(
-        [Parent] AssetPrice parent,
-        AssetBySymbolDataLoader assetBySymbol,
-        CancellationToken cancellationToken)
-        => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
-
-    [GraphQLType(typeof(AssetPriceChangeType))]
-    public async Task<JsonElement> GetChangeAsync(
-        ChangeSpan span,
-        [ScopedState("span")] SetState<ChangeSpan> setSpan,
-        [Parent] AssetPrice parent,
-        AssetPriceChangeDataLoader assetPriceBySymbol,
-        CancellationToken cancellationToken)
-    {
-        setSpan(span);
-        return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
+```graphql
+query GrabPriceChangeId {
+  assetBySymbol(symbol: "BTC") {
+    price {
+      change(span: DAY) {
+        id
+      }
     }
-
-    [NodeResolver]
-    public static Task<AssetPrice> GetByIdAsyncAsync(
-        int id,
-        AssetPriceByIdDataLoader dataLoader,
-        CancellationToken cancellationToken)
-        => dataLoader.LoadAsync(id, cancellationToken);
+  }
 }
 ```
+
+```graphql
+query RefetchData {
+  node(id: "QXNzZXRQcmljZUNoYW5nZQpkQlRDOkRheQ==") {
+    id
+    ... on AssetPriceChange {
+      history {
+        nodes {
+          epoch
+        }
+      }
+    }
+  }
+}
+```
+
+## Summary
+
+In this part of 
