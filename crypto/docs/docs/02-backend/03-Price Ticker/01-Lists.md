@@ -3,6 +3,7 @@
 In this chapter, we will start with our crypto coin portal example. We will begin with a basic GraphQL server that exposes an `Asset` and an `AssetPrice` entity to allow the GraphQL portal to fetch the available crypto assets and price information.
 
 During this chapter, we will cover the following topics:
+
 - Exposing lists of entities from a database
 - Cursor pagination
 - Global Object Identification

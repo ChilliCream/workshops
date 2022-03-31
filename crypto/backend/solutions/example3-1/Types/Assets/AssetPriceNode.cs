@@ -15,13 +15,14 @@ public sealed class AssetPriceNode
     [GraphQLType(typeof(AssetPriceChangeType))]
     public async Task<JsonElement> GetChangeAsync(
         ChangeSpan span,
-        [ScopedState("span")] SetState<ChangeSpan> setSpan,
+        [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
         [Parent] AssetPrice parent,
         AssetPriceChangeDataLoader assetPriceBySymbol,
         CancellationToken cancellationToken)
     {
-        setSpan(span);
-        return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
+        var key = new KeyAndSpan(parent.Symbol!, span);
+        setKey(key);
+        return await assetPriceBySymbol.LoadAsync(key, cancellationToken);
     }
 
     [NodeResolver]
