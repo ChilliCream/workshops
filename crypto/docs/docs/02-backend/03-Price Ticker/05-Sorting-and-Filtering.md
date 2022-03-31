@@ -159,6 +159,8 @@ public sealed class UsePagingAttribute : DescriptorAttribute
 
 :::
 
+:::info
+
 A field middleware can be applied to an `IObjectTypeDescriptor` with the fluent API.
 
 ```csharp
@@ -181,6 +183,8 @@ public sealed class AssetPriceChangeType : ObjectType
     }
 }
 ```
+
+:::
 
 ## Resolver
 
