@@ -1,19 +1,19 @@
 # REST Endpoints
 
-Until now we have provided data for the ticker component of our GUI. Further, we have made use of the same data to create some asset list components to show the daily losers and gainers. In the following chapter we will focus on historical data and real-time updates.
+Until now, we have provided data for the ticker component of our GUI. Further, we have used the same data to create some asset list components to show the daily losers and gainers. The following chapter will focus on historical data and real-time data.
 
 During this chapter, we will cover the following topics:
 
 - Integrating existing infrastructure like REST services
 - Tapping into external systems to yield real-time data
 
-In this first part we will focus on integrating our existing REST services that provide historical price data.
+This first part will focus on integrating our existing REST services that provide historical price data.
 
 ## Infrastructure
 
-Assume that we have two existing services running in Azure. The first of these services aggregates the price change for predefined spans (All, Hour, Day, Week, Month, Year).
+Assume that we have two existing services running in Azure. The first of these services aggregate the price change for predefined spans (All, Hour, Day, Week, Month, Year).
 
-Our percentage change service can be invoked by providing a single asset symbol and a span.
+The price change service can be invoked by providing an asset symbol and a span.
 
 ```
 GET https://ccc-workshop-eu-functions.azurewebsites.net/api/asset/price/change?symbol=BTC&span=Day
@@ -40,7 +40,7 @@ This optimized variant will return a list of results:
 ]
 ```
 
-We also have a second rest service running along this one providing historical price point. This service can be invoked like the previous one with a symbol and a span.
+We also have a second REST service running along the price change service providing historical price points. We need to provide the asset symbol and the span to fetch historical price points.
 
 ```
 GET https://ccc-workshop-eu-functions.azurewebsites.net/api/asset/price/history?symbol=ADA&span=Day
@@ -59,7 +59,7 @@ The service will yield a list of price points for a given span.
 }
 ```
 
-Again, like the first service we also have a batch API to invoke it which allows us to fetch multiple price histories at once for a given span.
+Again, like the first service, we also have a batch API to invoke it, which allows us to fetch multiple historic price points at once for a given span.
 
 ```
 GET https://ccc-workshop-eu-functions.azurewebsites.net/api/asset/price/history?symbols=ADA,BTC&span=Day
@@ -78,9 +78,9 @@ GET https://ccc-workshop-eu-functions.azurewebsites.net/api/asset/price/history?
 ]
 ```
 
-## Planing ahead
+## Planning ahead
 
-Before we can start integrating these service we need to think about how we want to access this data. Since it is related to the price fetching it through the price would allow us an easy way to get the data.
+Before we can start integrating these services, we need to think about how we want to access this data. Since it is related to the price, fetching it through the `AssetPrice` type would allow us to get the data quickly.
 
 ```graphql
 query Asset {
@@ -128,7 +128,7 @@ type AssetPriceHistory {
 
 ## Typing external data structures
 
-In order to type external data we could use the GraphQL SDL like the above or the fluent type API. For the next example we will use the fluent API to type the data.
+We could use the GraphQL SDL like the above or the fluent type API to type external data. We chose the fluent API to type the data for the following example.
 
 Open the example project for this part.
 
@@ -164,11 +164,11 @@ public sealed class AssetPriceChangeType : ObjectType
 }
 ```
 
-The above type class defines the `AssetPriceChange` type. We also added a method `IsAssetPriceChangeType` that will check if a JSON structure is of this type. In this example we are checking the structure of the JSON element that represents our `AssetPrice`, if the the objects contains a property `percentageChange` we will assume it to be an `AssetPriceChange` object.
+The above type class defines the `AssetPriceChange` type. We also added a method, `IsAssetPriceChangeType`, to check if a JSON structure is of this type. In this example, we are checking the structure of the JSON element that represents our `AssetPriceChange`; if the object contains a property `percentageChange`, we will assume it to be an `AssetPriceChange` object.
 
-With the type in place we can start with fetching the data. Since we have a batching endpoint that allows us to fetch multiple price changes at once we can uset the batch **DataLoader** for this.
+With the type in place, we can start with fetching the data. Since we have a batching endpoint that allows us to fetch multiple price changes at once, we can use the batch **DataLoader**.
 
-Due to the fact that we have more than one REST service let us introduce a base class to have less duplicated code.
+Because we have more than one REST service, let us introduce a base class to have less code duplication.
 
 Create a new file `HttpBatchDataLoader` in the `DataLoader` directory and copy the following code into that file.
 
