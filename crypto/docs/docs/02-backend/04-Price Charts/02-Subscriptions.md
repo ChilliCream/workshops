@@ -1,5 +1,8 @@
 # Subscriptions
 
+In the previous part of this chapter we integrated historic data to enable complex price charts. In this part we want to go in the opposite direction by tapping into real-time price information that are coming from an external service.
+
+
 ```csharp
 builder.Services
     .AddGraphQLServer()
