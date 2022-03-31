@@ -792,4 +792,4 @@ query RefetchData {
 
 ## Summary
 
-In this part of 
+In this first part of our chapter to modify our backend to cater to the new use-cases that we face for our price charts we have learned how we can integrate data from different services. In most cases when you start with GraphQL you will not have the luxury to start fresh, often we have an existing infrastructure. With **HotChocolate** it is simple to integrate JSON data by just typing it, whether you prefer to use the GraphQL SDL or the fluent type API for this is up to you. Further we have leveraged **DataLoader** to interact with our REST services in a more efficient way. Last but not least we introduced refetchability to external data through the node interface.
