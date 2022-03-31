@@ -14,6 +14,10 @@ public sealed class AssetPriceChangeType : ObjectType
             .IsOfType(IsAssetPriceChangeType);
 
         descriptor
+            .ImplementsNode()
+            .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+
+        descriptor
             .Field("id")
             .Type<NonNullType<IdType>>()
             .FromJson(obj =>
@@ -51,6 +55,19 @@ public sealed class AssetPriceChangeType : ObjectType
         {
             JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
             return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+        }
+
+        public async Task<JsonElement?> ResolveNodeAsync(
+            string id,
+            [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+            AssetPriceChangeDataLoader dataLoader,
+            CancellationToken cancellationToken)
+        {
+            string[] parts = id.Split(':');
+            ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+            var key = new KeyAndSpan(parts[0], span);
+            setKey(key);
+            return await dataLoader.LoadAsync(key, cancellationToken);
         }
     }
 }

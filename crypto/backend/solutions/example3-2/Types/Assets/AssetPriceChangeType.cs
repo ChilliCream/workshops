@@ -14,6 +14,10 @@ public sealed class AssetPriceChangeType : ObjectType
             .IsOfType(IsAssetPriceChangeType);
 
         descriptor
+            .ImplementsNode()
+            .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+
+        descriptor
             .Field("id")
             .Type<NonNullType<IdType>>()
             .FromJson(obj =>
@@ -33,7 +37,7 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default, default!, default!, default))
+            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
     }
 
@@ -44,15 +48,26 @@ public sealed class AssetPriceChangeType : ObjectType
     private class Resolvers
     {
         public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] ChangeSpan span,
-            [Parent] JsonElement parent,
+            [ScopedState] KeyAndSpan keyAndSpan,
             AssetPriceHistoryDataLoader dataLoader,
             IResolverContext context,
             CancellationToken cancellationToken)
         {
-            string symbol = parent.GetProperty("symbol").GetString()!;
-            JsonElement history = await dataLoader.LoadAsync(new KeyAndSpan(symbol, span), cancellationToken);
+            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
             return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+        }
+
+        public async Task<JsonElement?> ResolveNodeAsync(
+            string id,
+            [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+            AssetPriceChangeDataLoader dataLoader,
+            CancellationToken cancellationToken)
+        {
+            string[] parts = id.Split(':');
+            ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+            var key = new KeyAndSpan(parts[0], span);
+            setKey(key);
+            return await dataLoader.LoadAsync(key, cancellationToken);
         }
     }
 }
