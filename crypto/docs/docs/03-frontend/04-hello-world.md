@@ -18,10 +18,18 @@ The most common way to start any programming course is to display the text "Hell
    export {default} from '@/scenes/Greetings';
    ```
 
-:::tip Use the `patch`
+:::tip Use the `patch` as a shorthand to reproduce the mentioned changes
 
 ```sh
-git apply playground/example1.patch
+git apply playground/example1-1.patch
+```
+
+:::
+
+:::tip Use `git stash` to save your local changes between excersises
+
+```sh
+git stash -u -- .
 ```
 
 :::
