@@ -61,6 +61,14 @@ Later we'll see some limitations of this approach and a better alternative that 
    }
    ```
 
+   :::tip Use `git apply` to see a solution
+
+   ```sh
+   git apply solutions/example1-2.patch
+   ```
+
+   :::
+
 1. See the results.
 
    :::note Ta-da!
