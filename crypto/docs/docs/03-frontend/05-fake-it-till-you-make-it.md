@@ -61,15 +61,15 @@ Later we'll see some limitations of this approach and a better alternative that 
    }
    ```
 
-   :::tip Use `git apply` to see a solution
+1. See the results.
+
+   :::tip Use the `patch` as a shorthand to reproduce the mentioned changes
 
    ```sh
-   git apply solutions/example1-2.patch
+   git apply playground/example1-2.patch
    ```
 
    :::
-
-1. See the results.
 
    :::note Ta-da!
 
@@ -248,7 +248,19 @@ Relay is comprised of three key pieces: a compiler (`relay-compiler`, which is u
 
 1. See the Results.
 
-The browser should automatically refresh and display the updated page.
+   :::tip Use the `patch` as a shorthand to reproduce the mentioned changes
+
+   ```sh
+   git apply playground/example1-3.patch
+   ```
+
+   :::
+
+   :::note Ta-da!
+
+   The browser should automatically refresh and display the updated page.
+
+   :::
 
 #### Behavior
 
@@ -293,6 +305,14 @@ Now we are able to pass the name into the query, allowing us to something like:
 <Greetings name="Luke" />
 ```
 
+:::tip Use the `patch` as a shorthand to reproduce the mentioned changes
+
+```sh
+git apply playground/example1-4.patch
+```
+
+:::
+
 Lets see what's going on here:
 
 - By default, when the component renders, Relay will fetch the data for this query (if it isn't already cached), and return it as a the result of the `useLazyLoadQuery` call.
@@ -300,22 +320,6 @@ Lets see what's going on here:
 - Note that if you re-render your component and pass different query variables than the ones originally used, it will cause the query to be fetched again with the new variables, and potentially re-render with different data.
 
 - Finally, make sure you're providing a Relay environment using a [Relay Environment Provider](https://relay.dev/docs/api-reference/relay-environment-provider/) at the root of your app before trying to render a query.
-
-:::tip Use `git stash` to save your local changes
-
-```sh
-git stash -u -- .
-```
-
-:::
-
-:::tip Use `git apply` to see a solution
-
-```sh
-git apply solutions/example1-5.patch
-```
-
-:::
 
 ### Recap
 
