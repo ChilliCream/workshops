@@ -33,7 +33,7 @@ index 0000000000000000000000000000000000000000..79a9efe2e921cfce4af279d686c6f599
 +      }
 +    `)
 +      .then((response) => {
-+        if (!mounted) {
++        if (mounted) {
 +          setGreetings(response.data.greetings);
 +        }
 +      })
