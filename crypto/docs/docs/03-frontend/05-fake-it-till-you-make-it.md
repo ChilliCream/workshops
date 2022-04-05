@@ -301,8 +301,44 @@ export default function Greetings({name}) {
 
 Now we are able to pass the name into the query, allowing us to something like:
 
-```jsx
-<Greetings name="Luke" />
+```jsx title="@/pages/index.js"
+import {Environment, Network, RecordSource, Store} from 'relay-runtime';
+import {RelayEnvironmentProvider} from 'react-relay';
+import {Suspense} from 'react';
+
+import {default as Greetings} from '@/scenes/Greetings';
+
+const fetchGraphQL = async (query, variables) => {
+  const response = await fetch('http://localhost:5000/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  });
+
+  return await response.json();
+};
+
+const fetchFn = (params, variables) => fetchGraphQL(params.text, variables);
+
+const environment = new Environment({
+  network: Network.create(fetchFn),
+  store: new Store(new RecordSource()),
+});
+
+export default function Main() {
+  return (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback="Loading...">
+        <Greetings name="Luke" />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  );
+}
 ```
 
 :::tip Use the `patch` as a shorthand to reproduce the mentioned changes
