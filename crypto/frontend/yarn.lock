@@ -2468,8 +2468,8 @@ __metadata:
     react: experimental
     react-dom: experimental
     react-dropzone: latest
-    react-relay: latest
-    relay-compiler: latest
+    react-relay: main
+    relay-compiler: main
     subscriptions-transport-ws: latest
   languageName: unknown
   linkType: soft
@@ -5704,18 +5704,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-relay@npm:latest":
-  version: 13.2.0
-  resolution: "react-relay@npm:13.2.0"
+"react-relay@npm:main":
+  version: 0.0.0-main-abae8d71
+  resolution: "react-relay@npm:0.0.0-main-abae8d71"
   dependencies:
     "@babel/runtime": ^7.0.0
     fbjs: ^3.0.2
     invariant: ^2.2.4
     nullthrows: ^1.1.1
-    relay-runtime: 13.2.0
+    relay-runtime: 0.0.0-main-abae8d71
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18
-  checksum: 2fcf09cc9f7799c2c27f8a931e103651f26077088320e994e17171ffd18a249a5a64e0d314330497e3ed0530579b1987506df89fd5fb4e391d4e4bc4b66312ee
+  checksum: 4f558688f405ced6c184bd88b027f05e3efcdc5d4c0c9e2c410ba0e6d7927a0156569f0656aae8249d67506438045b2074d0647791d5a0d5996b86340f05812a
   languageName: node
   linkType: hard
 
@@ -5832,23 +5832,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"relay-compiler@npm:latest":
-  version: 13.2.0
-  resolution: "relay-compiler@npm:13.2.0"
+"relay-compiler@npm:main":
+  version: 0.0.0-main-abae8d71
+  resolution: "relay-compiler@npm:0.0.0-main-abae8d71"
   bin:
     relay-compiler: cli.js
-  checksum: 54adaf22ef408c7452ae6a27538730fe30f47449a2c129e26fc0b8667abc3faba7862b386d5658b0c5dcfe1a9bc3bcf400ede6f0fdd07a6c24366a4b4a4e0739
+  checksum: c61aa006eed1b5f4999b1ae2689ee601885e4b6205cdbfcd87142f473900c753447476a138ff05bf33ebdcc5d027d289a572a317b42e410b474cb5f66ff073a4
   languageName: node
   linkType: hard
 
-"relay-runtime@npm:13.2.0":
-  version: 13.2.0
-  resolution: "relay-runtime@npm:13.2.0"
+"relay-runtime@npm:0.0.0-main-abae8d71":
+  version: 0.0.0-main-abae8d71
+  resolution: "relay-runtime@npm:0.0.0-main-abae8d71"
   dependencies:
     "@babel/runtime": ^7.0.0
     fbjs: ^3.0.2
     invariant: ^2.2.4
-  checksum: 4e03d5d3fabb12bd2e5f29da4e4664336af4077b215893e5e6cf4256e4b8f56a6ad1693b75465f1f6118bc682456714404e3f0fcdd51b5b6433a2ddd63ba8160
+  checksum: bc9b8432dccbb8c72dc250e9f8e2342b01fef2f0f7d4da6ffc0f01137fec79051850956a72d7446bc58daae40d0d410aa5fc399e746dbfb7e98afa8de6d1e3bb
   languageName: node
   linkType: hard
 

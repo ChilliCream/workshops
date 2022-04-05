@@ -109,10 +109,9 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..7c5956fe3651dd396d39459bcc7415df2c4d269b
 --- /dev/null
 +++ b/crypto/frontend/generated/GreetingsQuery.graphql.js
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,51 @@
 +/**
-+ * @generated SignedSource<<52c3f7b1fccc07efdf09533ea8dd6031>>
-+ * @flow
++ * @generated SignedSource<<a2de065d887a05e8af1910bdf9c3b51d>>
 + * @lightSyntaxTransform
 + * @nogrep
 + */
@@ -121,19 +120,8 @@ index 0000000000000000000000000000000000000000..7c5956fe3651dd396d39459bcc7415df
 +
 +'use strict';
 +
-+/*::
-+import type { ConcreteRequest, Query } from 'relay-runtime';
-+export type GreetingsQuery$variables = {||};
-+export type GreetingsQuery$data = {|
-+  +greetings: string,
-+|};
-+export type GreetingsQuery = {|
-+  variables: GreetingsQuery$variables,
-+  response: GreetingsQuery$data,
-+|};
-+*/
 +
-+var node/*: ConcreteRequest*/ = (function(){
++var node = (function(){
 +var v0 = [
 +  {
 +    "alias": null,
@@ -171,8 +159,7 @@ index 0000000000000000000000000000000000000000..7c5956fe3651dd396d39459bcc7415df
 +};
 +})();
 +
-+(node/*: any*/).hash = "613f3ef79740dc8be3c71bb5b04d5e2f";
-+
++node.hash = "613f3ef79740dc8be3c71bb5b04d5e2f";
 +export default node;
 diff --git a/crypto/frontend/schema/server.graphql b/crypto/frontend/schema/server.graphql
 new file mode 100644

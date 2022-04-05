@@ -31,7 +31,7 @@
     "react": "experimental",
     "react-dom": "experimental",
     "react-dropzone": "latest",
-    "react-relay": "latest",
+    "react-relay": "main",
     "subscriptions-transport-ws": "latest"
   },
   "devDependencies": {
@@ -42,7 +42,7 @@
     "eslint-config-next": "latest",
     "graphql": "latest",
     "prettier": "latest",
-    "relay-compiler": "latest"
+    "relay-compiler": "main"
   },
   "scripts": {
     "build": "next build",

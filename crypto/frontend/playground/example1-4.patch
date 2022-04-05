@@ -114,10 +114,9 @@ diff --git a/crypto/frontend/generated/GreetingsQuery.graphql.js b/crypto/fronte
 index 0000000000000000000000000000000000000000..3c72a0333afe52eb358c94e59fc45d5efe9e6a40 100644
 --- a/crypto/frontend/generated/GreetingsQuery.graphql.js
 +++ b/crypto/frontend/generated/GreetingsQuery.graphql.js
-@@ -1,64 +1,79 @@
+@@ -1,51 +1,64 @@
 -/**
-- * @generated SignedSource<<52c3f7b1fccc07efdf09533ea8dd6031>>
-- * @flow
+- * @generated SignedSource<<a2de065d887a05e8af1910bdf9c3b51d>>
 - * @lightSyntaxTransform
 - * @nogrep
 - */
@@ -126,19 +125,8 @@ index 0000000000000000000000000000000000000000..3c72a0333afe52eb358c94e59fc45d5e
 -
 -'use strict';
 -
--/*::
--import type { ConcreteRequest, Query } from 'relay-runtime';
--export type GreetingsQuery$variables = {||};
--export type GreetingsQuery$data = {|
--  +greetings: string,
--|};
--export type GreetingsQuery = {|
--  variables: GreetingsQuery$variables,
--  response: GreetingsQuery$data,
--|};
--*/
 -
--var node/*: ConcreteRequest*/ = (function(){
+-var node = (function(){
 -var v0 = [
 -  {
 -    "alias": null,
@@ -176,12 +164,10 @@ index 0000000000000000000000000000000000000000..3c72a0333afe52eb358c94e59fc45d5e
 -};
 -})();
 -
--(node/*: any*/).hash = "613f3ef79740dc8be3c71bb5b04d5e2f";
--
+-node.hash = "613f3ef79740dc8be3c71bb5b04d5e2f";
 -export default node;
 +/**
-+ * @generated SignedSource<<74a5db1e4460028532a7e69919b70de1>>
-+ * @flow
++ * @generated SignedSource<<13cc28d6173216c5c2051e50cb5b41e1>>
 + * @lightSyntaxTransform
 + * @nogrep
 + */
@@ -190,21 +176,8 @@ index 0000000000000000000000000000000000000000..3c72a0333afe52eb358c94e59fc45d5e
 +
 +'use strict';
 +
-+/*::
-+import type { ConcreteRequest, Query } from 'relay-runtime';
-+export type GreetingsQuery$variables = {|
-+  name: string,
-+|};
-+export type GreetingsQuery$data = {|
-+  +greetings: string,
-+|};
-+export type GreetingsQuery = {|
-+  variables: GreetingsQuery$variables,
-+  response: GreetingsQuery$data,
-+|};
-+*/
 +
-+var node/*: ConcreteRequest*/ = (function(){
++var node = (function(){
 +var v0 = [
 +  {
 +    "defaultValue": null,
@@ -255,6 +228,5 @@ index 0000000000000000000000000000000000000000..3c72a0333afe52eb358c94e59fc45d5e
 +};
 +})();
 +
-+(node/*: any*/).hash = "8100c9379a13b8b002da3186b76f05d6";
-+
++node.hash = "8100c9379a13b8b002da3186b76f05d6";
 +export default node;

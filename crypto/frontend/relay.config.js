@@ -12,7 +12,7 @@ module.exports = {
   },
   eagerEsModules: true,
   noFutureProofEnums: false,
-  language: 'flow',
+  language: 'javascript',
 
   // @see https://relay.dev/docs/guides/type-emission/#single-artifact-directory
   artifactDirectory: 'generated',
