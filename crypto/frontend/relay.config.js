@@ -12,7 +12,8 @@ module.exports = {
   },
   eagerEsModules: true,
   noFutureProofEnums: false,
-  language: 'javascript',
+  // @see https://github.com/vercel/next.js/discussions/35904
+  language: 'flow',
 
   // @see https://relay.dev/docs/guides/type-emission/#single-artifact-directory
   artifactDirectory: 'generated',
