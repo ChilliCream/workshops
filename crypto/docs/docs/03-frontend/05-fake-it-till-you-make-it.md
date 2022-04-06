@@ -359,4 +359,4 @@ Lets see what's going on here:
 
 ### Recap
 
-We explored how to get started with Relay, although in a naive way, there is nothing wrong about it, but we will continue introducing other concepts and possibilities.
+We have explored how to get started with Relay, although in a naive way, anyway we will continue introducing other concepts and possibilities.
