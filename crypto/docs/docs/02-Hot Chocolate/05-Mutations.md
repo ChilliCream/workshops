@@ -6,7 +6,7 @@ Everything we have done so far was related to querying data. To enable the new w
 
 ## Operation Structure
 
-Lets first have a look the the structure of a GraphQL query.
+Let's first have a look at the structure of a GraphQL query.
 
 ![GraphQL Query Structure](images/query-structure.png)
 
@@ -18,18 +18,18 @@ query GetAssets($first: Int) {
 }
 ```
 
-So, when we register the query type in **Hot Chocolate** we are specifying the type that represents the `query` operation type.
+So, when we register the query type in **Hot Chocolate**, we specify the type that represents the `query` operation.
 
 ```csharp
 builder.Services.AddQueryType<Query>();
 ```
 
-A mutation is specified almost the same than a query in the GraphQL syntax.
+A mutation is specified almost as a query in the GraphQL syntax.
 
 **DO NOT FORGET TO SWAP IMAGE**
 ![GraphQL Mutation Structure](images/mutation-structure.png)
 
-The first striking difference is that a mutation starts with the keyword `mutation`. Like for the query type we need to register in **Hot Chocolate** a mutation type.
+The first striking difference is that a mutation starts with the keyword `mutation`. Like with the query type, we need to register a mutation type in **Hot Chocolate**.
 
 ```csharp
 builder.Services
@@ -38,20 +38,20 @@ builder.Services
 ```
 
 :::note
-Only the 'query' type is obligatory in order to have a spec compliant schema. The 'mutation' and 'subscription' types are optional.
+Only the `query` type is obligatory to have a spec-compliant schema. The `mutation` and `subscription` types are optional.
 :::
 
 :::note
-By convention the root types are named `Query`, `Mutation` and `Subscription` in **Hot Chocolate**.
+By convention, the root types are named `Query`, `Mutation` and `Subscription` in **Hot Chocolate**.
 
-There are variants in the wild, some implementations use `QueryRoot`, `MutationRoot` and `SubscriptionRoot` as their default name.
+There are other variants in the wild, with some implementations using `QueryRoot`, `MutationRoot`, and `SubscriptionRoot` as their default names.
 
-In general you are free to pick any name for each operation type.
+You are free to pick any name for each operation type.
 :::
 
-Second important difference between a query and a mutation is that in a query everything is a query. Every field is side-effect free and by default parallel executable.
+The second important difference between a query and a mutation is that everything is a query in a query. Every field in a query is side-effect free and, by default, parallel executable.
 
-In mutation only fields in the root selection set are mutations. Mutation fields are executed sequentially since they cause side-effects on our system.
+In a mutation, only fields in the root selection set represent mutations. Mutation fields are executed sequentially since they cause side effects on our system.
 
 ```graphql
 mutation ModifyWatchlist($input: AddToWatchlistInput!) {
@@ -62,9 +62,9 @@ mutation ModifyWatchlist($input: AddToWatchlistInput!) {
 }
 ```
 
-Everything that is within the selection set of a mutation field is essentially the  result of the mutation. In general we want to make the effected data available that changed through the mutation.
+Everything within the selection set of a mutation field is essentially the result of the mutation. In general, we want to make the data available to the user that was affected by the mutation.
 
-If we for instance would create and object we might wand to get the server generated id in return. 
+If we, for instance, would create an object, we might want to resolve the server-generated identifer.
 
 ```graphql
 mutation CreateBook($input: CreateBookInput!) {
