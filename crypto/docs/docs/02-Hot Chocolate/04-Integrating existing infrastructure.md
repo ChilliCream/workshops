@@ -129,7 +129,7 @@ We could use the GraphQL SDL like the above or the fluent type API to type exter
 Open the example project for this part.
 
 ```
-code workshops/crypto/backend/playground/example3-1
+code workshops/crypto/backend/playground/example3
 ```
 
 Create a new file `AssetPriceChangeType.cs` in the `Types/Assets` directory.
