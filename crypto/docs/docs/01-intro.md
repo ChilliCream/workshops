@@ -1,4 +1,4 @@
-# Intro
+# Introduction
 
 _Building Modern Applications with GraphQL_
 
@@ -8,25 +8,106 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 ## Day 1: GraphQL Basics
 
-- What is GraphQL
-- Migrating REST applications to GraphQL
-- Wrapping REST APIs with GraphQL
-- Transitioning to GraphQL native
-- GraphQL server ecosystem in .NET
-- GraphQL client ecosystem in .NET and JavaScript (Apollo vs Relay)
-- Exploring Meta's Relay client?
-- Query and Mutation
-- Fragments and Composability
-- GraphQL Syntax
-- Schema best practices
+**09:00 Hello, Intro, Tech Check**
 
-## Day 2: Putting GraphQL Production
+- Introduction
+- What is GraphQL?
 
-- GraphQL Subscriptions
+**09:50 BREAK (10 minutes)**
+
+**10:00 Hello, World!**
+
+**10:50 BREAK (20 minutes)**
+
+**11:10 Building a foundation.**
+
+- Lists
+- Pagination
+- DataLoader
+- Object Identification
+
+**12:00 BREAK (10 minutes)**
+
+**12:10 Building with components.**
+
+- Store Concepts
+- Fragments
+- Collocation & Aggregation
+
+**13:00 LUNCH**
+
+**14:00 Rethinking Data Fetching.**
+
+- Field Middleware
+- Exposing sorting and filtering to the consumer.
 - Defer and Stream
-- Schema Federation
-- Putting GraphQL Production
-- Persisted Queries
+
+**14:50 BREAK (10 minutes)**
+
+**15:00 React Suspense - Part 1**
+
+- Filtering
+- Sorting
+- Pagination
+- Defer and Stream
+
+**15:50 BREAK (20 minutes)**
+
+**16:10 React Suspense - Part 2**
+
+17:00 FINISH
+
+## Day 2: GraphQL in Depth
+
+**09:00 Integrating existing infrastructure.**
+
+- Wrapping REST APIs with GraphQL
+- Migrating REST applications to GraphQL
+
+**09:50 BREAK (10 minutes)**
+
+**10:00 Real-Time Data**
+
+- Exploring data fetching approaches
+- GraphQL Subscriptions
+
+**10:50 BREAK (20 minutes)**
+
+**11:10 Mutating Data**
+
+- GraphQL Mutations
+- Optimistic Updates
+
+**12:00 BREAK (10 minutes)**
+
+**12:10 Polishing**
+
+- Advanced Subscription Concepts
+
+**13:00 LUNCH**
+
+**14:00 GraphQL in Production - Part 1**
+
+- Persisted Queries with Relay
+- Automatic Persisted Queries
+- Type Emission
+- Client Schema Extensions
+- Relay Developer Tools
+
+**14:50 BREAK (10 minutes)**
+
+**15:00 GraphQL in Production - Part 1**
+
+- GraphQL Observability
 - Security Concepts
-- Observability with Open Telemetry
-- Testing Strategies
+- Request Pipeline Exploration
+
+**15:50 BREAK (20 minutes)**
+
+**16:10 Looking ahead.**
+
+- The future of GraphQL
+- Question and Answer
+- Feedback
+
+**17:00 FINISH**
