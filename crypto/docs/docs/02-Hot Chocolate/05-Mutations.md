@@ -90,3 +90,11 @@ https://spec.graphql.org/October2021/#sec-Mutation
 https://spec.graphql.org/October2021/#sec-Normal-and-Serial-Execution
 :::
 
+## Exercise
+
+With the introduction to mutations out of the way lets create our first mutation.
+
+
+
+## Summary
+
