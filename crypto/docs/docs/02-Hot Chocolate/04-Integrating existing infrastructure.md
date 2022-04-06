@@ -1,13 +1,9 @@
 # Integrating existing infrastructure
 
-Until now, we have provided data for the ticker component of our GUI. Further, we have used the same data to create some asset list components to show the daily losers and gainers. The following chapter will focus on historical data and real-time data.
+Until now, we have provided data for the ticker component of our GUI. Further, we have used the same data to create some asset list components to show the daily losers and gainers. We now want to provide historical price data through our GraphQL server so that we can build a price chart component in our GUI.
 
-During this chapter, we will cover the following topics:
-
-- Integrating existing infrastructure like REST services
-- Tapping into external systems to yield real-time data
-
-This first part will focus on integrating our existing REST services that provide historical price data.
+The historical price data are available through REST services that represent our existing infrastructure. 
+In this chapter we will focus on existing REST services with our new GraphQL server to provide historical price data.
 
 ## Infrastructure
 
@@ -794,4 +790,4 @@ query RefetchData {
 
 ## Summary
 
-In this first part of our chapter, to modify our backend to cater to the new use-cases that we face for our price charts, we have learned how to integrate data from different services. When you start with GraphQL, you will not have the luxury to start fresh; often, we have an existing infrastructure. With **HotChocolate**, it is simple to integrate JSON data by just typing it. Whether you prefer to use the GraphQL SDL or the fluent type API is up to you. Further, we have leveraged **DataLoader** to interact with our REST services more efficiently. Last but not least, we introduced refetchability to external data through the node interface.
+In this chapter, we modify our backend to cater to the new use-cases that we face for our price charts, we have learned how to integrate data from different services. When you start with GraphQL, you will not have the luxury to start fresh; often, we have an existing infrastructure. With **HotChocolate**, it is simple to integrate JSON data by just typing it. Whether you prefer to use the GraphQL SDL or the fluent type API is up to you. Further, we have leveraged **DataLoader** to interact with our REST services more efficiently. Last but not least, we introduced refetchability to external data through the node interface.
