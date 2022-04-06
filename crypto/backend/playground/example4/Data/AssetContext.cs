@@ -22,4 +22,6 @@ public class AssetContext : DbContext
     public DbSet<Asset> Assets => Set<Asset>();
 
     public DbSet<AssetPrice> AssetPrices => Set<AssetPrice>();
+
+    public DbSet<Watchlist> Watchlists => Set<Watchlist>();
 }
