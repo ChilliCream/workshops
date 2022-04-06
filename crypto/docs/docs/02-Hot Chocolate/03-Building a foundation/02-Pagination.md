@@ -4,7 +4,7 @@ In the first part, we exposed the `Asset` entity through GraphQL. Fetching the `
  
 With **Hot Chocolate**, we can use the default paging middleware, which will rewrite the queryable to only fetch a segment of the asset table.
 
-<img src="/img/backend/example2-part1-middleware.png" width="500" />
+<img src="/img/backend/example2-part1-middleware.png" width="300" />
 
 To use the paging middleware, annotate your `GetAssets` resolver with the `UsePagingAttribute`.
 

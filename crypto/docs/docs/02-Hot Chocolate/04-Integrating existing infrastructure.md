@@ -1,4 +1,4 @@
-# REST Endpoints
+# Integrating existing infrastructure
 
 Until now, we have provided data for the ticker component of our GUI. Further, we have used the same data to create some asset list components to show the daily losers and gainers. The following chapter will focus on historical data and real-time data.
 
@@ -368,7 +368,7 @@ dotnet run
 
 Open `http://localhost:5000/graphql` and refresh the schema.
 
-![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
+![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
 Execute the following query to see if we have integrated our service correctly. 
 
@@ -599,7 +599,7 @@ With this done, we have integrated both services with our GraphQL server and sho
 
 Also, we are using paging in a custom way by using the `ApplyCursorPaginationAsync` extension method on top of our JSON result object.
 
-![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
+![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
 Execute the following query to see if we have integrated our service correctly. 
 
@@ -761,7 +761,7 @@ Let's test our server again.
 dotnet run
 ```
 
-![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
+![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
 Execute the following query to see if we have integrated our service correctly. 
 
