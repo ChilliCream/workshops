@@ -26,4 +26,10 @@ public sealed class UserNode
 
         return $"{scheme}://{host}/images/{user.ImageKey}";
     }
+
+    public Task<Watchlist?> GetWatchlistAsync(
+        [GlobalState] string username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
 }

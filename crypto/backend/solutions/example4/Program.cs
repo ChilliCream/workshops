@@ -14,10 +14,12 @@ builder.Services
 builder.Services
     .AddGraphQLServer()
     .AddQueryType()
+    .AddMutationType()
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
     .AddFiltering()
     .AddSorting()
+    .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 
 var app = builder.Build();

@@ -18,6 +18,7 @@ builder.Services
     .AddGlobalObjectIdentification()
     .AddFiltering()
     .AddSorting()
+    .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 
 var app = builder.Build();
