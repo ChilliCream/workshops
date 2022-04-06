@@ -170,11 +170,8 @@ dotnet run
 
 Open `http://localhost:5000/graphql` and refresh the schema.
 
-![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
+![Banana Cake Pop - Refresh Schema](images/example2-part1-bcp1.png)
 
 Next, lets head over to the `Schema Reference` tab to explore.
 
-
-
 ## Summary
-
