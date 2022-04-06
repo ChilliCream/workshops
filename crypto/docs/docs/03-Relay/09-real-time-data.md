@@ -1,6 +1,8 @@
-# Subscriptions
+# Real-Time Data
 
-GraphQL Subscriptions (GQLS) are a mechanism which allow clients to subscribe to changes in a piece of data from the server, and get notified whenever that data changes.
+If we want to keep our data up to date with the latest version from the server, the first thing to consider is if it appropriate to use any real-time features, which can make it easier to automatically keep the data up to date without manually refreshing (aka "refreshing a query") the data periodically.
+
+[GraphQL Subscriptions (GQLS)](https://relay.dev/docs/guided-tour/updating-data/graphql-subscriptions) are a mechanism which allow clients to subscribe to changes in a piece of data from the server, and get notified whenever that data changes.
 
 ## Writing Subscriptions
 
