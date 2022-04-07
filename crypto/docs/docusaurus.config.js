@@ -14,7 +14,7 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'ChilliCream',
-  projectName: 'crypto-workshop', // Usually your repo name.
+  projectName: 'crypto-workshop',
 
   presets: [
     [
