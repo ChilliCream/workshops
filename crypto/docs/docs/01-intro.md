@@ -35,6 +35,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Fragments
 - Store Concepts
 - Loading States with Suspense
+- Error States with ErrorBoundaries
 
 **13:00 LUNCH**
 
