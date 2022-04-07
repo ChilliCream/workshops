@@ -30,9 +30,10 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **12:10 Building with components**
 
-- Store Concepts
-- Fragments
 - Collocation & Aggregation
+- Data Masking
+- Fragments
+- Store Concepts
 - Loading States with Suspense
 
 **13:00 LUNCH**
