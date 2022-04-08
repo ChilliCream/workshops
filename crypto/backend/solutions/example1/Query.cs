@@ -2,6 +2,6 @@
 
 public class Query
 {
-    public string Greetings(string name = "Luke")
+    public string Greetings(string name = "World")
         => $"Hello, {name}!";
 }
