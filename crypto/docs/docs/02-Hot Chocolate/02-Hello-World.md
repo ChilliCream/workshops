@@ -120,7 +120,37 @@ code .
 
 ![Visual Studio Code ](images/code-1.png)
 
+Our GraphQL server has 2 code files `Program.cs` and `Query.cs`. Head over to the `Program.cs` first.
+
 ![Visual Studio Code - Program.cs](images/code-2.png)
+
+The `Program.cs` contains the server configuration. We have to important things here.
+
+```csharp
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType<Query>()
+```
+
+The above piece of code registers a GraphQL server as a service with our dependency injection. The `AddGraphQLServer` returns a GraphQL Server builder and allows us to chain in configurations. 
+
+:::note
+
+You can host multiple GraphQL servers by naming them.
+
+```csharp
+builder.Services
+    .AddGraphQLServer("Schema1")
+    .AddQueryType<Query>()
+
+builder.Services
+    .AddGraphQLServer("Schema2")
+    .AddQueryType<Query>()
+```
+
+:::
+
+`AddQueryType<Query>` specifies that the class `Query` represents our query operation type in GraphQL. It is mandatory to provide a query operation type.
 
 ![Visual Studio Code - Query.cs](images/code-3.png)
 
@@ -138,7 +168,11 @@ public class Query
 dotnet run
 ```
 
+Now, let us head over 
+
 ![Banana Cake Pop - Operations](images/bcp-7.png)
+
+
 
 ![Banana Cake Pop - Operations](images/bcp-8.png)
 
