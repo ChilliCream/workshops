@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'workshop',
   tagline: 'Building Modern Applications with GraphQL',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://ccc-workshop-eu-web-docs.azurewebsites.net',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
