@@ -1,0 +1,42 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - crypto/docs
+
+pr: none
+
+pool:
+  vmImage: "ubuntu-20.04"
+
+steps:
+  - task: DockerInstaller@0
+    displayName: "Install Docker"
+    inputs:
+      dockerVersion: "17.09.0-ce"
+
+  - task: NodeTool@0
+    displayName: "Install Node.js"
+    inputs:
+      versionSpec: "14.x"
+      checkLatest: true
+
+  - script: "yarn --immutable --network-timeout 100000"
+    displayName: "Install Packages"
+    workingDirectory: "crypto/docs"
+
+  - script: "yarn build"
+    displayName: "Build Website"
+    workingDirectory: "crypto/docs"
+
+  - task: Docker@2
+    displayName: "Build WebSite Container"
+    inputs:
+      containerRegistry: "$(container-registry)"
+      repository: "ccc-workshop-eu-graphql"
+      command: "buildAndPush"
+      Dockerfile: "crypto/docs/dockerfile"
+      buildContext: "crypto/docs"
