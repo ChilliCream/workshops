@@ -2,13 +2,6 @@
 
 In this chapter we will create a basic GraphQL server with Hot Chocolate and write our first GraphQL query to ensure that our server works properly.
 
-## Prerequisites
-
-Before we can start lets ensure that out computer is setup properly.
-
-1. Install .NET 6 (https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-2. Install Visual Studio Code (https://code.visualstudio.com)
-
 ## Creating a GraphQL Server from Template
 
 First lets create a directory where we can put our GraphQL server.
