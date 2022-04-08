@@ -1,4 +1,4 @@
-# Hello, world!
+# Hello, World!
 
 In this chapter we will create a basic GraphQL server with Hot Chocolate and write our first GraphQL query to ensure that our server works properly.
 
@@ -145,27 +145,49 @@ builder.Services
 
 `AddQueryType<Query>` specifies that the class `Query` represents our query operation type in GraphQL. It is mandatory to provide a query operation type.
 
+Lets head over to our `Query.cs` and explore it a bit.
+
 ![Visual Studio Code - Query.cs](images/code-3.png)
+
+The current class `Query` has a single resolver `GetBook` which returns a book object. **Hot Chocolate** traverses the type tree and automatically infers all types that are connected to the `Query` type.
+
+**Hot Chocolate** also applies GraphQL naming conventions. In this particular case we will remove the verb 'Get' from the method and also adjust the casing to be **camelCase**.
+
+OK, lets delete all the source code in this file and replace it with the source code below.
 
 ```csharp title="/Query.cs"
 namespace BasicServer;
 
 public class Query
 {
-    public string Greetings(string name = "Luke")
+    public string Greetings(string name = "World")
         => $"Hello, {name}!";
 }
 ```
+
+Our new `Query` class has a single resolver called `Greetings`. Since we do not have the `Get` verb in this case all we do is adjusting to **camelCase**. Our new `Query` type will look like the following:
+
+```graphql
+type Query {
+  greetings(name: String! = "World") : String!
+}
+```
+
+The nice thing is that **Hot Chocolate** infers the correct nullability, arguments and also the default value from the .NET representation.
+
+Start your server again.
 
 ```bash
 dotnet run
 ```
 
-Now, let us head over 
+Now, let us head over to http://localhost:5000/graphql and refresh the schema.
 
 ![Banana Cake Pop - Operations](images/bcp-7.png)
 
+You will see that our previous GraphQL query now is marked with some squiggles telling us that the query is no longer valid. This is because we modified our schema.
 
+The 
 
 ![Banana Cake Pop - Operations](images/bcp-8.png)
 
@@ -178,7 +200,7 @@ query {
 ```json
 {
   "data": {
-    "greetings": "Hello, Luke!"
+    "greetings": "Hello, World!"
   }
 }
 ```
