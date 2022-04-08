@@ -17,6 +17,11 @@ builder.Services
     .AddMutationType()
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
+    .AddMutationConventions(
+        new MutationConventionOptions
+        {
+            InputArgumentName = "{MutationName}Input"
+        })
     .AddFiltering()
     .AddSorting()
     .AddInMemorySubscriptions()

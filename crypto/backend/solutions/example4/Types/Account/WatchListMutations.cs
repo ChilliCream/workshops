@@ -1,9 +1,13 @@
+using Demo.Types.Errors;
+
 namespace Demo.Types.Account;
 
 [ExtendObjectType(OperationTypeNames.Mutation)]
 public sealed class WatchlistMutations
 {
-    public async Task<Watchlist> AddAssetToWatchlistAsync(
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -11,12 +15,12 @@ public sealed class WatchlistMutations
     {
         if (username is null)
         {
-            throw new GraphQLException("Not Authorized.");
+            throw new NotAuthenticatedException(Constants.Watchlists);
         }
 
         if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
         {
-            throw new GraphQLException("Symbol unknown.");
+            throw new UnknownAssetException(symbol);
         }
 
         Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
@@ -31,6 +35,6 @@ public sealed class WatchlistMutations
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return watchlist;
+        return new AddAssetToWatchlistPayload(symbol, watchlist);
     }
 }
