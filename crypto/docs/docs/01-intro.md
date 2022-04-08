@@ -15,11 +15,11 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **09:50 BREAK (10 minutes)**
 
-**10:00 Hello, World!**
+**10:00 Hello, world!**
 
 **10:50 BREAK (20 minutes)**
 
-**11:10 Building a foundation.**
+**11:10 Building a foundation**
 
 - Lists
 - Pagination
@@ -28,23 +28,26 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **12:00 BREAK (10 minutes)**
 
-**12:10 Building with components.**
+**12:10 Building with components**
 
-- Store Concepts
-- Fragments
 - Collocation & Aggregation
+- Data Masking
+- Fragments
+- Store Concepts
+- Loading States with Suspense
+- Error States with ErrorBoundaries
 
 **13:00 LUNCH**
 
-**14:00 Rethinking Data Fetching.**
+**14:00 Rethinking Data Fetching**
 
 - Field Middleware
-- Exposing sorting and filtering to the consumer.
+- Exposing sorting and filtering to the consumer
 - Defer and Stream
 
 **14:50 BREAK (10 minutes)**
 
-**15:00 React Suspense - Part 1**
+**15:00 On-demand Data - Part 1**
 
 - Filtering
 - Sorting
@@ -53,13 +56,16 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **15:50 BREAK (20 minutes)**
 
-**16:10 React Suspense - Part 2**
+**16:10 On-demand Data - Part 2**
 
-17:00 FINISH
+- Suspense and Transitions
+- Advanced Composition
+
+**17:00 FINISH**
 
 ## Day 2: GraphQL in Depth
 
-**09:00 Integrating existing infrastructure.**
+**09:00 Integrating existing infrastructure**
 
 - Wrapping REST APIs with GraphQL
 - Migrating REST applications to GraphQL
@@ -104,10 +110,10 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **15:50 BREAK (20 minutes)**
 
-**16:10 Looking ahead.**
+**16:10 Looking ahead**
 
 - The future of GraphQL
-- Question and Answer
+- Questions and Answers
 - Feedback
 
 **17:00 FINISH**

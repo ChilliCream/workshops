@@ -359,4 +359,10 @@ Lets see what's going on here:
 
 ### Recap
 
-We have explored how to get started with Relay, although in a naive way, anyway we will continue introducing other concepts and possibilities.
+We have explored how to get started with Relay, although a bit naive, anyway we will continue introducing other concepts and possibilities.
+
+## One more thing
+
+In the example above we can see that `RelayEnvironmentProvider` is used just for a single route, but usually, a _single_ instance of this component should be rendered at the very root of the application, in order to set the Relay environment for the whole application. Therefore, we will move this context provider to `/pages/_app.js`.
+
+Another change is to enhance the [Network Layer](https://relay.dev/docs/next/guides/network-layer/) to handle authentication, multipart responses, file upload and subscriptions. A more extensive solution will be located into the file `/client/index.js`. Even so, it is possible and recommended to make it extensible with a middleware system to enable other features.

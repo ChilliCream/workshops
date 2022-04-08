@@ -1,4 +1,4 @@
-# Introduction
+# Preparations
 
 Thousands of products now use GraphQL APIs. Even companies like Github have a public GraphQL API.
 

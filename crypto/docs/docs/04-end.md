@@ -1,5 +1,5 @@
 # End
 
-- Looking ahead
-- Q&A
+- The future of GraphQL
+- Questions and Answers
 - Feedback
