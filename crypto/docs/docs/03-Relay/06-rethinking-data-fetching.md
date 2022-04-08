@@ -209,6 +209,24 @@ We've seen that Relay ensures that the data for a view is fetched all at once. B
 
 Relay only allows components to access data they specifically ask for in GraphQL fragments, and nothing more. So if one component queries for `foo`, and another for `bar`, each can see _only_ the field that they asked for. In fact, components can't even see the data requested by their _children_: that would also break encapsulation.
 
+:::info
+
+If we look at the example above, we can get the value for `symbol` because it is explicitly defined within the fragment, but it will not be possible to access to `color` that was defined in the `DashboardTickerItemFragment_asset` fragment.
+
+```jsx title="@/scenes/dashboard/DashboardTicker.js"
+// ...
+return (
+  <Ticker>
+    {assets?.map((asset) => (
+      <DashboardTickerItem key={asset.symbol} fragmentRef={asset} />
+    ))}
+  </Ticker>
+);
+// ...
+```
+
+:::
+
 ## Refreshing
 
 When referring to "refreshing a query", we mean fetching the exact same data that was originally rendered by the query, in order to get the most up-to-date version of that data from the server.

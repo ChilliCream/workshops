@@ -74,7 +74,7 @@ export default memo(function ScreenerList({fragmentRef}) {
 });
 ```
 
-### Behavior
+Let's distill what's going on here:
 
 - The component is automatically subscribed to updates to the fragment data: if the data required is updated anywhere in the app (e.g. via fetching new data, or mutating existing data), the component will automatically re-render with the latest updated data.
 
@@ -149,3 +149,21 @@ const {data, hasNext, loadNext, isLoadingNext, refetch} = usePaginationFragment(
 
 refetch({where: {symbol: {contains: 'BT'}}, order: {symbol: 'ASC'}});
 ```
+
+Let's distill what's going on here:
+
+- Calling `refetch` and passing a new set of variables will fetch the fragment again _with the newly provided variables_.
+
+- This will re-render your component and may cause it to suspend if it needs to send and wait for a network request.
+
+- Conceptually, when we call `refetch`, we're fetching the connection _from scratch_. It other words, we're fetching it again from the _beginning_ and _"resetting"_ our pagination state.
+
+:::note Transitions and Updates that Suspend
+
+`Suspense` boundary fallbacks allow us to describe our loading placeholders when initially rendering some content, but our applications will also have transitions between different content.
+
+React, when concurrent rendering is supported, provides an option to avoid hiding already rendered content with a `Suspense` fallback when suspending.
+
+For more information, read the docs [here](https://reactjs.org/docs/hooks-reference.html#usetransition).
+
+:::

@@ -1,6 +1,12 @@
-# Mutations
+# Changing Data
 
-In GraphQL, data in the server is updated using [GraphQL Mutations](https://graphql.org/learn/queries/#mutations). Mutations are _read-write_ server operations, which both modify data on the backend, and allow querying for the modified data from the server in the same request.
+In GraphQL, data in the server is updated using so-called [GraphQL Mutations](https://graphql.org/learn/queries/#mutations). Mutations are _read-write_ server operations, which both modify data on the backend, and allow querying for the modified data from the server in the same request.
+
+There generally are three kinds of mutations:
+
+- creating new data
+- updating existing data
+- deleting existing data
 
 ## Writing Mutations
 
