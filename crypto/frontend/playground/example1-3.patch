@@ -203,5 +203,5 @@ index 0000000000000000000000000000000000000000..f8d6abc88acdb140458f0cf9dc13433a
 +) on FIELD
 +
 +type Query {
-+  greetings(name: String! = "Luke"): String!
++  greetings(name: String! = "World"): String!
 +}
