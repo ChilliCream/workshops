@@ -1,4 +1,4 @@
-schema: http://ccc-workshop-eu-web.azurewebsites.net/graphql
+schema: https://api-crypto-workshop.chillicream.com/graphql
 generates:
   schema/server.graphql:
     plugins:
