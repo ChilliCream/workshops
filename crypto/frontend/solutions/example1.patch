@@ -125,7 +125,7 @@ index 0000000000000000000000000000000000000000..f8d6abc88acdb140458f0cf9dc13433a
 +) on FIELD
 +
 +type Query {
-+  greetings(name: String! = "Luke"): String!
++  greetings(name: String! = "World"): String!
 +}
 diff --git a/crypto/frontend/scenes/Greetings.js b/crypto/frontend/scenes/Greetings.js
 new file mode 100644
