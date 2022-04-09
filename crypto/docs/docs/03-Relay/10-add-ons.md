@@ -435,31 +435,67 @@ The main purpose of `MockPayloadGenerator` is to improve the process of creating
 
 Most of GraphQL type information for a specific field in the selection is not available during Relay runtime. Using the `@relay_test_operation` directive will add additional metadata containing GraphQL type info and it will improve the quality of the generated data.
 
+For example, this test covers the `Greetings` shown before.
+
 ```js title="/scenes/Greetings.test.js"
 import {act, render, waitFor} from '@testing-library/react';
-import {Suspense} from 'react';
+import {Component, Suspense} from 'react';
 import {RelayEnvironmentProvider} from 'react-relay';
 import {MockPayloadGenerator, createMockEnvironment} from 'relay-test-utils';
 
 import Greetings from './Greetings';
 
 describe('<Greetings />', () => {
-  const environment = createMockEnvironment();
+  const errorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-  const TestRenderer = ({children}) => (
+  let environment;
+  const name = 'foo';
+
+  class ErrorBoundary extends Component {
+    static getDerivedStateFromError(error) {
+      return {error};
+    }
+
+    state = {error: false};
+
+    render() {
+      const {children, fallback} = this.props;
+      const {error} = this.state;
+
+      return error ? fallback : children;
+    }
+  }
+
+  const TestRenderer = () => (
     <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback="loading">{children}</Suspense>
+      <ErrorBoundary fallback="error">
+        <Suspense fallback="loading">
+          <Greetings name={name} />
+        </Suspense>
+      </ErrorBoundary>
     </RelayEnvironmentProvider>
   );
 
-  it('should work with automatic mock', async () => {
-    const {getByText, queryByText} = render(
-      <TestRenderer>
-        <Greetings />
-      </TestRenderer>,
-    );
+  beforeEach(() => {
+    environment = createMockEnvironment();
+  });
+
+  afterEach(() => {
+    errorSpy.mockReset();
+  });
+
+  afterAll(() => {
+    errorSpy.mockRestore();
+  });
+
+  it('should handle loading state', () => {
+    const {getByText} = render(<TestRenderer />);
 
     expect(getByText('loading')).toBeInTheDocument();
+  });
+
+  it('should handle data state with automatic mock', async () => {
+    const {getByText} = render(<TestRenderer />);
 
     act(() => {
       environment.mock.resolveMostRecentOperation((operation) =>
@@ -468,22 +504,14 @@ describe('<Greetings />', () => {
     });
 
     await waitFor(() => {
-      expect(queryByText('loading')).not.toBeInTheDocument();
+      expect(
+        getByText('<mock-value-for-field-"greetings">'),
+      ).toBeInTheDocument();
     });
-
-    expect(getByText('<mock-value-for-field-"greetings">')).toBeInTheDocument();
   });
 
-  it('should work with custom mock', async () => {
-    const name = 'foo';
-
-    const {getByText, queryByText} = render(
-      <TestRenderer>
-        <Greetings name={name} />
-      </TestRenderer>,
-    );
-
-    expect(getByText('loading')).toBeInTheDocument();
+  it('should handle data state with custom mock', async () => {
+    const {getByText} = render(<TestRenderer />);
 
     act(() => {
       environment.mock.resolveMostRecentOperation((operation) =>
@@ -498,12 +526,34 @@ describe('<Greetings />', () => {
     });
 
     await waitFor(() => {
-      expect(queryByText('loading')).not.toBeInTheDocument();
+      expect(getByText(`hello, ${name}!`)).toBeInTheDocument();
+    });
+  });
+
+  it('should handle error state', async () => {
+    const {getByText} = render(<TestRenderer />);
+
+    act(() => {
+      environment.mock.rejectMostRecentOperation(new Error('Uh-oh'));
     });
 
-    expect(getByText(`hello, ${name}!`)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByText('error')).toBeInTheDocument();
+    });
   });
 });
 ```
+
+:::tip Use the `patch` as a shorthand to reproduce the mentioned changes
+
+```sh
+git apply solutions/example1.patch
+```
+
+```sh
+git apply solutions/example1-test.patch
+```
+
+:::
 
 For more information, read the docs [here](https://relay.dev/docs/guides/testing-relay-components/).
