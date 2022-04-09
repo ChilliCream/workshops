@@ -37,12 +37,17 @@
   "devDependencies": {
     "@graphql-codegen/cli": "latest",
     "@graphql-codegen/schema-ast": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
     "@types/react": "latest",
+    "babel-jest": "latest",
+    "babel-plugin-relay": "main",
     "eslint": "latest",
     "eslint-config-next": "latest",
-    "graphql": "latest",
+    "jest": "latest",
     "prettier": "latest",
-    "relay-compiler": "main"
+    "relay-compiler": "main",
+    "relay-test-utils": "main"
   },
   "scripts": {
     "build": "next build",
