@@ -413,4 +413,97 @@ Relay can be used to read and write local data, and act as a single source of tr
 
 Client schema extensions allows you to modify existing types on the schema (e.g. by adding new fields to a type), or to create entirely new types that only exist in the client.
 
-For more information, read the docs [here](https://relay.dev/docs/next/guides/client-schema-extensions/) and [here](https://relay.dev/docs/next/guided-tour/updating-data/client-only-data/).
+For more information, read the docs [here](https://relay.dev/docs/guides/client-schema-extensions/) and [here](https://relay.dev/docs/guided-tour/updating-data/client-only-data/).
+
+## Testing
+
+Testing applications that are using Relay may be challenging, because of the additional data fetching layer that is wrapping the actual product code.
+
+And it's not always easy to understand the mechanics of all processes that are happening behind Relay, and how to properly handle interactions with the framework.
+
+Fortunately, there are tools that aim to simplify the process of writing tests for Relay components, by providing imperative APIs for controlling the request/response flow and additional API for mock data generation.
+
+There are two main modules that you may using in your tests:
+
+- `createMockEnvironment(options): RelayMockEnvironment`
+
+- `MockPayloadGenerator` and the `@relay_test_operation` directive
+
+The `RelayMockEnvironment` instance created by `createMockEnvironment` has an additional Mock layer, with methods that allow to resolve/reject and control the flow of operations (queries/mutations/subscriptions).
+
+The main purpose of `MockPayloadGenerator` is to improve the process of creating and maintaining the mock data for tested components.
+
+Most of GraphQL type information for a specific field in the selection is not available during Relay runtime. Using the `@relay_test_operation` directive will add additional metadata containing GraphQL type info and it will improve the quality of the generated data.
+
+```js title="/scenes/Greetings.test.js"
+import {act, render, waitFor} from '@testing-library/react';
+import {Suspense} from 'react';
+import {RelayEnvironmentProvider} from 'react-relay';
+import {MockPayloadGenerator, createMockEnvironment} from 'relay-test-utils';
+
+import Greetings from './Greetings';
+
+describe('<Greetings />', () => {
+  const environment = createMockEnvironment();
+
+  const TestRenderer = ({children}) => (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback="loading">{children}</Suspense>
+    </RelayEnvironmentProvider>
+  );
+
+  it('should work with automatic mock', async () => {
+    const {getByText, queryByText} = render(
+      <TestRenderer>
+        <Greetings />
+      </TestRenderer>,
+    );
+
+    expect(getByText('loading')).toBeInTheDocument();
+
+    act(() => {
+      environment.mock.resolveMostRecentOperation((operation) =>
+        MockPayloadGenerator.generate(operation),
+      );
+    });
+
+    await waitFor(() => {
+      expect(queryByText('loading')).not.toBeInTheDocument();
+    });
+
+    expect(getByText('<mock-value-for-field-"greetings">')).toBeInTheDocument();
+  });
+
+  it('should work with custom mock', async () => {
+    const name = 'foo';
+
+    const {getByText, queryByText} = render(
+      <TestRenderer>
+        <Greetings name={name} />
+      </TestRenderer>,
+    );
+
+    expect(getByText('loading')).toBeInTheDocument();
+
+    act(() => {
+      environment.mock.resolveMostRecentOperation((operation) =>
+        MockPayloadGenerator.generate(operation, {
+          Query() {
+            return {
+              greetings: `hello, ${name}!`,
+            };
+          },
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(queryByText('loading')).not.toBeInTheDocument();
+    });
+
+    expect(getByText(`hello, ${name}!`)).toBeInTheDocument();
+  });
+});
+```
+
+For more information, read the docs [here](https://relay.dev/docs/guides/testing-relay-components/).
