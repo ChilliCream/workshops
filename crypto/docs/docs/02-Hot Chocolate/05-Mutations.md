@@ -188,7 +188,7 @@ We can pass into the mutation the symbol and get returned the `Watchlist`. This 
 
 ## Relay Mutation Convention
 
-In GraphQL we actually have a convention on how to design mutations. 
+In GraphQL we actually have a convention on how to design mutations.
 
 :::info
 
@@ -206,7 +206,9 @@ So for our addAssetToWatchlist mutation, we would create two types: AddAssetToWa
 
 ```graphql
 type Mutation {
-  addAssetToWatchlist(input: AddAssetToWatchlistInput!): AddAssetToWatchlistPayload!
+  addAssetToWatchlist(
+    input: AddAssetToWatchlistInput!
+  ): AddAssetToWatchlistPayload!
 }
 
 input AddAssetToWatchlistInput {
@@ -225,16 +227,32 @@ The single input argument allows clients to use a single variable to pass in the
 :::tip
 
 - Follow Relay Mutation Convention
-  
+
   The relay mutation convention is well established in the GraphQL community and is used beyond relayjs. Following this convention will make your API easier to integrate with standard tooling and better to understand with developers that already know GraphQL.
 
 - Think beyond CRUD
-  
+
   GraphQL allows us to create a ubiquitous model of our business with rich types.
   Introducing more specific mutations will clearly convey what the intend is.
 
+  ```graphql
+  # Bad
+  mutation AddAssetToWatchlist {
+    updateAsset(input: { ..., inWatchlist: true }) {
+      ... 
+    }
+  }
+
+  # Good
+  mutation AddAssetToWatchlist {
+    addAssetToWatchlist(input: { symbol: “BTC” }) {
+      ... 
+    }
+  }
+  ```
+
 - Don’t reuse input and payload types
-  
+
   Sharing input an payloads will make it more difficult to refactor your schema since a change to the types will have an effect across multiple mutations.
 
 :::
@@ -329,7 +347,7 @@ When we now execute the following mutation with our service we will get one of o
 
 ```graphql
 mutation {
-  addAssetToWatchlist(input: { symbol: "FOO" }) {
+  addAssetToWatchlist(input: {symbol: "FOO"}) {
     watchlist {
       id
     }
@@ -491,7 +509,7 @@ Head over to the operations tab an add the following mutation request.
 
 ```graphql
 mutation {
-  addAssetToWatchlist(input: { symbol: "FOO" }) {
+  addAssetToWatchlist(input: {symbol: "FOO"}) {
     watchlist {
       id
     }
@@ -524,7 +542,6 @@ The error message here is more for people who actually use tooling like **Banana
 
 Lastly, we can dig into specific error details where needed. In this specific case we are using and inline-fragment to get the invalid symbols property from our `UnknownAssetError`.
 
-
 ```json
 {
   "data": {
@@ -534,9 +551,7 @@ Lastly, we can dig into specific error details where needed. In this specific ca
         {
           "kind": "UnknownAssetError",
           "message": "The asset with the symbol `FOO` was not found.",
-          "symbols": [
-            "FOO"
-          ]
+          "symbols": ["FOO"]
         }
       ]
     }
@@ -561,6 +576,7 @@ The mutation conventions in **Hot Chocolate** remove a lot of boilerplate from a
 While our mutation feels great already we might want allow people to decide if they want to query for the whole watchlist or only for the added symbol. Depending on how large your `Watchlist` is you might just want to grab the added `Asset` and manipulate your store manually.
 
 ```graphql
+
 ```
 
 So we essentially want to add more fields to our payload. We can do that by using the `ExtendObjectTypeAttribute` like we did with other types. But in this case we might want to just replace the type.
@@ -656,6 +672,494 @@ builder.Services
 
 ## Batching
 
-Depending on your use-case we might want to introduce batched mutations. Batched mutations essentially
+Depending on the use-case we might want to introduce batched mutations. Batched mutations allow us to make multiple changes to our data in a single mutation. If we look at our current mutation we could allow the user to add multiple symbols at once.
+
+:::tip
+
+Design transactions as batch mutations rather than letting clients use multiple mutation fields.
+
+```graphql
+mutation {
+  # Bad: Only offering highly specific mutation
+  # increases complexity on client
+  addProducts(productIDs: [ ... ]) { ... }
+  removeProducts(productIds: [ ... ]) { ... }
+
+  # Good: Coarse grained version to answer client use case.
+  # Specific versions as well if needed
+  updateCart(input: { productToAdd: [ ... ], productsToRemove: [ ... ] }) { ... }
+}
+```
+
+:::
+
+Head over to the `WatchlistMutations` and lets introduce a version of the `AddAssetToWatchlist` mutation that allows us to add multiple assets to the watchlist at once.
+
+```graphql
+mutation {
+  addAssetToWatchlist(input: { symbols: ["BTC", "ADA"] }) {
+    ...
+  }
+}
+```
+
+Before we can add a new mutation we also need to add a new payload type since we want to be able to query multiple assets.
+
+Add the file `AddAssetsToWatchlistPayload.cs` to the `Types/Account` directory.
+
+```csharp title="/Types/Account/AddAssetsToWatchlistPayload.cs"
+namespace Demo.Types.Account;
+
+public sealed class AddAssetsToWatchlistPayload
+{
+    private readonly string[] _addedSymbols;
+
+    public AddAssetsToWatchlistPayload(string[] addedSymbols, Watchlist watchlist)
+    {
+        _addedSymbols = addedSymbols;
+        Watchlist = watchlist;
+    }
+
+    public Watchlist? Watchlist { get; }
+
+    public async Task<IReadOnlyList<Asset>?> AddedAssetsAsync(
+        AssetBySymbolDataLoader assetBySymbol,
+        CancellationToken cancellationToken)
+        => await assetBySymbol.LoadAsync(_addedSymbols, cancellationToken)!;
+}
+
+```
+
+Next, add the following mutation to the `WatchlistMutations` class.
+
+```csharp
+[Error<UnknownAssetException>]
+[Error<NotAuthenticatedException>]
+public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+    string[] symbols,
+    [GlobalState] string? username,
+    AssetContext context,
+    CancellationToken cancellationToken)
+{
+    if (username is null)
+    {
+        throw new NotAuthenticatedException(Constants.Watchlists);
+    }
+
+    if (!await context.Assets.AnyAsync(t => symbols.Contains(t.Symbol), cancellationToken))
+    {
+        throw new UnknownAssetException(symbols);
+    }
+
+    Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+    if (watchlist is null)
+    {
+        watchlist = new Watchlist { User = username };
+        context.Watchlists.Add(watchlist);
+    }
+
+    watchlist.AddSymbols(symbols);
+    await context.SaveChangesAsync(cancellationToken);
+
+    return new AddAssetsToWatchlistPayload(symbols, watchlist);
+}
+```
+
+Your `WatchlistMutations.cs` file should now look like the following.
+
+```csharp title="/Types/Account/WatchlistMutations.cs"
+using Demo.Types.Errors;
+
+namespace Demo.Types.Account;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public sealed class WatchlistMutations
+{
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
+        string symbol,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
+        {
+            throw new UnknownAssetException(symbol);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            watchlist = new Watchlist { User = username };
+            context.Watchlists.Add(watchlist);
+        }
+
+        watchlist.AddSymbols(symbol);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new AddAssetToWatchlistPayload(symbol, watchlist);
+    }
+
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+        string[] symbols,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => symbols.Contains(t.Symbol), cancellationToken))
+        {
+            throw new UnknownAssetException(symbols);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            watchlist = new Watchlist { User = username };
+            context.Watchlists.Add(watchlist);
+        }
+
+        watchlist.AddSymbols(symbols);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new AddAssetsToWatchlistPayload(symbols, watchlist);
+    }
+}
+```
+
+Lets restart our server.
+
+```bash
+dotnet run
+```
+
+Open `http://localhost:5000/graphql` and refresh the schema.
+
+![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
+
+Execute the following request to add two assets to our watchlist.
+
+```graphql
+mutation {
+  addAssetsToWatchlist(input: {symbols: ["BTC", "ADA"]}) {
+    addedAssets {
+      id
+    }
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "addAssetsToWatchlist": {
+      "addedAssets": [
+        {
+          "id": "QXNzZXQKaTEwMQ=="
+        },
+        {
+          "id": "QXNzZXQKaTk1"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Jumping ahead
+
+Before we can move on lets add some last types so that we cover all use cases. We will just copy paste in these mutations so that we fulfill all the needs for our frontend.
+
+Specifically we are adding the following mutations:
+
+- removeAssetFromWatchlist
+- removeAssetsFromWatchlist
+- changeAssetPositionInWatchlist
+
+For these we will need custom payloads that we will just add.
+
+```csharp title="/Types/Account/RemoveAssetFromWatchlistPayload.cs"
+namespace Demo.Types.Account;
+
+public sealed class RemoveAssetFromWatchlistPayload
+{
+    private readonly string? _removedSymbol;
+
+    public RemoveAssetFromWatchlistPayload(string? removedSymbol, Watchlist? watchlist)
+    {
+        _removedSymbol = removedSymbol;
+        Watchlist = watchlist;
+    }
+
+    public Watchlist? Watchlist { get; }
+
+    public async Task<Asset?> RemovedAssetAsync(
+        AssetBySymbolDataLoader assetBySymbol,
+        CancellationToken cancellationToken)
+    {
+        if (_removedSymbol is null)
+        {
+            return null;
+        }
+
+        return await assetBySymbol.LoadAsync(_removedSymbol, cancellationToken);
+    }
+}
+```
+
+```csharp title="/Types/Account/RemoveAssetsFromWatchlistPayload.cs"
+namespace Demo.Types.Account;
+
+public sealed class RemoveAssetsFromWatchlistPayload
+{
+    private readonly string[]? _removedSymbols;
+
+    public RemoveAssetsFromWatchlistPayload(string[]? addedSymbols, Watchlist? watchlist)
+    {
+        _removedSymbols = addedSymbols;
+        Watchlist = watchlist;
+    }
+
+    public Watchlist? Watchlist { get; }
+
+    [UsePaging]
+    public async Task<IReadOnlyList<Asset>?> RemovedAssetsAsync(
+        AssetBySymbolDataLoader assetBySymbol,
+        CancellationToken cancellationToken)
+    {
+        if (_removedSymbols is null)
+        {
+            return null;
+        }
+
+        return await assetBySymbol.LoadAsync(_removedSymbols, cancellationToken);
+    }
+}
+```
+
+```csharp title="/Types/Errors/UnknownWatchlistException.cs"
+#pragma warning disable RCS1194
+namespace Demo.Types.Errors;
+
+public sealed class UnknownWatchlistException : Exception
+{
+    public UnknownWatchlistException(string username)
+        : base($"The user `{username}` has no watchlist.")
+    {
+        Username = username;
+    }
+
+    public string Username { get; }
+}
+```
+
+```csharp title="/Types/Account/WatchlistMutations.cs"
+using Demo.Types.Errors;
+
+namespace Demo.Types.Account;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public sealed class WatchlistMutations
+{
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
+        string symbol,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
+        {
+            throw new UnknownAssetException(symbol);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            watchlist = new Watchlist { User = username };
+            context.Watchlists.Add(watchlist);
+        }
+
+        watchlist.AddSymbols(symbol);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new AddAssetToWatchlistPayload(symbol, watchlist);
+    }
+
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+        string[] symbols,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => symbols.Contains(t.Symbol), cancellationToken))
+        {
+            throw new UnknownAssetException(symbols);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            watchlist = new Watchlist { User = username };
+            context.Watchlists.Add(watchlist);
+        }
+
+        watchlist.AddSymbols(symbols);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new AddAssetsToWatchlistPayload(symbols, watchlist);
+    }
+
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    [UseMutationConvention]
+    public async Task<RemoveAssetFromWatchlistPayload> RemoveAssetFromWatchlistAsync(
+        string symbol,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
+        {
+            throw new UnknownAssetException(symbol);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            return new RemoveAssetFromWatchlistPayload(null, null);
+        }
+        else
+        {
+            watchlist.RemoveSymbols(symbol);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new RemoveAssetFromWatchlistPayload(symbol, watchlist);
+    }
+
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    [UseMutationConvention(PayloadFieldName = "removedAssets")]
+    public async Task<RemoveAssetsFromWatchlistPayload> RemoveAssetsFromWatchlistAsync(
+        string[] symbols,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => symbols.Contains(t.Symbol), cancellationToken))
+        {
+            throw new UnknownAssetException(symbols);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            return new RemoveAssetsFromWatchlistPayload(null, null);
+        }
+        else
+        {
+            watchlist.RemoveSymbols(symbols);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return new RemoveAssetsFromWatchlistPayload(symbols, watchlist);
+    }
+
+    [Error<UnknownAssetException>]
+    [Error<NotAuthenticatedException>]
+    [Error<UnknownWatchlistException>]
+    [Error<IndexOutOfRangeException>]
+    public async Task<Watchlist> ChangeAssetPositionInWatchlistAsync(
+        string symbol,
+        int index,
+        [GlobalState] string? username,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (username is null)
+        {
+            throw new NotAuthenticatedException(Constants.Watchlists);
+        }
+
+        if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
+        {
+            throw new UnknownAssetException(symbol);
+        }
+
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);
+
+        if (watchlist is null)
+        {
+            throw new UnknownWatchlistException(username);
+        }
+
+        var symbols = watchlist.GetSymbols();
+
+        if (symbols.Count <= index)
+        {
+            throw new IndexOutOfRangeException("The specified index is outside of the list.");
+        }
+
+        symbols.Remove(symbol);
+        symbols.Insert(index, symbol);
+        watchlist.SetSymbols(symbols);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return watchlist;
+    }
+}
+```
+
+With these updates we are complete.
 
 ## Summary
+
+In this chapter we have explored GraphQL mutations concepts. We have learned GraphQL best practices for designing the mutation structure. We also looked at how we can expose domain errors to our consumer. **Hot Chocolate** removed the boilerplate code for us and let us focus on writing the mutation. Last we looked at batch mutations where we can do multiple changes at once within a single mutation, giving the consumer an easy way to add multiple items at once to the watchlist.
