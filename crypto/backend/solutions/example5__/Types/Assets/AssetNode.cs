@@ -28,27 +28,6 @@ public sealed class AssetNode
         return $"{scheme}://{host}/images/{asset.ImageKey}";
     }
 
-    public async Task<bool?> IsInWatchlistAsync(
-        [Parent] Asset asset,
-        [GlobalState] string? username,
-        WatchlistByUserDataLoader watchListByUser,
-        CancellationToken cancellationToken)
-    {
-        if (username is null)
-        {
-            return null;
-        }
-
-        HashSet<string>? symbols = await watchListByUser.LoadAsync(username, cancellationToken);
-
-        if (symbols is null)
-        {
-            return false;
-        }
-
-        return symbols.Contains(asset.Symbol!);
-    }
-
     [NodeResolver]
     public static async Task<Asset> GetByIdAsync(
         int id, 
