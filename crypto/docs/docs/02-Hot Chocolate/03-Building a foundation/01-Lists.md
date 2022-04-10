@@ -181,4 +181,4 @@ query GetAllAssets {
 
 ## Summary
 
-In the first part, we have learned how to expose a list of database entities through GraphQL. We also explore resolver dependency injection and how to register the `DbContext` with the execution engine.
+In the first part, we have learned how to expose a list of database entities through GraphQL. We also explored resolver dependency injection and how we can register the `DbContext` with the execution engine.
