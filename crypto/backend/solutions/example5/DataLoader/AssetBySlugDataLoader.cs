@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Demo.Data;
-
 namespace Demo.DataLoader;
 
 public sealed class AssetBySlugDataLoader : BatchDataLoader<string, Asset>

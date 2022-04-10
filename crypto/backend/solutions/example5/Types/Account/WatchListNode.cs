@@ -1,7 +1,3 @@
-using Demo.Data;
-using Demo.DataLoader;
-using Microsoft.EntityFrameworkCore;
-
 namespace Demo.Types.Account;
 
 [Node]
