@@ -12,6 +12,7 @@ public sealed class AddAssetsToWatchlistPayload
 
     public Watchlist? Watchlist { get; }
 
+    [UsePaging]
     public async Task<IReadOnlyList<Asset>?> AddedAssetsAsync(
         AssetBySymbolDataLoader assetBySymbol,
         CancellationToken cancellationToken)

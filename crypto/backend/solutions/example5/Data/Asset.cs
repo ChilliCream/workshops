@@ -34,4 +34,6 @@ public class Asset
     public string? WhitePaper { get; set; }
 
     public AssetPrice? Price { get; }
+
+    public ICollection<Alert> Alerts { get; } = new List<Alert>();
 }
