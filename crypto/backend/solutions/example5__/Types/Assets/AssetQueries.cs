@@ -1,6 +1,3 @@
-using HotChocolate.Language;
-using HotChocolate.Resolvers;
-
 namespace Demo.Types.Assets;
 
 [ExtendObjectType(OperationTypeNames.Query)]

@@ -14,10 +14,8 @@ builder.Services
 builder.Services
     .AddGraphQLServer()
     .AddQueryType()
-    .AddMutationType()
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
-    .AddMutationConventions()
     .AddFiltering()
     .AddSorting()
     .AddInMemorySubscriptions()
