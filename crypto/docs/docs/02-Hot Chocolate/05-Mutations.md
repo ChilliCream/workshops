@@ -42,7 +42,7 @@ Only the `query` type is obligatory to have a spec-compliant schema. The `mutati
 :::
 
 :::note
-By convention, the root types are named `Query`, `Mutation` and `Subscription` in **Hot Chocolate**.
+By convention, the root types are named `Query`, `Mutation`, and `Subscription` in **Hot Chocolate**.
 
 There are other variants in the wild, with some implementations using `QueryRoot`, `MutationRoot`, and `SubscriptionRoot` as their default names.
 
@@ -81,9 +81,9 @@ mutation CreateBook($input: CreateBookInput!) {
 
 :::important
 
-While there is a lot of content out there in the wild suggesting to use nested mutations, as of the GraphQL 2021 specification there are NO nested mutations.
+While there is a lot of content in the wild suggesting using nested mutations, as of the GraphQL 2021 specification, there are **NO** nested mutations.
 
-Further, suggestions of using types as namespaces is also not compliant with the GraphQL spec dictated execution behavior and pollutes type system.
+Further, suggestions of using types as namespaces of mutations are also not compliant with the GraphQL spec dictated execution behavior and pollute the type system.
 
 > If the operation is a mutation, the result of the operation is the result of executing the operation’s top level selection set on the mutation root object type. This selection set should be executed serially.
 
@@ -94,7 +94,7 @@ https://spec.graphql.org/October2021/#sec-Normal-and-Serial-Execution
 
 ## Watchlist Mutations
 
-With the introduction to mutations out of the way lets create our first mutation. In this first try will start with a naive mutation approach.
+With the introduction of mutations out of the way, let's create our first mutation. In this first try will start with a naive mutation approach.
 
 Create a new file called `WatchlistMutations.cs` located in the `Types/Account` directory and copy the following code.
 
@@ -137,15 +137,15 @@ public sealed class WatchlistMutations
 }
 ```
 
-Lets have look at the key aspects of this initial mutation. The mutation is called `addAssetToWatchlist` and adds a single `Asset` to the users watchlist by passing in the `symbol`.
+Let's have a look at the key aspects of this initial mutation. The mutation is called `addAssetToWatchlist` and adds a single `Asset` to the user's watchlist by passing in the `symbol`.
 
 We have some initial validation that ensures that we are logged in and that the asset exists.
 
-The mutation will at the end return the `Watchlist` type since this is the entity that we have modified.
+The mutation will, in the end, return the `Watchlist` type since this is the entity that we have modified.
 
-The class itself is annotated with the `ExtendObjectTypeAttribute` and extends the mutation type. This allows to have operation type classes per topic which potentially could live in a separate assembly.
+The class itself is annotated with the `ExtendObjectTypeAttribute` and extends the mutation type. This allows operation-type classes per topic that could potentially live in a separate assembly.
 
-Since, we are only extending the `Mutation` type we also need to register a mutation type in our schema that we can extend. For this head over to the `Program.cs` and add `.AddMutationType()` after `.AddQueryType()`.
+Since, we are only extending the `Mutation` type; we also need to register a mutation type in our schema that we can extend. For this head over to the `Program.cs` and add `.AddMutationType()` after `.AddQueryType()`.
 
 ```csharp
 builder.Services
@@ -160,9 +160,9 @@ builder.Services
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
 
-`AddMutationType` with no generic type or configuration applied to it will create an empty mutation type. This would lead to an error if there were no extension adding at least one field.
+`AddMutationType` with no generic type or configuration applied to it will create an empty mutation type. This would lead to an error if no extensions were adding any fields.
 
-Like already explained before our source generator will find the annotated `WatchlistMutations` class and register it with the generated `AddAssetTypes` extension.
+As already explained before, our source generator will find the annotated `WatchlistMutations` class and register it with the generated `AddAssetTypes` extension.
 
 Let`s test what we have done before diving deeper.
 
@@ -174,7 +174,7 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
-Next, lets head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
+Next, let's head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
 
 ![Banana Cake Pop - Mutation Type](./images/example4-bcp1.png)
 
@@ -184,15 +184,15 @@ type Mutation {
 }
 ```
 
-We can pass into the mutation the symbol and get returned the `Watchlist`. This is actually very close to how we write a simple method in C#. However, as we get more fields this style would not scale very well. Also we would head towards a structure of mutation that is different for every use-case.
+We can pass into the mutation the symbol and get returned the `Watchlist`. This is actually very close to how we write a simple method in C#. However, as we get more fields, this style would not scale very well. Also, we would head towards a structure of mutation that is different for every use case.
 
 ## Relay Mutation Convention
 
-In GraphQL we actually have a convention on how to design mutations.
+In GraphQL, we have a convention on how to design mutations.
 
 :::info
 
-Originally this design was introduce by relay as one of their server guidelines.
+Initially, this design was introduced by Relay as one of their server guidelines.
 
 https://relay.dev/docs/v9.1.0/graphql-server-specification/#mutations
 
@@ -220,9 +220,9 @@ type AddAssetToWatchlistPayload {
 }
 ```
 
-With this structure we can easily scale and expose more ways to query the changed state of our service with additional fields on our payload type.
+With this structure, we can easily scale and expose more ways to query the changed state of our service with additional fields on our payload type.
 
-The single input argument allows clients to use a single variable to pass in the data that is needed for the mutation.
+The single input argument allows clients to use a single variable to pass in the needed data for the mutation.
 
 :::tip
 
@@ -239,27 +239,27 @@ The single input argument allows clients to use a single variable to pass in the
   # Bad
   mutation AddAssetToWatchlist {
     updateAsset(input: { ..., inWatchlist: true }) {
-      ... 
+      ...
     }
   }
 
   # Good
   mutation AddAssetToWatchlist {
     addAssetToWatchlist(input: { symbol: “BTC” }) {
-      ... 
+      ...
     }
   }
   ```
 
 - Don’t reuse input and payload types
 
-  Sharing input an payloads will make it more difficult to refactor your schema since a change to the types will have an effect across multiple mutations.
+  Sharing input and payloads will make it more difficult to refactor your schema since a change to the types will have an effect across multiple mutations.
 
 :::
 
-On the downside we have to create a lot more boilerplate types in our backend. This is where the **Hot Chocolate** mutation conventions come in to help you achieve this with a minimal effort.
+On the downside, we have to create a lot more boilerplate types in our backend. This is where the **Hot Chocolate** mutation conventions come in to help you achieve this with minimal effort.
 
-First, lets head over to the `Program.cs` and register the mutation conventions with the GraphQL configuration.
+First, head over to the `Program.cs` and register the mutation conventions with the GraphQL configuration.
 
 ```csharp
 builder.Services
@@ -275,7 +275,7 @@ builder.Services
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
 
-The updated `Program.cs` should no look like the following.
+The updated `Program.cs` should now look like the following.
 
 ```csharp title="/Program.cs"
 var builder = WebApplication.CreateBuilder(args);
@@ -313,9 +313,9 @@ app.MapGraphQL();
 app.Run();
 ```
 
-With the **Hot Chocolate** mutation convention registered the schema engine will rewrite all mutations into the relay mutation convention.
+With the **Hot Chocolate** mutation convention registered, the schema engine will rewrite all mutations into the relay mutation convention.
 
-Lets restart our server.
+Let's restart our server.
 
 ```bash
 dotnet run
@@ -327,21 +327,21 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 :::important
 
-In order to simulate a signed-in user, click on the settings button of the current document. In the authentication tab select **basic auth** and use whatever username and password you like.
+In order to simulate a signed-in user, click on the settings button of the current document. Select **basic auth** in the authentication tab and use whatever username and password you like.
 
 ![Banana Cake Pop - Refresh Schema](./images/example4-bcp6.png)
 
 :::
 
-Next, lets head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
+Next, let's head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
 
 ![Banana Cake Pop - Refresh Schema](./images/example4-bcp2.png)
 
-We can see that the mutation structure has changed and we did not need to rewrite our actual mutation code.
+We can see that the mutation structure has changed, and we did not need to rewrite our actual mutation code.
 
 ## Errors
 
-When we now execute the following mutation with our service we will get one of our GraphQL errors since we used a symbol that does not exist.
+When we execute the following mutation with our service, we will get one of our GraphQL errors since we used a symbol that does not exist.
 
 **Request**
 
@@ -367,11 +367,11 @@ mutation {
 }
 ```
 
-There are no error types in the schema and we cannot design custom error with GraphQL. In fact errors are not meant to be used to model domain errors. A GraphQL error should be thrown when something exceptional happens like a data source that became unavailable.
+There are no error types in the schema, and we cannot design custom errors with GraphQL. In fact, errors are not meant to be used to model domain errors. A GraphQL error should be thrown when something exceptional happens, like a data source that became unavailable.
 
-In our concrete case we are talking about expected errors. Expected errors should be part of our domain so that the consuming GUI can handle them. A single mutation might have multiple different errors. In our concrete case we have to expected error cases that we do handle at the moment with GraphQL errors.
+In our concrete case, we are talking about expected errors. Expected errors should be part of our domain so that the consuming GUI can handle them. A single mutation might have multiple different errors.
 
-Lets start by introducing specific exceptions for our errors. For this create a new directory `Types/Errors`.
+Let's start by introducing specific exceptions for our errors. For this, create a new directory, `Types/Errors`.
 
 Now, create a new file `NotAuthenticatedException.cs` located in the `Types/Errors` directory.
 
@@ -388,7 +388,7 @@ public sealed class NotAuthenticatedException : Exception
 }
 ```
 
-This error will cover our first error where we ensure that only if a user is signed in we will allow the mutation to execute.
+This error will cover our first error, where we ensure that only if a user is signed in will we allow the mutation to execute.
 
 Create another file called `UnknownAssetException.cs` located in the `Types/Errors` directory.
 
@@ -414,7 +414,7 @@ public sealed class UnknownAssetException : Exception
 }
 ```
 
-Head over to the `WatchlistMutations.cs` located in the `Types/Account` directory and lets replace our validation logic.
+Head over to the `WatchlistMutations.cs` located in the `Types/Account` directory, and let us replace our validation logic.
 
 ```csharp
 if (username is null)
@@ -428,7 +428,7 @@ if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))
 }
 ```
 
-Last, we need to annotate our mutation with the `ErrorAttribute` to expose to the schema building engine what kinds of errors this mutation will throw.
+Last, we need to annotate our mutation with the `ErrorAttribute` to expose what kinds of errors this mutation will throw to the schema building engine.
 
 ```csharp
 [Error<UnknownAssetException>]
@@ -485,7 +485,7 @@ public sealed class WatchlistMutations
 }
 ```
 
-With this in place lets revisit our mutation in **Banana Cake Pop**.
+Let's revisit our mutation in **Banana Cake Pop**with this in place.
 
 ```bash
 dotnet run
@@ -495,17 +495,17 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
-Next, lets head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
+Next, let's head over to the `Schema Reference` tab to explore the schema and navigate to the `Mutation` type.
 
 ![Banana Cake Pop - Refresh Schema](./images/example4-bcp3.png)
 
-When we drill in to the mutation with the column-view we can see that we now have an additional `errors` field which returns a list of `AssetToWatchListError` unions. Like we do with the payload and input type we generated now an error union.
+When we drill into the mutation with the column-view, we can see that we now have an additional `errors` field, which returns a list of `AssetToWatchListError` unions. Like we do with the payload and input type, **Hot Chocolate** generated an error union.
 
 ![Banana Cake Pop - Refresh Schema](./images/example4-bcp4.png)
 
-The error union represents a set of domain errors that can happen when executing this particular mutation. With this we can now change our mutation request to not only query the changed state but also for the errors that might have happened.
+The error union represents a set of domain errors that can happen when executing this particular mutation. With this, we can now change our mutation request to retrieve the watchlist and the errors that might have happened.
 
-Head over to the operations tab an add the following mutation request.
+Head over to the operations tab and add the following mutation request.
 
 ```graphql
 mutation {
@@ -526,11 +526,11 @@ mutation {
 }
 ```
 
-In the above request we can now query for the errors. Since, each error is represented by a unique type we can use the `__typename` field to know which kind of error we are dealing with. Often, this is the main switch for GUI components.
+In the above request, we can now query for the errors. Since each error is represented by a unique type, we can use the `__typename` field to know which kind of error we are dealing with. Often, this is the main switch for GUI components.
 
-The mutation conventions will rewrite all errors to implement the `Error` interface so that we are able to query for the common error properties without writing explicit inline-fragments for each error kind.
+The mutation conventions will rewrite all errors to implement the `Error` interface so that we can query for the common error properties without writing explicit inline-fragments for each error kind.
 
-In this case we are always querying for the error message.
+In this case, we are always querying for the error message.
 
 ```graphql
 ... on Error {
@@ -538,9 +538,9 @@ In this case we are always querying for the error message.
 }
 ```
 
-The error message here is more for people who actually use tooling like **Banana Cake Pop**, often our web application would have resources in place and would use the `__typename` to switch to the correct error resource. Again this might be different for different approaches and the common error properties available can be configured in **Hot Chocolate**.
+The error message here is more for people using tooling like **Banana Cake Pop**; often, our web application would have resources in place and use the `__typename` to switch to the correct error resource. Again this might be different for different approaches. The error properties of the error interface can be configured in **Hot Chocolate**.
 
-Lastly, we can dig into specific error details where needed. In this specific case we are using and inline-fragment to get the invalid symbols property from our `UnknownAssetError`.
+Lastly, we can dig into specific error details where needed. In this particular case, we use an inline-fragment to get the invalid symbols property from our `UnknownAssetError`.
 
 ```json
 {
@@ -571,15 +571,21 @@ https://productionreadygraphql.com/2020-08-01-guide-to-graphql-errors
 
 ## Customizing
 
-The mutation conventions in **Hot Chocolate** remove a lot of boilerplate from adhering to the GraphQL mutation pattern. At the same time they allow us to take over whenever we want define a specific aspect by ourselves.
+The mutation conventions in **Hot Chocolate** remove a lot of boilerplate from adhering to the GraphQL mutation pattern. At the same time, they allow us to take over whenever we want to define a specific aspect by ourselves.
 
-While our mutation feels great already we might want allow people to decide if they want to query for the whole watchlist or only for the added symbol. Depending on how large your `Watchlist` is you might just want to grab the added `Asset` and manipulate your store manually.
+While our mutation feels great already, we might want to let people decide if they're going to query for the whole watchlist or only for the added symbol.
 
 ```graphql
-
+mutation {
+  addAssetToWatchlist(input: { symbol: "BTC" }) {
+    addedAsset {
+      id
+    }
+  }
+}
 ```
 
-So we essentially want to add more fields to our payload. We can do that by using the `ExtendObjectTypeAttribute` like we did with other types. But in this case we might want to just replace the type.
+So we essentially want to add more fields to our payload. We can do that by using the `ExtendObjectTypeAttribute` as we did with other types. But in this case, we might want to replace the type.
 
 For this let us create a new file called `AddAssetsToWatchlistPayload.cs` located in the `Types/Account` directory.
 
@@ -605,7 +611,7 @@ public sealed class AddAssetToWatchlistPayload
 }
 ```
 
-We will pass into this type the `Watchlist` object that we have in memory anyway and also add a resolver to fetch the asset object if needed.
+We will pass into the payload type the `Watchlist` object that we have in memory anyway. Also, we add n additional resolver to fetch the asset object if needed.
 
 Let us return to the `WatchlistMutations` and return instead of the `Watchlist` the new AddAssetToWatchlistPayload.
 
@@ -652,7 +658,7 @@ public sealed class WatchlistMutations
 }
 ```
 
-The mutation convention allows to provide our own payload type and also our own input type if we chose so.
+The mutation convention allows us to provide our own payload and input type if we choose to do so.
 
 :::info
 
@@ -672,7 +678,7 @@ builder.Services
 
 ## Batching
 
-Depending on the use-case we might want to introduce batched mutations. Batched mutations allow us to make multiple changes to our data in a single mutation. If we look at our current mutation we could allow the user to add multiple symbols at once.
+Depending on the use case, we might want to introduce batched mutations. Batched mutations allow us to make multiple changes to our data in a single mutation. If we look at our current mutation, we could allow the user to add multiple symbols at once.
 
 :::tip
 
@@ -693,7 +699,7 @@ mutation {
 
 :::
 
-Head over to the `WatchlistMutations` and lets introduce a version of the `AddAssetToWatchlist` mutation that allows us to add multiple assets to the watchlist at once.
+Head over to the `WatchlistMutations`, and let's introduce a version of the `AddAssetToWatchlist` mutation that allows us to add multiple assets to the watchlist at once.
 
 ```graphql
 mutation {
@@ -703,7 +709,7 @@ mutation {
 }
 ```
 
-Before we can add a new mutation we also need to add a new payload type since we want to be able to query multiple assets.
+Before we can add a new mutation, we also need to add a new payload type since we want to be able to query multiple assets.
 
 Add the file `AddAssetsToWatchlistPayload.cs` to the `Types/Account` directory.
 
@@ -843,7 +849,7 @@ public sealed class WatchlistMutations
 }
 ```
 
-Lets restart our server.
+Let's restart our server.
 
 ```bash
 dotnet run
@@ -884,15 +890,15 @@ mutation {
 
 ## Jumping ahead
 
-Before we can move on lets add some last types so that we cover all use cases. We will just copy paste in these mutations so that we fulfill all the needs for our frontend.
+Before we can move on, let's add some last types to cover all use cases. We will copy-paste these mutations to fulfill all the needs of our front end.
 
-Specifically we are adding the following mutations:
+Specifically, we are adding the following mutations:
 
 - removeAssetFromWatchlist
 - removeAssetsFromWatchlist
 - changeAssetPositionInWatchlist
 
-For these we will need custom payloads that we will just add.
+For these, we will need custom payloads that we will just add.
 
 ```csharp title="/Types/Account/RemoveAssetFromWatchlistPayload.cs"
 namespace Demo.Types.Account;
@@ -1158,8 +1164,8 @@ public sealed class WatchlistMutations
 }
 ```
 
-With these updates we are complete.
+With these updates, we are complete.
 
 ## Summary
 
-In this chapter we have explored GraphQL mutations concepts. We have learned GraphQL best practices for designing the mutation structure. We also looked at how we can expose domain errors to our consumer. **Hot Chocolate** removed the boilerplate code for us and let us focus on writing the mutation. Last we looked at batch mutations where we can do multiple changes at once within a single mutation, giving the consumer an easy way to add multiple items at once to the watchlist.
+In this chapter, we have explored GraphQL mutations concepts. We have learned GraphQL best practices for designing the mutation structure. We also looked at how we can expose domain errors to our consumers. **Hot Chocolate** removed the boilerplate code for us and let us focus on writing the mutation. Last, we looked at batch mutations, where we can do multiple changes within a single mutation, giving the consumer an easy way to add multiple items to the watchlist.
