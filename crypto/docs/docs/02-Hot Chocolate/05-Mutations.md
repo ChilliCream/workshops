@@ -226,7 +226,7 @@ The single input argument allows clients to use a single variable to pass in the
 
 :::tip
 
-- Follow Relay Mutation Convention
+- Follow the Relay Mutation Convention
 
   The relay mutation convention is well established in the GraphQL community and is used beyond relayjs. Following this convention will make your API easier to integrate with standard tooling and better to understand with developers that already know GraphQL.
 
