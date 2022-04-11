@@ -13,7 +13,7 @@ You don’t need to explicitly set the `Content-Type` header for the upload requ
 
 :::
 
-Even if files can be passed using [`uploadables` option of the mutation's config](https://relay.dev/docs/api-reference/commit-mutation/#type-mutationconfigtmutationconfig-mutationparameters), it we will use a variable of scalar type `Upload` that will give us some extra type safety.
+Even if files can be passed using [`uploadables` option of the mutation's config](https://relay.dev/docs/api-reference/commit-mutation/#type-mutationconfigtmutationconfig-mutationparameters), we will use a variable of scalar type `Upload` that will give us some extra type safety.
 
 Here a simplified snippet for the `fetchFn`:
 
