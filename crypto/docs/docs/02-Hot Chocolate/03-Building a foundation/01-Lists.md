@@ -17,7 +17,7 @@ Before we can begin, we need to clone the workshop repository. To do this, open 
 git clone https://github.com/ChilliCream/workshops.git
 ```
 
-Next, open the backend playground for this example.
+Next, open the backend playground directory for this example.
 
 ```bash
 code workshops/crypto/backend/playground/example2
