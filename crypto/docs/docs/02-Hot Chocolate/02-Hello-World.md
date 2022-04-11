@@ -1,10 +1,10 @@
 # Hello, World!
 
-This chapter will create a basic GraphQL server with Hot Chocolate and write our first GraphQL query to ensure that our server works properly.
+In this chapter we will create a basic GraphQL server with **Hot Chocolate** and write our first GraphQL query to test our server works properly.
 
 ## Creating a GraphQL Server from Template
 
-First, let us create a directory where we can put our GraphQL server.
+First, let us create a directory for our GraphQL server.
 
 ```bash
 mkdir BasicServer
@@ -27,10 +27,10 @@ Ensure that version 6.0.100 or above is being used. The `global.json` file shoul
 }
 ```
 
-Before generating our server project, we need to install the Hot Chocolate templates.
+Before generating our server project, we need to install the **Hot Chocolate** templates.
 
 ```bash
-dotnet new -i HotChocolate.Templates::13.0.0-preview.12
+dotnet new -i HotChocolate.Templates::13.0.0-preview.15
 ```
 
 Now that we have everything in place, we can generate the actual server project.
@@ -53,7 +53,7 @@ dotnet run
 
 By default, the GraphQL server will listen on port 5000. Open your web browser and open the following address: `http://localhost:5000/graphql`
 
-You will be greeted with Banana Cake Pop, our GraphQL IDE, which allows you to explore the schema and write GraphQL queries.
+Our GraphQL IDE Banana Cake Pop will show up and allows you to explore the schema and write GraphQL queries.
 
 ![Banana Cake Pop - Greeting Screen](images/bcp-1.png)
 
@@ -65,15 +65,15 @@ Click on `Apply` in the connection details dialog for accepting the server defau
 
 ![Banana Cake Pop - Schema Reference](images/bcp-3.png)
 
-First, let's explore the schema by clicking on the `Schema Reference` tab. In the `Schema Reference` tab, we are greeted with the `Query` type documentation. As we already learned, the `Query` root type contains the root fields to read data when we execute a query operation.
+First, let's explore the schema by clicking on the `Schema Reference` tab. In the `Schema Reference` tab, we see the `Query` type documentation. As we already learned, the `Query` root type contains the root fields to read data when we execute a query operation.
 
 :::note
 
-Query operations in GraphQL are expected to be side-effect free, which means that executing GraphQL queries will not alter the server's state.
+Query operations in GraphQL are expected to be side-effect free, which means that the execution shall not alter the server's state.
 
 :::
 
-Banana Cake Pop allows us to explore the schema from two different views. Often when exploring the schema, the column view can be more precise. For this, let us switch to the column view now.
+Banana Cake Pop allows us to explore the schema with two different views. Often when exploring the schema, the column view is mor helpful. For this, let us switch to the column view now.
 
 ![Banana Cake Pop - Schema Reference - Column View](images/bcp-4.png)
 
@@ -105,7 +105,7 @@ The server will respond with the following result.
 }
 ```
 
-GraphQL, as we already discussed, will respond only with the data you asked for, no more, no less.
+GraphQL will respond only with the data you asked for, no more, no less. The `Book` type also contains a field `Author?, but it is not included in the response.
 
 ## Resolvers
 
@@ -121,7 +121,7 @@ Our GraphQL server has 2 code files `Program.cs` and `Query.cs`. Head over to th
 
 ![Visual Studio Code - Program.cs](images/code-2.png)
 
-The `Program.cs` contains the server configuration. We have two important things here.
+The `Program.cs` contains the server configuration.
 
 ```csharp
 builder.Services
@@ -129,7 +129,10 @@ builder.Services
     .AddQueryType<Query>()
 ```
 
-The above piece of code registers a GraphQL server as a service with our dependency injection. The `AddGraphQLServer` returns a GraphQL Server builder and allows us to chain in configurations.
+We have two important things here:
+
+1. `AddGraphQLServer` registers a GraphQL server as a service with the .NET core dependency injection and returns a GraphQL configuration builder that allows us to chain in configurations.
+2. `AddQueryType<Query>` specifies that the class `Query` represents our query operation type in GraphQL. It is mandatory to provide a query operation type.
 
 :::note
 
@@ -147,13 +150,11 @@ builder.Services
 
 :::
 
-`AddQueryType<Query>` specifies that the class `Query` represents our query operation type in GraphQL. It is mandatory to provide a query operation type.
-
 Let's head over to our `Query.cs` and explore it.
 
 ![Visual Studio Code - Query.cs](images/code-3.png)
 
-The current class `Query` has a single resolver `GetBook` which returns a book object. **Hot Chocolate** traverses the type tree and automatically infers all types connected to the `Query` type.
+The current class `Query` has a single resolver `GetBook` which returns a book object. **Hot Chocolate** traverses the type tree and automatically infers all types connected to the `Query` type. Because of that there's no need to register types for `Book` or `Author`, although you could do so to apply a specific configuration.
 
 **Hot Chocolate** also applies GraphQL naming conventions. In this particular case, we will remove the verb 'Get' from the method and also adjust the casing to be **camelCase**.
 
@@ -169,7 +170,7 @@ public class Query
 }
 ```
 
-Our new `Query` class has a single resolver called `Greetings`. Since we do not have the `Get` verb in this case, all we do is adjust to **camelCase**. Our new `Query` type will look like the following:
+Our new `Query` class has a single resolver called `Greetings`. Since we do not have the `Get` verb included in the method name, all that happens is an adjustment to **camelCase**. Our new `Query` type will look like the following:
 
 ```graphql
 type Query {
@@ -189,7 +190,7 @@ Now, let us head over to http://localhost:5000/graphql and refresh the schema.
 
 ![Banana Cake Pop - Operations](images/bcp-7.png)
 
-Our previous GraphQL query now is marked with some squiggles telling us that the query is no longer valid. This is because we modified our schema.
+Our previous GraphQL query is now marked with some squiggles telling us that the query is no longer valid. This is because we modified our schema.
 
 When we inspect the **Schema Reference**, we can see that our schema has changed, and the Query type now has the `greetings` field with the correctly inferred argument `name`.
 
@@ -231,6 +232,6 @@ query {
 
 ## Summary
 
-In this chapter, we have made our first baby steps into the GraphQL roam. We have written our first few GraphQL queries and explored some fundamental query characteristics. Further, we explored the ChilliCream GraphQL IDE **Banana Cake Pop** that is bundled with the **Hot Chocolate** server.
+In this chapter, we have made our first baby steps into the GraphQL roam. We have written our first few queries and explored some fundamental query characteristics. Further, we explored the ChilliCream GraphQL IDE **Banana Cake Pop** that is bundled with the **Hot Chocolate** server.
 
-After our initial exploration, we have looked at how we can configure a **Hot Chocolate** GraphQL server and defined our first GraphQL resolver. As we progress through this workshop, we will learn many more new concepts about GraphQL resolvers.
+After our initial exploration, we have looked at how we can configure a **Hot Chocolate** GraphQL server and defined our first GraphQL resolver. As we progress through this workshop, we will learn many more new concepts about resolvers.
