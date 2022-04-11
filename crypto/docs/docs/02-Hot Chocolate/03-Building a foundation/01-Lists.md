@@ -69,6 +69,12 @@ type Query {
 }
 ```
 
+:::note
+
+We applied GraphQL naming conventions to the method name `GetAssets` which removed the `Get` verb from the name and applied **camelCase** to it.
+
+:::
+
 To fetch the assets from our database, we need an `AssetContext`. With **Hot Chocolate**, we can ask for services required in our resolver by adding them as parameters. We call this resolver-level dependency injection.
 
 In GraphQL, it has benefits to use resolver-level dependency injection since we only will create resources for services we need. Further, the execution engine can resolve those service dependencies for us, allowing it to consider service characteristics like pooled resources or single-threaded services.
