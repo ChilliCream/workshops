@@ -1,6 +1,6 @@
 # DataLoader
 
-As of now, we can fetch multiple assets through the `assets` field. But this will only yield the base information about our `Asset`. Next, we want to introduce the `AssetPrice` to our type system and connect it with the `Asset` entity.
+As of now, we can fetch a list of assets through the `assets` field. But this will only yield the base information about our `Asset`. Next, we want to introduce the `AssetPrice` to our type system and connect it with the `Asset` entity.
 
 We want to be able to query the asset price together with the asset like the following.
 
@@ -8,6 +8,7 @@ We want to be able to query the asset price together with the asset like the fol
 query {
   assets {
     nodes {
+      symbol
       price {
         lastPrice
       }
@@ -16,13 +17,13 @@ query {
 }
 ```
 
-Since `Asset` and `AssetPrice` are exposed through the same `DbContext`, we could use projections and delegate this work to the `DbContext`. But in many use-cases, we can more efficiently handle loading entities with **DataLoader**.
+Since `Asset` and `AssetPrice` are exposed through the same `DbContext`, we could use projections and delegate this work to the `DbContext`. But in many use-cases, we can more efficiently handle loading entities with a **DataLoader**.
 
 ## DataLoader
 
-**DataLoader** is a utility to ask for an entity by its key. Instead of resolving the entity, the DataLoader will only return us with a promise of the result but will not start fetching the data.
+A **DataLoader** is a utility to ask for an entity by its key. Instead of resolving the entity, the DataLoader will return with a promise of the result, but will not start fetching the data immediately.
 
-The **DataLoader** will only start fetching data once the execution engine runs out of work. This means we can batch the requests from all requesting resolvers in one go.
+The **DataLoader** will only start fetching data once the complete dependency tree has been analyzed by the execution engine. This means all requests from all requesting resolvers are batched in one call to the database.
 
 Think about the following query.
 
@@ -30,6 +31,7 @@ Think about the following query.
 query {
   assets {
     nodes {
+      symbol
       price {
         lastPrice
       }
@@ -38,18 +40,17 @@ query {
 }
 ```
 
-If we did a naive implementation, we would fetch multiple times from the database. With deeper trees, the same price entities could also be connected to other parts in the graph and exaggerate this problem, causing hundreds of queries to the database.
+If we did a naive implementation, we would fetch the `price` information for each `asset` node individually. With deeper trees, the same price entities could also be connected to other parts in the graph and exaggerate this problem, causing hundreds of queries to the database.
 
-The **DataLoader** instead batches requests to the database or any other data source and uses a request-bound cache so that repeated requests for the same item will be served from that cache instead of fetching it from the database. This also has a second benefit since it guarantees that objects used multiple times in a query graph have a consistent state throughout the request.
+The **DataLoader** instead batches requests to the database or any other data source and uses a request-bound cache so that repeated requests for the same item will be served from that cache that is only loaded once. Another benefit is that this guarantees that objects used multiple times in a query graph have a consistent state throughout the request.
 
-Let's first create a new directory called `DataLoader`.
+Let's first create a new directory called `DataLoaders` in the `example2` directory.
 
 ```bash
-mkdir DataLoader
+mkdir DataLoaders
 ```
 
-Next, we will create a file called `AssetPriceBySymbolDataLoader` located in the `DataLoader` directory.
-Copy the following code into the file.
+Next, we will create a file called `AssetPriceBySymbolDataLoader` in there and copy the following code into the file.
 
 ```csharp title="/DataLoader/AssetPriceBySymbolDataLoader.cs"
 namespace Demo.DataLoader;
@@ -80,9 +81,11 @@ public sealed class AssetPriceBySymbolDataLoader : BatchDataLoader<string, Asset
 
 The `AssetPriceBySymbolDataLoader` inherits from a class called `BatchDataLoader`, which allows us to batch multiple requests to the database. There are other kinds of **DataLoader** for more specific use-cases.
 
-The `LoadBatchAsync` method is invoked when the execution engine wants to execute a batch. The `keys` parameter passed into the `LoadBatchAsync` are all the symbols for which we shall resolve entities.
+**remark: instead of injecting the context factory, we could register an interface with DI that resolves to an concrete dbContext. Would mean less clutter in the dataloaders, but a bit more work when registering the DbContext/Factory**
 
-Now that we have a **DataLoader** to fetch the `AssetPrice`, let's introduce the price field to our `Asset`.
+The `LoadBatchAsync` method is invoked when the execution engine wants to retrieve data for a type. The `keys` parameter passed into the `LoadBatchAsync` are all the symbols for which we shall resolve entities.
+
+Now that we have a **DataLoader** to fetch the `AssetPrice`, let's introduce the price field to our `Asset` type.
 
 We will create a new file called `AssetNode.cs` located in the `Types` directory.
 
@@ -104,11 +107,13 @@ public sealed class AssetNode
 
 :::note
 
-The `ParentAttributes` marks parameters that represent the runtime value of the declaring GraphQL type. In this case, we are resolving the `price` field of the `Asset` type, so we want to inject the `Asset` instance into our resolver.
+The `Parent` attribute marks a parameter that represent the runtime value of the declaring GraphQL type. In this case, we are resolving the `price` field of the `Asset` type, so we want to inject the `Asset` instance into our resolver.
 
 :::
 
 The class `AssetNode` is annotated with the `ExtendObjectTypeAttribute`, allowing us to extend an existing type `Asset` with additional fields.
+
+The above code defines a new field on the `Asset` type:
 
 ```graphql
 extend type Asset {
@@ -116,11 +121,9 @@ extend type Asset {
 }
 ```
 
-The **HotChocolate** source generator will automatically add all annotated types with one of the following attributes to the schema module.
-
 :::note
 
-The **HotChocolate** source generator will automatically add all types that are annotated with one of the following attributes the the schema module.
+The **HotChocolate** source generator will automatically add all types that are annotated with one of the following attributes the the GraphQL schema.
 
 - ExtendObjectTypeAttribute
 - ObjectTypeAttribute
@@ -143,15 +146,15 @@ Also, all classes extending the following classes will be automatically added.
 - InputObjectTypeExtension
 - EnumTypeExtension
 
-Last, all **DataLoader** will be automatically added to the GraphQL module.
-
-- IDataLoader
+Last, all classes inheriting from `IDataLoader`, i.e. all **DataLoader**, are also added. This greatly reduced the number of types that need to be added to the schema manually.
 
 :::
 
 To register the generated GraphQL module with the GraphQL configuration, we need to head over to the `Program.cs` and chain in `AddAssetTypes` to the GraphQL configuration builder.
 
 :::note
+
+**remark: maybe it's only me, but what is the 'ModuleInfo.cs'? Where does it come from? Doesn't this contradict the preceding note about 'automatically' adding? And where is 'AddAssetType()' defined?**
 
 The GraphQL module name is defined in the `ModuleInfo.cs` file.
 
@@ -240,6 +243,8 @@ FROM "Assets" AS "a"
 ORDER BY "a"."Symbol"
 LIMIT @__p_0
 ```
+
+**remark: the query doesn't include a limit, but the SQL does show one**
 
 The second request will fetch the `AssetPrice` for each `Asset` fetched in the initial request.
 
