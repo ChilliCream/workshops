@@ -1,9 +1,23 @@
 # Real-Time Data
 
+So far we have looked at several concepts for GraphQL queries and mutations. If we put this in a REST context we essentially dealt with the `GET`, `PUT`, `POST`, `PATCH`, `DELETE` verbs. Everything related to reading data and altering data.
+
+| Operation | GraphQL      | REST                     |
+|-----------|--------------|--------------------------|
+| Read      | Query        | GET                      |
+| Write     | Mutation     | PUT, POST, PATCH, DELETE |
+
+In this chapter we will look at real-time data. In GraphQL real-time data is handled by the GraphQL subscription operation type. Like before we will look at these concepts through the lense of our coin portal application.
+
+
+
+
+
+
 - notifications
 - price updates
 
-So far we have dealt with GraphQL 
+
 
 In the previous part of this chapter we integrated historic data to enable complex price charts. In this part we want to go in the opposite direction by tapping into real-time price information that are coming from an external service.
 
