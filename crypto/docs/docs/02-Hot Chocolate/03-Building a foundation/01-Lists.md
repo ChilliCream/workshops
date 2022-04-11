@@ -19,7 +19,7 @@ Before we can begin, we need to clone the workshop repository. To do this, open 
 git clone https://github.com/ChilliCream/workshops.git
 ```
 
-Next, open the backend playground for this example.
+Next, open the backend playground directory for this example.
 
 ```bash
 code workshops/crypto/backend/playground/example2
@@ -41,7 +41,7 @@ First, we want to expose  a simple list of assets through GraphQL. We will add a
 
 :::note
 
-The `Query` class will represent the GraphQL root type for query operations. Queries operations in GraphQL represent side-effect-free read operations.
+The `Query` class will represent the GraphQL root type for query operations. Query operations in GraphQL represent side-effect-free read operations.
 
 :::
 
@@ -72,6 +72,15 @@ type Query {
 ```
 
 :::note
+<<<<<<< HEAD
+=======
+
+We applied GraphQL naming conventions to the method name `GetAssets` which removed the `Get` verb from the name and applied **camelCase** to it.
+
+:::
+
+To fetch the assets from our database, we need an `AssetContext`. With **Hot Chocolate**, we can ask for services required in our resolver by adding them as parameters. We call this resolver-level dependency injection.
+>>>>>>> main
 
 The exclamation mark `!` has a special meaning in GraphQL. All types in GraphQL are nullable by default. The `!` marks a type as `Non-Null` type. Somewhat the opposite of a C# `?`. So the above `assets` property will not be null and will not contain null objects. 
 
@@ -190,4 +199,8 @@ query GetAllAssets {
 **remark: Maybe add the expected result here as screen shot**
 ## Summary
 
+<<<<<<< HEAD
 In the first part, we have learned how to expose a list of database entities through GraphQL. We also explored resolver dependency injection and registered the `DbContext` with the execution engine.
+=======
+In the first part, we have learned how to expose a list of database entities through GraphQL. We also explored resolver dependency injection and how we can register the `DbContext` with the execution engine.
+>>>>>>> main
