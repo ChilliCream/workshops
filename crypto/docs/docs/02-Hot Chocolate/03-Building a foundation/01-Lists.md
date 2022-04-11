@@ -39,7 +39,7 @@ First, we want to expose through GraphQL a simple list of assets. We will add a 
 
 :::note
 
-The `Query` class will represent the GraphQL root type for query operations. Queries operations in GraphQL represent side-effect-free read operations.
+The `Query` class will represent the GraphQL root type for query operations. Query operations in GraphQL represent side-effect-free read operations.
 
 :::
 
