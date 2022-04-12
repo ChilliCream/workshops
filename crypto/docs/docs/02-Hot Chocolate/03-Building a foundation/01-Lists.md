@@ -43,7 +43,7 @@ The `Query` class will represent the GraphQL root type for query operations. Que
 
 :::
 
-Open your terminal within Visual Studio Code and create a new directory `Types` in the `example2` directory. The `Types` directory will be the home of our GraphQL types.
+Open your terminal within Visual Studio Code and create a new directory `Types` in the `example2` directory. The `Types` directory will be home to our GraphQL types.
 
 ```bash
 mkdir Types
