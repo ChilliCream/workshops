@@ -30,7 +30,7 @@ public sealed class AssetNode
 
     [NodeResolver]
     public static async Task<Asset> GetByIdAsync(
-        int id, 
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
