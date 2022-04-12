@@ -61,7 +61,7 @@ public class Query
 }
 ```
 
-The `GetAssets` method within the `Query` class represents a resolver for the GraphQL root field `assets` on the `Query` type. The GraphQL representation looks like this:
+The `GetAssets` method within the `Query` class represents a resolver for the GraphQL root field `assets` on the `Query` type. The GraphQL representation looks like the following:
 
 ```graphql
 type Query {
