@@ -35,7 +35,7 @@ Further, we have a directory **Data** containing an Entity Framework `DbContext`
 
 ## Asset List
 
-First, we want to expose  a simple list of assets through GraphQL. We will add a new `Query` class with a resolver to fetch the asset list.
+First, we want to expose a simple list of assets through GraphQL. We will add a new `Query` class with a resolver to fetch the asset list.
 
 :::note
 
