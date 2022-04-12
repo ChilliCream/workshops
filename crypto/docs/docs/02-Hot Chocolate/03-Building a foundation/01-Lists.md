@@ -49,7 +49,7 @@ Open your terminal within Visual Studio Code and create a new directory `Types` 
 mkdir Types
 ```
 
-Next, create the a `Query.cs` file in the `Types` directory. Copy the following code into the new file.
+Next, create the `Query.cs` file in the `Types` directory. Copy the following code into the new file.
 
 ```csharp title="/Types/Query.cs"
 namespace Demo.Types;
