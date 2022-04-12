@@ -6,7 +6,7 @@ In this chapter, we will start with our crypto coin portal example. We will begi
 
 During this chapter, we will cover the following topics:
 
-- Exposing a lists of entities from a database as GraphQL types
+- Exposing lists of entities from a database
 - Cursor pagination
 - Global Object Identification
 - DataLoader
