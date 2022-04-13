@@ -1,12 +1,10 @@
 # Lists
 
-In this chapter, we will start with our crypto coin portal example. We will begin with a basic GraphQL server that exposes an `Asset` and an `AssetPrice` type to allow the GraphQL portal to fetch the available crypto assets and price information.
-
-**Remark: is 'entity' the right term? 'type' would come to my mind**
+In this chapter, we will start with our crypto coin portal example. We will begin with a basic GraphQL server that exposes an `Asset` and an `AssetPrice` entity to allow the GraphQL portal to fetch the available crypto assets and price information.
 
 During this chapter, we will cover the following topics:
 
-- Exposing a lists of entities from a database as GraphQL types
+- Exposing lists of entities from a database
 - Cursor pagination
 - Global Object Identification
 - DataLoader
@@ -37,7 +35,7 @@ Further, we have a directory **Data** containing an Entity Framework `DbContext`
 
 ## Asset List
 
-First, we want to expose  a simple list of assets through GraphQL. We will add a new `Query` class with a resolver to fetch the asset list.
+First, we want to expose a simple list of assets through GraphQL. We will add a new `Query` class with a resolver to fetch the asset list.
 
 :::note
 
@@ -45,13 +43,13 @@ The `Query` class will represent the GraphQL root type for query operations. Que
 
 :::
 
-Open your terminal within Visual Studio Code and create a new directory `Types` in the `example2` directory. The `Types` directory will be the home of our GraphQL types.
+Open your terminal within Visual Studio Code and create a new directory `Types` in the `example2` directory. The `Types` directory will be home to our GraphQL types.
 
 ```bash
 mkdir Types
 ```
 
-Next, create the a `Query.cs` file in the `Types` directory. Copy the following code into the new file.
+Next, create the `Query.cs` file in the `Types` directory. Copy the following code into the new file.
 
 ```csharp title="/Types/Query.cs"
 namespace Demo.Types;
@@ -63,7 +61,7 @@ public class Query
 }
 ```
 
-The `GetAssets` method within the `Query` class represents a resolver for the GraphQL root field `assets` on the `Query` type. The GraphQL representation looks like this:
+The `GetAssets` method within the `Query` class represents a resolver for the GraphQL root field `assets` on the `Query` type. The GraphQL representation looks like the following:
 
 ```graphql
 type Query {
