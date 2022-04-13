@@ -31,8 +31,7 @@
     "react": "experimental",
     "react-dom": "experimental",
     "react-dropzone": "latest",
-    "react-relay": "main",
-    "subscriptions-transport-ws": "latest"
+    "react-relay": "main"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "latest",
