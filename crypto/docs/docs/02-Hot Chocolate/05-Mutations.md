@@ -26,7 +26,6 @@ builder.Services.AddQueryType<Query>();
 
 A mutation is specified almost as a query in the GraphQL syntax.
 
-**DO NOT FORGET TO SWAP IMAGE**
 ![GraphQL Mutation Structure](images/mutation-structure.png)
 
 The first striking difference is that a mutation starts with the keyword `mutation`. Like with the query type, we need to register a mutation type in **Hot Chocolate**.
@@ -95,6 +94,12 @@ https://spec.graphql.org/October2021/#sec-Normal-and-Serial-Execution
 ## Watchlist Mutations
 
 With the introduction of mutations out of the way, let's create our first mutation. In this first try will start with a naive mutation approach.
+
+Open the backend playground directory for this example.
+
+```bash
+code workshops/crypto/backend/playground/example4
+```
 
 Create a new file called `WatchlistMutations.cs` located in the `Types/Account` directory and copy the following code.
 
