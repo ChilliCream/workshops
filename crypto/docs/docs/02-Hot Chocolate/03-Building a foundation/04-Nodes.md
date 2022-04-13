@@ -1,6 +1,6 @@
 # Nodes
 
-So far, we can fetch all assets with pagination activated. This allows us to fetch the assets for lists in our GUI. In this next step, we want to enable the consumer of our API to fetch an asset by its id. Further, we want to introduce a concept for global object identification where the client can fetch any entity in a generic identifier just by its id.
+So far, we can fetch all assets with pagination activated. This allows us to fetch the assets for lists in our GUI. In this next step, we want to fetch an asset by its id. Further, we want to introduce a concept for global object identification where the client can fetch any entity by a generic identifier.
 
 ## Fetch single Asset
 
@@ -39,7 +39,7 @@ public sealed class AssetByIdDataLoader : BatchDataLoader<int, Asset>
 }
 ```
 
-Now that we have a DataLoader to fetch the `Asset` entity by its ID, head over to the `Query.cs` file and add a new method called `GetAssetByIdAsync`.
+Now that we have a DataLoader to fetch the `Asset` entity by its id, head over to the `Query.cs` file and add a new method called `GetAssetByIdAsync`.
 
 ```csharp
 public async Task<Asset?> GetAssetByIdAsync(
@@ -136,6 +136,7 @@ builder.Services
     .AddAssetTypes()
     .AddGlobalObjectIdentification()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+
 var app = builder.Build();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
@@ -199,7 +200,7 @@ public sealed class AssetNode
 
 ```
 
-With this in place, let's explore the schema a bit and explore how this changed the execution behavior.
+With that **HotChocolate** knows how to resolve a `Node` of type `Asset`. Let's explore the schema a bit and explore how this changed the execution behavior.
 
 ```bash
 dotnet run
@@ -279,7 +280,7 @@ query {
 You could compare the **InlineFragment** to an is check in C#.
 
 ```csharp
-if(node is Asset asset) 
+if (node is Asset asset) 
 {
     Console.WriteLine(asset.Symbol);
 }
@@ -287,9 +288,10 @@ if(node is Asset asset)
 
 Essentially it will return the fields within the inline fragment if the returned type is an `Asset`.
 
+
 ## Cleanup
 
-Let us tidy up the schema a bit. With the **Global Object Identification** specification, we want to be consistent with the `Asset` id. The consumer does not need to figure out when to pass an encoded ID and when to use the internal ID.
+Let us tidy up the schema a bit. With the **Global Object Identification** specification, we want to be consistent with the `Asset` id. The consumer does not need to figure out when to pass an encoded id and when to use the internal id.
 
 Head over to the `Query` class and add the `IdAttribute` to the `id` parameter in our `GetAssetByIdAsync` resolver.
 
@@ -303,9 +305,9 @@ public async Task<Asset?> GetAssetByIdAsync(
 
 :::note
 
-The `nameof(Asset)` argument into the attribute will ensure that only IDs are accepted that are encoded to be `Asset` ids.
+The `nameof(Asset)` argument on the attribute will ensure that only IDs are accepted that are encoded to be `Asset` ids.
 
-:::
+on :::
 
 The complete `Query` class should look now like the following.
 
@@ -326,7 +328,7 @@ public class Query
 }
 ```
 
-With the above in place, we now have to pass in the encoded ID to the `assetById` field.
+With the above in place, we now have to pass in the encoded id to the `assetById` field.
 
 ```graphql
 query {
@@ -337,6 +339,8 @@ query {
 ```
 
 To complete our schema, we will also make the `AssetPrice` entity a `Node`. In general, not every object type has to be a node. But for parts of the graph that you want to be refetchable, you need to implement the node interface.
+
+**Remark: the AssetBySymbolDataLoader has nothing to do with the mentioned goal of turning AssetPrice in a Node in the paragraph above.**
 
 Create a new file called `AssetBySymbolDataLoader.cs` in the `DataLoader` directory and add the following code.
 
@@ -420,9 +424,11 @@ public sealed class AssetPriceNode
 }
 ```
 
+**Maybe the `IgnoreProperties = new[] { nameof(AssetPrice.AssetId) }` deserves and explanation.**
+
 With the addition of the `AssetPriceNode` class, we have made the `AssetPrice` type a node. We also introduced a way to get from the `AssetPriceNode` to the `Asset` by adding the `GetAssetAsync` resolver to the `AssetPriceNode` class.
 
-This allows us to refetch the `AssetPrice` and the `Asset` simultaneously from and from both angles.
+This allows us to refetch the `AssetPrice` from the `Asset` and also the `Asset` from the `AssetPrice`.
 
 ```graphql
 query {

@@ -1,6 +1,6 @@
 # Sorting and Filtering
 
-In this last part of creating the backend for our price ticker, we want to give the consumer of our API the power to filter and sort assets. By default, we return the assets sorted by the asset`s symbol field.
+In this last part of creating the backend for our price ticker, we want to give the consumer of our API the power to filter and sort assets. We now return the assets sorted by the asset`s symbol field by default.
 
 ```csharp
 [UsePaging]
@@ -8,9 +8,9 @@ public IQueryable<Asset> GetAssets(AssetContext context)
     => context.Assets.OrderBy(t => t.Symbol);
 ```
 
-But in our frontend component for the ticker, we want to sort the assets by the `tradableMarketCapRank`. Further, we also want to introduce new UI components that allow sorting of the assets in lists. **Hot Chocolate** comes with integrations for many data sources to rewrite exposed filters and sort order into the native query language. 
+But in our frontend component for the ticker, we want to sort the assets by the `tradableMarketCapRank`. Further, we also want to introduce UI components that allow sorting of the assets in lists. **Hot Chocolate** comes with integrations for many data sources to rewrite exposed filters and the sort order into the native query language.
 
-In our case, we want to again apply these custom filters and sort orders onto the returned `IQueryable<Asset>`. While paging is actually built into the core of **Hot Chocolate**, the data integrations like sorting and filtering come with the `HotChocolate.Data.*` packages. We have already added the `HotChocolate.Data.EntityFramework` package to the current project.
+In our case, we want to apply these custom filters and sort orders onto the returned `IQueryable<Asset>`, like we did with the paging. While paging is actually built into the core of **Hot Chocolate**, the data integrations like sorting and filtering come with the `HotChocolate.Data.*` packages. We have already added the `HotChocolate.Data.EntityFramework` package to the current project.
 
 ## Configuration
 
@@ -92,7 +92,7 @@ public sealed class UsePagingAttribute : DescriptorAttribute
 }
 ```
 
-By annotating this attribute to your resolver, it will intercept the field descriptor and apply the configuration to it. Attributes that start with the verb `Use` will apply field middleware to the field, changing the runtime behavior of the annotated resolver.
+Annotating our resolver with this attribute, we will lead to intercepting the field descriptor and applying the configuration to it. Attributes that start with the verb `Use` will apply field middleware, changing the runtime behavior of the annotated resolver.
 
 <img src="/img/backend/example2-part1-middleware.png" width="300" />
 
@@ -122,7 +122,7 @@ By annotating this attribute to your resolver, it will intercept the field descr
           descriptor.Field(t => t.Price);
       }
   }
-  ``` 
+  ```
 
 - **schema-first**
   
@@ -134,7 +134,7 @@ By annotating this attribute to your resolver, it will intercept the field descr
   }
   ```
 
-> Schema building approaches can be mixed and matched.
+Schema building approaches can be mixed and matched.
 
 :::
 
@@ -188,9 +188,9 @@ public sealed class AssetPriceChangeType : ObjectType
 
 ## Resolver
 
-Now that we understand what field middleware is and how we can leverage it to change execution behavior let's just do that by adding the filtering and sorting middleware to our `GetAssets` resolver.
+Now that we understand what field middleware is and how we can leverage it to change execution behavior, let's do that by adding the filtering and sorting middleware to our `GetAssets` resolver.
 
-Head over to the `Query.cs` file located in the `Types` directory and add the `UseFilteringAttribute` and `UseSortingAttribute`.
+Head over to the `Query.cs` file located in the `Types` directory and add the `UseFiltering` and `UseSorting` attributes.
 
 ```csharp
 [UsePaging]
@@ -218,7 +218,7 @@ Next, let's head over to the `Schema Reference` tab to inspect the new schema.
 
 ![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp4.png)
 
-Our assets field suddenly has two more arguments called `where` and `order`, which are input objects.
+Our assets field now has two more arguments called `where` and `order`, which are input objects.
 
 Now, click on the order type and let us explore the type structure.
 
@@ -228,9 +228,9 @@ We can see that we can order by all the fields on our `Asset` and `AssetPrice` t
 
 :::important
 
-When we allow the consumer to filter on any field and/or sort by and field, we no longer are in control over how our resolver will perform. This has security and performance implications. Ensure that you only expose fields to the filter and/or sorting middleware that you really need.
+When we allow the consumer to filter on any field and/or sort by and field, we no longer are in control over how our resolver will perform. This has security and performance implications, e.g. you probably want to make sure that all fields, that can be used for sorting and filtering, have an index defined in a relational database. Ensure that you only expose fields to the filter and/or sorting middleware that you really need.
 
-The data package allows you to control what fields are filterable or sortable and what filter- or sort-operations are permitted on the fields.
+The data package allows you to control what fields are filterable or sortable and what filter or sort operations are permitted on the fields.
 
 :::
 
@@ -256,13 +256,13 @@ public sealed class AssetFilterInputType : FilterInputType<Asset>
 }
 ```
 
-Next, head over to the file `Query.cs` and pass in the `AssetFilterInputType` type to the `UseFilteringAttribute`.
+Next, head over to the file `Query.cs` and pass in the `AssetFilterInputType` type to the `UseFiltering` attribute.
 
 ```csharp
 [UseFiltering(typeof(AssetFilterInputType))]
 ```
 
-With the filtering configured, we still need to configure our sorting middleware. 
+With the filtering configured, we still need to configure our sorting middleware.
 
 Create a new file `AssetSortInputType.cs` located in the `Types` directory.
 
@@ -290,7 +290,7 @@ As for filtering, we need to pass the `AssetSortInputType` type into the filteri
 [UseSorting(typeof(AssetSortInputType))]
 ```
 
-Last but not least, we need to refine our resolver a bit so that we apply the default order only to our `IQueryable` if the user did not specify a sort order of his/her own.
+Last but not least, we need to refine our resolver a bit so that we apply the default order only to our `IQueryable` if no sort order was specified.
 
 ```csharp
 [UsePaging]
@@ -359,6 +359,12 @@ query {
 }
 ```
 
+:::note
+
+Note that it is possible to filter and sort not only by the root element of the query, but also by elements of child collections.
+
+:::
+
 ## Field Bindings
 
 Before wrapping up this last part of our chapter, we need to add one more thing to our `Asset` type. As of now, the `Asset` exposes an image key that the UI cannot leverage to fetch the `Asset` icon.
@@ -386,7 +392,7 @@ public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor 
 }
 ```
 
-The above resolver is annotated with the `BindMemberAttribute`, which allows us to indicate to the schema building process that the resolver replaces a field that has a different name than can be inferred from the resolver. The new field name will become `imageUrl` instead of `imageKey`.
+The above resolver is annotated with the `BindMember` attribute. This instruct the schema builder to replace a field with a different name with this resolver. The new field name will become `imageUrl` instead of `imageKey`.
 
 The completed file should look like the following.
 
@@ -432,6 +438,10 @@ public sealed class AssetNode
 
 Lets quickly test this new field with **Banana Cake Pop**.
 
+```bash
+dotnet run
+```
+
 Open http://localhost:5000/graphql and refresh your schema.
 
 ![Banana Cake Pop - Refresh Schema](../images/example2-part1-bcp1.png)
@@ -451,4 +461,4 @@ query {
 
 ## Summary
 
-In this last part of this chapter, we have explored what field middleware is and how it enables the paging, filtering, and sorting capabilities of **Hot Chocolate**. We have extended our `assets` field to allow custom filters and to sort the dataset by the user. We also learned that it's best not to just expose all the fields to the consumer for performance and security reasons.
+In the last part of this chapter, we explored what field middleware is and how it enables the paging, filtering, and sorting capabilities of **Hot Chocolate**. We extended our `assets` field to allow custom filtering and sorting by the user. We also learned that it's best not to expose all the fields to the consumer for performance and security reasons.
