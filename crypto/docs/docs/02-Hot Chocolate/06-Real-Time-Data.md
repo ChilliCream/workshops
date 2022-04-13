@@ -7,23 +7,29 @@ So far we have looked at several concepts for GraphQL queries and mutations. If 
 | Read      | Query        | GET                      |
 | Write     | Mutation     | PUT, POST, PATCH, DELETE |
 
-In this chapter we will look at real-time data. In GraphQL real-time data is handled by the GraphQL subscription operation type. Like before we will look at these concepts through the lense of our coin portal application.
+In this chapter, we will learn how to bring realtime functionality into the coin by portal implementing GraphQL subscriptions. The goal is to implement two subscriptions to be exposed by our GraphQL server:
 
-Get real-time updates from your GraphQL server
+- Send real-time price updates to our app when the price has been updated
+- Send real-time notifications whenever a user configured price alert has been hit.
 
-Subscriptions are real-time, beyond that we have not learned a lot about what they really are.
+## What are GraphQL subscriptions?
 
-Subscriptions instead of a single response return a response stream. Instead of something like an observable we are using an async iterator to represent the stream of responses we will send down to the client. In order to produce this stream of responses the execution engine will subscribe to an event stream. For each event on the event stream we will produce a response.
+Subscriptions are a GraphQL feature that allows a server to send data to its clients when a specific event happens. Subscriptions are usually implemented with WebSockets but can also be transported by other means like server side events, MQTT, ZeroMQ or Post to a webhook callback . With WebSockets the server maintains a steady connection to its subscribed client. This also breaks the “Request-Response-Cycle” that were used for all previous interactions with the API.
 
-Small, incremental changes to large objects. Repeatedly polling for a large object is expensive, especially when most of the object's fields rarely change. Instead, you can fetch the object's initial state with a query, and your server can proactively push updates to individual fields as they occur.
-Low-latency, real-time updates. For example, a chat application's client wants to receive new messages as soon as they're available.
+Instead, the client initially opens up a long-lived connection to the server by sending a subscription query that specifies which event it is interested in. Every time this particular event happens, the server uses the connection to push the event data to the subscribed client.
 
-## External Events
+## Price Updates
+
 
 The first use case we want to solve is to introduce a real-time price update. Essentially we want to give our portal the ability to subscribe to an `onPriceChange` event and update prices shown in the various components in real-time.
 
 
+## Problems 
 
+- Multiple Subscriptions -> Multiplexing
+- Scaling
+- Throttling -> batching
+- Quality of Service
 
 
 
