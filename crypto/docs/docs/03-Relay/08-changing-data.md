@@ -131,6 +131,6 @@ And it returns:
 
 :::info
 
-There are several ways to implement `optimistic` updates, to provide a better UX. In the example above, we have used `optimisticUpdater`: a function used to optimistically update the local in-memory store, i.e. immediately, before the mutation request has completed. If an error occurs during the mutation request, the optimistic update will be rolled back.
+There are several ways to implement `optimistic` updates, to provide a better UX. In the example above, we have used `optimisticUpdater`: a function used to optimistically update the local in-memory store (i.e., immediately) before the mutation request has completed. If an error occurs during the mutation request, the optimistic update will be rolled back.
 
 :::

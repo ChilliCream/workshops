@@ -76,7 +76,7 @@ export default memo(function ScreenerList({fragmentRef}) {
 
 Let's distill what's going on here:
 
-- The component is automatically subscribed to updates to the fragment data: if the data required is updated anywhere in the app (e.g. via fetching new data, or mutating existing data), the component will automatically re-render with the latest updated data.
+- The component is automatically subscribed to updates to the fragment data: if the data required is updated anywhere in the app (e.g., via fetching new data, mutating existing data), the component will automatically re-render with the latest updated data.
 
 - The component will suspend if any data for that specific fragment is missing, and the data is currently being fetched by a parent query.
 

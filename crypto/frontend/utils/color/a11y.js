@@ -86,7 +86,7 @@ const hslToRgb = (h, s, l) => {
 /**
  * Converts a CSS color value to HSL.
  *
- * @param {string} color The CSS color (i.e. one of: #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
+ * @param {string} color The CSS color (i.e., #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
  * @returns {number[]} The HSL representation
  */
 const strToHsl = (color) => {
@@ -105,7 +105,7 @@ const strToHsl = (color) => {
  * @param {number} r The red color value
  * @param {number} g The green color value
  * @param {number} b The blue color value
- * @returns {string} The HEX representation (i.e.: #nnnnnn)
+ * @returns {string} The HEX representation (i.e., #nnnnnn)
  */
 const rgbToHex = (r, g, b) => {
   const intToHex = (int) => int.toString(16).padStart(2, '0');
@@ -121,7 +121,7 @@ const rgbToHex = (r, g, b) => {
  * @param {number} h The hue value
  * @param {number} s The saturation value
  * @param {number} l The lightness value
- * @returns {string} The HEX representation (i.e.: #nnnnnn)
+ * @returns {string} The HEX representation (i.e., #nnnnnn)
  */
 const hslToHex = (h, s, l) => {
   const [r, g, b] = hslToRgb(h, s, l);
@@ -135,10 +135,10 @@ const hslToHex = (h, s, l) => {
  * @example
  * findClosestAccessibleColor('#f7931a', '#fff'); // → #dd7c07
  *
- * @param {string} foregroundColor The CSS color (i.e. one of: #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
- * @param {string} backgroundColor The CSS color (i.e. one of: #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
- * @param {number} minContrastRatio The desired minimum contrast ratio (e.g.: 3, 4.5, 7)
- * @returns {string} The HEX representation (i.e.: #nnnnnn)
+ * @param {string} foregroundColor The CSS color (i.e., #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
+ * @param {string} backgroundColor The CSS color (i.e., #nnn, #nnnnnn, rgb(), rgba(), hsl(), hsla())
+ * @param {number} minContrastRatio The desired minimum contrast ratio (e.g., 3, 4.5, 7)
+ * @returns {string} The HEX representation (i.e., #nnnnnn)
  */
 export const findClosestAccessibleColor = (
   foregroundColor,
