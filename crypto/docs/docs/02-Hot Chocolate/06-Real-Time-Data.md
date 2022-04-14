@@ -1,36 +1,36 @@
 # Real-Time Data
 
-So far we have looked at several concepts for GraphQL queries and mutations. If we put this in a REST context we essentially dealt with the `GET`, `PUT`, `POST`, `PATCH`, `DELETE` verbs. Everything related to reading data and altering data.
+So far, we have looked at several concepts for GraphQL queries and mutations. If we put this in a REST context, we essentially dealt with the `GET`, `PUT`, `POST`, `PATCH`, `DELETE` verbs. Everything is related to reading data and altering data.
 
 | Operation | GraphQL      | REST                     |
 |-----------|--------------|--------------------------|
 | Read      | Query        | GET                      |
 | Write     | Mutation     | PUT, POST, PATCH, DELETE |
 
-In this chapter, we will learn how to bring realtime functionality into the coin by portal implementing GraphQL subscriptions. The goal is to implement two subscriptions to be exposed by our GraphQL server:
+In this chapter, we will learn how to bring real-time functionality into the coin portal by implementing GraphQL subscriptions. The goal is to expose two subscription events by our GraphQL server:
 
 - Send real-time price updates to our app when the price has been updated
-- Send real-time notifications whenever a user configured price alert has been hit.
+- Send real-time notifications whenever a user-configured price alert has been hit.
 
 ## What are GraphQL subscriptions?
 
-Subscriptions are a GraphQL feature that allows a server to send data to its clients when a specific event happens. Subscriptions are usually implemented with WebSockets but can also be transported by other means like server side events, MQTT, ZeroMQ or Post to a webhook callback . With WebSockets the server maintains a steady connection to its subscribed client. This also breaks the “Request-Response-Cycle” that were used for all previous interactions with the API.
+Subscriptions are a GraphQL feature that allows a server to send data to its clients when a specific event happens. Subscriptions are usually implemented with WebSockets but can also be transported by server-side events, MQTT, ZeroMQ, or webhook callbacks. With WebSockets, the server maintains a steady connection to its subscribed client. This also breaks the "Request-Response-Cycle" used for all previous interactions with our API.
 
 Instead, the client initially opens up a long-lived connection to the server by sending a subscription request that specifies which event it is interested in. Every time this particular event happens, the server uses the connection to push the event data to the subscribed client.
 
 ## Price Updates
 
-The first use case we want to solve is to introduce a real-time price update. Essentially we want to give our portal the ability to subscribe to an `onPriceChange` event and update prices shown in the various components in real-time.
+The first use case we want to solve is introducing a real-time price update. We want to give our coin portal the ability to subscribe to an `onPriceChange` event and update prices shown in the various components in real-time.
 
-The example 5 code already provides a stream of price updates and we will tap into this to implement a GraphQL subscription.
+The example 5 code already provides a stream of price updates, and we will tap into this to implement a GraphQL subscription.
 
 ```bash
 code workshops/crypto/backend/playground/example5
 ```
 
-Let us first head over to the `Program.cs` and inspect it a bit.
+First, head over to the `Program.cs` and inspect it a bit.
 
-We already have setup the server to support WebSockets. 
+We already have set up the server to support WebSockets. 
 
 ```csharp
 app.UseWebSockets(); // <-----
@@ -39,9 +39,9 @@ app.UseStaticFiles();
 app.MapGraphQL();
 ```
 
-`UseWebSockets` is a ASP.NET Core middleware and adds transport support for raw WebSockets. 
+`UseWebSockets` is an ASP.NET Core middleware and adds transport support for raw WebSockets. 
 
-`MapGraphQL` adds support for the `graphql-ws` and `graphql-transport-ws` sub protocols which specify how the client will communicate with the server for GraphQL when using WebSockets.
+`MapGraphQL` adds the GraphQL transport layer and supports the `graphql-ws` and `graphql-transport-ws` sub-protocols which specify how the client will communicate with the server for GraphQL when using WebSockets.
 
 :::info
 
@@ -56,7 +56,7 @@ app.MapBananaCakePop("/graphql/ui");
 
 :::
 
-The second thing that we have already configured in our GraphQL server is an in-memory pub/sub to handle our event stream.
+The second thing that we have already configured in our GraphQL server is an in-memory PubSub-system to handle our event stream.
 
 ```csharp
 builder.Services
@@ -72,7 +72,7 @@ builder.Services
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
 
-What we still have to do here is adding a subscription root type. Chain `AddSubscriptionType` in after `AddMutationType`.
+What we still have to do here is add a subscription root type. Chain `AddSubscriptionType` in after `AddMutationType`.
 
 ```csharp
 builder.Services
@@ -89,7 +89,7 @@ builder.Services
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
 
-The first event we want to introduce is a price update event where we can subscribe to price updates for specific assets of to all price updates.
+The first event we want to introduce is a price update event where we can subscribe to price updates for specific assets of all price updates.
 
 ```graphql
 subscription {
@@ -100,7 +100,7 @@ subscription {
 }
 ```
 
-Or, if we want to subscribe to all price updates we just leave the symbols away.
+Or, if we want to subscribe to all price updates, we just leave the symbols away.
 
 ```graphql
 subscription {
@@ -135,7 +135,7 @@ public sealed class AssetSubscriptions
 
 `OnPriceChangeAsync` represents our root resolver that will resolve the price update for each event on the event stream.
 
-Next, add a subscribe method to the `AssetSubscriptions` class which will connect to the internal price update events and create an async iterable for the execution engine that represents the event stream.
+Next, add a subscribe method to the `AssetSubscriptions` class, which will connect to the internal price update events and create an async iterable for the execution engine that represents the event stream.
 
 ```csharp
 public async IAsyncEnumerable<string> PriceChangeStreamAsync(
@@ -157,13 +157,13 @@ public async IAsyncEnumerable<string> PriceChangeStreamAsync(
 }
 ```
 
-We need to update our `OnPriceChangeAsync` resolver to indicate how we want to subscribe to the event stream. For this we will swap out the `SubscribeAttribute`.
+We need to update our `OnPriceChangeAsync` resolver to indicate how we want to subscribe to the event stream. For this, we will swap out the `SubscribeAttribute`.
 
 ```csharp
 [Subscribe(With = nameof(PriceChangeStreamAsync))]
 ```
 
-The code should now like the following.
+The code should now be like the following.
 
 ```csharp title="/Types/Assets/SubscribeAttribute.cs"
 using System.Runtime.CompilerServices;
@@ -203,7 +203,7 @@ public sealed class AssetSubscriptions
 }
 ```
 
-Our subscription event reuses the `AssetPrice` model meaning we can subscribe to `onPriceChange` and can query into any property that is available through the `AssetPrice` type.
+Our subscription event reuses the `AssetPrice` model, meaning we can subscribe to `onPriceChange` and query into any property available through the `AssetPrice` type.
 
 ```graphql
 subscription OnPriceChange {
@@ -227,9 +227,9 @@ subscription OnPriceChange {
 }
 ```
 
-This is great since we are not limited a very narrow event type and can pick the information that matter to us. Overall, subscription feels like a query with the difference that it is executed whenever an event happens.
+This is great since we are not limited to a very narrow event type and can pick the information that matters to us. Overall, a subscription feels like a query with the difference that it is executed whenever an event happens.
 
-But beware, having large subscription queries that are executed on a high-frequent real-time event with many subscribers can bring your system under pressure quickly.
+But beware, having large subscription queries executed on a high-frequent real-time event with many subscribers can quickly bring your system under pressure.
 
 :::important
 
@@ -241,7 +241,7 @@ Low-latency, real-time updates. For example, a chat application's client wants t
 
 :::
 
-For our use-case we would rather go for a smaller subscription request that will fetch only the price update.
+For our use case, we would rather go for a smaller subscription request that will fetch only the price update.
 
 ```graphql
 subscription OnPriceChange {
@@ -266,11 +266,11 @@ Add the above subscription request into the operation tab and execute it.
 
 ![Banana Cake Pop - Subscription](./images/example5-bcp1.png)
 
-When executing a subscription we might not get an immediate result. We will only get a subscription result send down whenever the event we are subscribing to happens.
+When executing a subscription, we might not get an immediate result. We will only get a subscription result sent down whenever the event we subscribe to happens.
 
 ## Notifications
 
-OK, we have another use case we want to solve with subscriptions and that is our application notifications. We want to give the user the ability to create price alerts. Whenever a certain price target is hit we want to receive a notification. Further, whenever we subscribe to our event we want to immediately get a notification whenever there are new unread notification. Think of this ans an initial indicator where the server tells the client that there are new notifications that we have not seen since the last time we logged in, but we do not want to overwhelm the user with repeating all the missed messages. 
+OK, we have another use case that we want to solve with subscriptions in our application: notifications. We want to give the user the ability to create price alerts. Whenever a certain price target is hit, we want to send a notification down to the client informing the user of that fact. Further, whenever we subscribe to our event, we want to immediately get a notification whenever there is a new unread notification. Think of this as an initial indicator where the server tells the client that there are new notifications that we have not seen since the last time we have logged in, but we do not want to overwhelm the user with repeating all the missed messages. 
 
 ```graphql
 subscription OnNotification {
@@ -287,7 +287,7 @@ subscription OnNotification {
 }
 ```
 
-For this we will introduce a new model called `NotificationUpdate` which provides us with the field `unreadNotifications`. Further, the `NotificationUpdate` might also carry a notification itself whenever one is raised while the client application is connected to our server. We have already put the `NotificationUpdate` into the `Notifications` directory. We also already added mutations to create and delete price alerts.
+We will introduce a new model called `NotificationUpdate`, which provides us with the field `unreadNotifications`. Further, the `NotificationUpdate` might also carry a notification whenever one is raised while the client application is connected to our server. We have already put the `NotificationUpdate` into the `Notifications` directory. We also already added mutations to create and delete price alerts.
 
 Create a new file `NotificationSubscriptions.cs` in the `Notifications` directory.
 
@@ -355,17 +355,17 @@ public sealed class NotificationSubscriptions
 }
 ```
 
-Lets review and understand the code. First, we have the `OnNotification` resolver which represents our subscription root resolver. In this case we are just passing through the message object.
+Let's review and understand the code. First, we have the `OnNotification` resolver, representing our subscription root resolver. In this case, we are just passing through the message object.
 
-Next, we have the `CreateOnNotificationUpdateStream` which represents our event stream. If we look at our stream object we can see that first check if there are any notifications for the current user, if there are notifications we will yield return a new `NotificationUpdate`. The client is able to request from this initial event object how many unread notifications are there for the user.
+Next, we have the `CreateOnNotificationUpdateStream` method, representing our event stream. If we look at our stream object, we can see that it first checks if there are any notifications for the current user. If there are notifications, we will return a new `NotificationUpdate`.
 
-After this initial message we will subscribe to the notification topic for this specific user on our internal pub/sub system.
+After this initial message, we will subscribe to the notification topic for this specific user on our internal PubSub-system.
 
-The interesting part here is that with the nice concept of an event stream we can yield initial messages or missed messages before we begin reading from the actual pub/sub stream.
+The interesting part here is that with the nice concept of an event stream, we can yield initial messages or missed messages before we begin reading from the actual event stream.
 
 :::info
 
-`ITopicEventSender` and `ITopicEventReceiver` are abstractions for the internal pub/sub system of **Hot Chocolate**. We registered these two service when we added the in-memory subscription system.
+`ITopicEventSender` and `ITopicEventReceiver` are abstractions for the internal PubSub-system of **Hot Chocolate**. We registered these two services when we added the in-memory PubSub-system
 
 ```csharp
 builder.Services
@@ -377,7 +377,7 @@ builder.Services
 
 :::
 
-Before we can finish up we need to add one more functionality and that is a way to mark a notification as read.
+Before we can finish up, we need to add one more functionality, which is a way to mark a notification as read.
 
 Head over to the `NotificationMutations.cs` located in the `Types/Notifications` directory.
 
@@ -409,11 +409,11 @@ public async Task<Notification?> MarkNotificationReadAsync(
 }
 ```
 
-This new mutation allows us to mark a received notification as read. If we think more about our use case we want to ensure that when a notification is marked as read we want to trigger the `onNotification` event to inform all signed in clients about the new unread count.
+This new mutation allows us to mark a received notification as read. If we think more about our use case, we want to ensure that when a notification is marked as read, we want to trigger the `onNotification` event to inform all signed-in clients about the new unread count.
 
-In order to trigger a subscription event from a mutation we can use the `ITopicEventSender` service to send in a event message.
+To trigger a subscription event from a mutation, we can use the `ITopicEventSender` service to send an event message.
 
-With that in mind lets update our mutation.
+With that in mind, let's update our mutation.
 
 ```csharp
 [Error<UnknownNotificationException>]
@@ -443,7 +443,7 @@ public async Task<Notification?> MarkNotificationReadAsync(
 }
 ```
 
-Now, we are sending a `NotificationUpdate` message everytime we mark a notification read.
+With the new mutation code, we send a `NotificationUpdate` message every time we mark a notification read.
 
 Let's start our server.
 
@@ -459,7 +459,7 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 In order to simulate a signed-in user, click on the settings button of the current document. Select **basic auth** in the authentication tab and use whatever username and password you like.
 
-![Banana Cake Pop - Refresh Schema](./images/example4-bcp6.png)
+![Banana Cake Pop - Authentication](./images/example4-bcp6.png)
 
 :::
 
@@ -484,7 +484,7 @@ Clone the tab in banana cake pop so that we do not have to enter all the auth de
 
 ![Banana Cake Pop - Clone](./images/example5-bcp2.png)
 
-Clear the operation tab an paste in the following mutation.
+Clear the operation tab and paste in the following mutation.
 
 ```graphql
 mutation CreateAlert {
@@ -496,9 +496,9 @@ mutation CreateAlert {
 }
 ```
 
-Look up the current price for Bitcoin and the create a couple of alerts below and above the current price.
+Look up the current price for Bitcoin and create a couple of alerts below and above the current price.
 
-Head back to our initial tab with the subscription and wait. At some point you should receive a subscription result like the following.
+Head back to our initial tab with the subscription and wait. At some point, you should receive a subscription result like the following.
 
 ```json
 {
@@ -518,7 +518,7 @@ Head back to our initial tab with the subscription and wait. At some point you s
 }
 ```
 
-Now lets head over back to the second tab and add the following operation.
+Now, head back to the second tab and add the following operation.
 
 ```graphql
 mutation MarkAsRead {
@@ -532,7 +532,7 @@ mutation MarkAsRead {
 
 Copy the notification ID from your subscription result and paste it into the `MarkAsRead` operation and execute it.
 
-Head back to the first tab and verify that you have received another subscription result with the `unreadNotifications` count reduced.
+Head to the first tab and verify that you have received another subscription result with the `unreadNotifications` count reduced.
 
 ```json
 {
@@ -545,9 +545,9 @@ Head back to the first tab and verify that you have received another subscriptio
 }
 ```
 
-## Jumping Ahead
+## Finishing Touches
 
-For our portal we will need a couple more mutation that are just a repetition of what we already did hear, so lets just copy them over in one go.
+For our portal, we will need a couple more mutations that are just a repetition of what we already did hear, so let's just copy them over in one go.
 
 ```csharp title="/Types/Notifications/NotificationMutations.cs"
 using Demo.Types.Errors;
@@ -732,4 +732,4 @@ public sealed class NotificationMutations
 
 ## Summary
 
-
+In this chapter, we have learned what GraphQL subscriptions are. We have looked at when to use them and how we can tab into real-time events for our application. We have learned that there are subscription events triggered by external systems and that we can trigger them within a resolver by using the `ITopicEventSender` service. Also, we discovered how we could add some more complex use cases by making use of async enumerables.
