@@ -252,7 +252,7 @@ subscription OnPriceChange {
 }
 ```
 
-Let's restart our server.
+Let's start our server.
 
 ```bash
 dotnet run
@@ -291,48 +291,445 @@ For this we will introduce a new model called `NotificationUpdate` which provide
 
 Create a new file `NotificationSubscriptions.cs` in the `Notifications` directory.
 
+```csharp title="/Types/Notifications/NotificationSubscriptions.cs"
+using HotChocolate.Subscriptions;
+
+namespace Demo.Types.Notifications;
+
+[ExtendObjectType(OperationTypeNames.Subscription)]
+public sealed class NotificationSubscriptions
+{
+    [Subscribe(With = nameof(CreateOnNotificationUpdateStream))]
+    public NotificationUpdate OnNotification(
+        [EventMessage] NotificationUpdate message)
+        => message;
+
+    public IAsyncEnumerable<NotificationUpdate> CreateOnNotificationUpdateStream(
+        [GlobalState] string username,
+        [Service] ITopicEventReceiver receiver,
+        [Service] IDbContextFactory<AssetContext> contextFactory)
+        => new OnNotificationUpdateStream(username, receiver, contextFactory);
+
+    private sealed class OnNotificationUpdateStream : IAsyncEnumerable<NotificationUpdate>
+    {
+        private readonly string _username;
+        private readonly ITopicEventReceiver _receiver;
+        private readonly IDbContextFactory<AssetContext> _contextFactory;
+
+        public OnNotificationUpdateStream(
+            string username,
+            ITopicEventReceiver receiver,
+            IDbContextFactory<AssetContext> contextFactory)
+        {
+            _username = username;
+            _receiver = receiver;
+            _contextFactory = contextFactory;
+        }
+
+        public async IAsyncEnumerator<NotificationUpdate> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            if (_username is null)
+            {
+                throw new GraphQLException("You need to be signed in for this subscription!");
+            }
+
+            await using (AssetContext context = await _contextFactory.CreateDbContextAsync(cancellationToken))
+            {
+                if (await context.Notifications.AnyAsync(t => t.Username == _username, cancellationToken))
+                {
+                    yield return new();
+                }
+            }
+
+            var stream = await _receiver.SubscribeAsync<string, NotificationUpdate>(
+                Constants.OnNotification(_username),
+                cancellationToken);
+
+            await foreach (NotificationUpdate message in 
+                stream.ReadEventsAsync().WithCancellation(cancellationToken))
+            {
+                yield return message;
+            }
+        }
+    }
+}
+```
+
+Lets review and understand the code. First, we have the `OnNotification` resolver which represents our subscription root resolver. In this case we are just passing through the message object.
+
+Next, we have the `CreateOnNotificationUpdateStream` which represents our event stream. If we look at our stream object we can see that first check if there are any notifications for the current user, if there are notifications we will yield return a new `NotificationUpdate`. The client is able to request from this initial event object how many unread notifications are there for the user.
+
+After this initial message we will subscribe to the notification topic for this specific user on our internal pub/sub system.
+
+The interesting part here is that with the nice concept of an event stream we can yield initial messages or missed messages before we begin reading from the actual pub/sub stream.
+
+:::info
+
+`ITopicEventSender` and `ITopicEventReceiver` are abstractions for the internal pub/sub system of **Hot Chocolate**. We registered these two service when we added the in-memory subscription system.
+
+```csharp
+builder.Services
+    .AddGraphQLServer()
+    ...
+    .AddInMemorySubscriptions() // <-----
+    ...
+```
+
+:::
+
+Before we can finish up we need to add one more functionality and that is a way to mark a notification as read.
+
+Head over to the `NotificationMutations.cs` located in the `Types/Notifications` directory.
+
+Add the mutation below to your class.
 
 
+```csharp
+[Error<UnknownNotificationException>]
+[UseMutationConvention(PayloadFieldName = "readNotification")]
+public async Task<Notification?> MarkNotificationReadAsync(
+    [ID(nameof(Notification))] int notificationId,
+    [GlobalState] string username,
+    AssetContext context,
+    CancellationToken cancellationToken)
+{
+    var notification = await context.Notifications.FirstOrDefaultAsync(
+        t => t.Id == notificationId && t.Username == username,
+        cancellationToken);
 
-## Problems 
+    if (notification is null)
+    {
+        throw new UnknownNotificationException(notificationId);
+    }
 
-- Multiple Subscriptions -> Multiplexing
-- Scaling
-- Throttling -> batching
-- Quality of Service
+    notification.Read = true;
+    await context.SaveChangesAsync(cancellationToken);
 
+    return notification;
+}
+```
 
+This new mutation allows us to mark a received notification as read. If we think more about our use case we want to ensure that when a notification is marked as read we want to trigger the `onNotification` event to inform all signed in clients about the new unread count.
 
+In order to trigger a subscription event from a mutation we can use the `ITopicEventSender` service to send in a event message.
 
+With that in mind lets update our mutation.
 
+```csharp
+[Error<UnknownNotificationException>]
+[UseMutationConvention(PayloadFieldName = "readNotification")]
+public async Task<Notification?> MarkNotificationReadAsync(
+    [ID(nameof(Notification))] int notificationId,
+    [GlobalState] string username,
+    AssetContext context,
+    [Service] ITopicEventSender eventSender,
+    CancellationToken cancellationToken)
+{
+    var notification = await context.Notifications.FirstOrDefaultAsync(
+        t => t.Id == notificationId && t.Username == username,
+        cancellationToken);
 
- 
-- price updates
-- notifications
+    if (notification is null)
+    {
+        throw new UnknownNotificationException(notificationId);
+    }
 
+    notification.Read = true;
+    await context.SaveChangesAsync(cancellationToken);
 
-In the previous part of this chapter we integrated historic data to enable complex price charts. In this part we want to go in the opposite direction by tapping into real-time price information that are coming from an external service.
+    await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
+    return notification;
+}
+```
 
+Now, we are sending a `NotificationUpdate` message everytime we mark a notification read.
+
+Let's start our server.
+
+```bash
+dotnet run
+```
+
+Open `http://localhost:5000/graphql` and refresh the schema.
+
+![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
+
+:::important
+
+In order to simulate a signed-in user, click on the settings button of the current document. Select **basic auth** in the authentication tab and use whatever username and password you like.
+
+![Banana Cake Pop - Refresh Schema](./images/example4-bcp6.png)
+
+:::
+
+Add the following subscription request into the operation tab and execute it.
 
 ```graphql
-subscription OnPriceChange {
-  onPriceChange(symbols: ["BTC", "ADA", "ETC", "LTC"]) {
-    lastPrice
-    change24Hour
-    change(span: DAY) {
-      percentageChange
-      history(first: 2) {
-        nodes {
-          epoch
-          price
-        }
+subscription OnNotification {
+  onNotification {
+    unreadNotifications
+    notification {
+      message
+      asset {
+        symbol
+        name
       }
-    }
-    asset {
-      symbol
-      slug
     }
   }
 }
 ```
+
+Clone the tab in banana cake pop so that we do not have to enter all the auth details for the new tab.
+
+![Banana Cake Pop - Clone](./images/example5-bcp2.png)
+
+Clear the operation tab an paste in the following mutation.
+
+```graphql
+mutation CreateAlert {
+  createAlert(input: { symbol: "BTC" currency: "USD" targetPrice: 42420 }) {
+    createdAlert {
+      id
+    }
+  }
+}
+```
+
+Look up the current price for Bitcoin and the create a couple of alerts below and above the current price.
+
+Head back to our initial tab with the subscription and wait. At some point you should receive a subscription result like the following.
+
+```json
+{
+  "data": {
+    "onNotification": {
+      "unreadNotifications": 7,
+      "notification": {
+        "id": "Tm90aWZpY2F0aW9uCmk5",
+        "message": "BTC hit your target price of $47,739.01.",
+        "asset": {
+          "symbol": "BTC",
+          "name": "Bitcoin"
+        }
+      }
+    }
+  }
+}
+```
+
+Now lets head over back to the second tab and add the following operation.
+
+```graphql
+mutation MarkAsRead {
+  markNotificationRead(input: {  notificationId: "Tm90aWZpY2F0aW9uCmk5" }) {
+    readNotification {
+      read
+    }
+  }
+}
+```
+
+Copy the notification ID from your subscription result and paste it into the `MarkAsRead` operation and execute it.
+
+Head back to the first tab and verify that you have received another subscription result with the `unreadNotifications` count reduced.
+
+```json
+{
+  "data": {
+    "onNotification": {
+      "unreadNotifications": 6,
+      "notification": null
+    }
+  }
+}
+```
+
+## Jumping Ahead
+
+For our portal we will need a couple more mutation that are just a repetition of what we already did hear, so lets just copy them over in one go.
+
+```csharp title="/Types/Notifications/NotificationMutations.cs"
+using Demo.Types.Errors;
+using HotChocolate.Subscriptions;
+
+namespace Demo.Types.Notifications;
+
+[ExtendObjectType(OperationTypeNames.Mutation)]
+public sealed class NotificationMutations
+{
+    [Error<InvalidTargetPriceException>]
+    [Error<UnknownCurrencyException>]
+    [UseMutationConvention(PayloadFieldName = "createdAlert")]
+    public async Task<Alert?> CreateAlertAsync(
+        CreateAlertInput input,
+        [GlobalState] string username,
+        AssetContext context,
+        AssetPriceBySymbolDataLoader assetPriceBySymbol,
+        CancellationToken cancellationToken)
+    {
+        if (input.TargetPrice <= 0)
+        {
+            throw new InvalidTargetPriceException(input.TargetPrice);
+        }
+
+        if (!input.Currency.Equals("USD"))
+        {
+            throw new UnknownCurrencyException(input.Currency);
+        }
+
+        var price = await assetPriceBySymbol.LoadAsync(input.Symbol, cancellationToken);
+        double change = input.TargetPrice - price.LastPrice;
+        double percentageChange = change / price.LastPrice;
+
+        var alert = new Alert
+        {
+            AssetId = price.AssetId,
+            PercentageChange = percentageChange,
+            TargetPrice = input.TargetPrice,
+            Currency = input.Currency,
+            Recurring = input.Recurring,
+            Username = username
+        };
+
+        context.Alerts.Add(alert);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return alert;
+    }
+
+    [Error<EntityNotFoundException>]
+    [UseMutationConvention(PayloadFieldName = "deletedAlert")]
+    public async Task<Alert?> DeleteAlertAsync(
+        [ID(nameof(Alert))] int alertId,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        var alert = await context.Alerts.FirstOrDefaultAsync(t => t.Id == alertId, cancellationToken);
+
+        if (alert is null)
+        {
+            throw new EntityNotFoundException(alertId);
+        }
+
+        context.Alerts.Remove(alert);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return alert;
+    }
+
+    [Error<UnknownNotificationException>]
+    [UseMutationConvention(PayloadFieldName = "readNotification")]
+    public async Task<Notification?> MarkNotificationReadAsync(
+        [ID(nameof(Notification))] int notificationId,
+        [GlobalState] string username,
+        AssetContext context,
+        [Service] ITopicEventSender eventSender,
+        CancellationToken cancellationToken)
+    {
+        var notification = await context.Notifications.FirstOrDefaultAsync(
+            t => t.Id == notificationId && t.Username == username,
+            cancellationToken);
+
+        if (notification is null)
+        {
+            throw new UnknownNotificationException(notificationId);
+        }
+
+        notification.Read = true;
+        await context.SaveChangesAsync(cancellationToken);
+
+        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+
+        return notification;
+    }
+
+    [Error<UnknownNotificationException>]
+    [UseMutationConvention(PayloadFieldName = "readNotifications")]
+    public async Task<IReadOnlyList<Notification>?> MarkNotificationsReadAsync(
+        [ID(nameof(Notification))] int[] notificationIds,
+        [GlobalState] string username,
+        AssetContext context,
+        [Service] ITopicEventSender eventSender,
+        CancellationToken cancellationToken)
+    {
+        var notifications = await context.Notifications.Where(
+            t => notificationIds.Contains(t.Id) && t.Username == username)
+            .ToListAsync(cancellationToken);
+
+        if (notificationIds.Length != notifications.Count)
+        {
+            throw new UnknownNotificationException(
+                notificationIds.Except(notifications.Select(t => t.Id)).ToArray());
+        }
+
+        foreach (Notification notification in notifications)
+        {
+            notification.Read = true;
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+
+        return notifications;
+    }
+
+    [Error<UnknownNotificationException>]
+    [UseMutationConvention(PayloadFieldName = "deletedNotification")]
+    public async Task<Notification?> DeleteNotificationAsync(
+        [ID(nameof(Notification))] int notificationId,
+        [GlobalState] string username,
+        AssetContext context,
+        [Service] ITopicEventSender eventSender,
+        CancellationToken cancellationToken)
+    {
+        var notification = await context.Notifications.FirstOrDefaultAsync(
+            t => t.Id == notificationId && t.Username == username,
+            cancellationToken);
+
+        if (notification is null)
+        {
+            throw new UnknownNotificationException(notificationId);
+        }
+
+        notification.Read = true;
+        await context.SaveChangesAsync(cancellationToken);
+
+        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+
+        return notification;
+    }
+
+    [Error<UnknownNotificationException>]
+    [UseMutationConvention(PayloadFieldName = "deletedNotifications")]
+    public async Task<List<Notification>?> DeleteNotificationsAsync(
+        [ID(nameof(Notification))] int[] notificationIds,
+        [GlobalState] string username,
+        AssetContext context,
+        [Service] ITopicEventSender eventSender,
+        CancellationToken cancellationToken)
+    {
+        var notifications = await context.Notifications.Where(
+            t => notificationIds.Contains(t.Id) && t.Username == username)
+            .ToListAsync(cancellationToken);
+
+        if (notificationIds.Length != notifications.Count)
+        {
+            throw new UnknownNotificationException(
+                notificationIds.Except(notifications.Select(t => t.Id)).ToArray());
+        }
+
+        context.Notifications.RemoveRange(notifications);
+        await context.SaveChangesAsync(cancellationToken);
+
+        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+
+        return notifications;
+    }
+}
+```
+
+## Summary
+
+
