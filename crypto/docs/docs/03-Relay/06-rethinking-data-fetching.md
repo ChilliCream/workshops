@@ -8,7 +8,7 @@ One solution (let's call it "top-down") is to have a root component declare and 
 
 Another logical approach is to have each component declare and fetch the data it requires. This sounds great. However, the problem is that a component may render different children based on the data it received. So, nested components will be unable to render and begin fetching their data until parent components' queries have completed. In other words, _this forces data fetching to proceed in stages_ (let's call it "waterfall"). Rendering would require multiple slow, serial roundtrips.
 
-Relay allows components to specify what data they require, but to coalesce those requirements into a single query that fetches the data for an entire subtree of components. In other words, it determines statically (i.e. before your application runs; at the time you write your code) the requirements for an entire view!
+Relay allows components to specify what data they require, but to coalesce those requirements into a single query that fetches the data for an entire subtree of components. In other words, it determines statically (i.e., before your application runs; at the time you write your code) the requirements for an entire view!
 
 ## Specifying the data requirements of a component
 
