@@ -16,9 +16,21 @@ Before getting started, bear in mind that we assume some level of familiarity wi
 
 ## Something else?
 
-- You'll need to install [Node.js 16.10 or higher](https://nodejs.org/en/).
+- Check if you have already installed [Node.js](https://nodejs.org/en/) version 16.10 or higher:
 
-- You'll need to enable [Yarn](https://yarnpkg.com/getting-started/install).
+  ```sh
+  node -v
+  ```
+
+  Otherwise you'll need to install it, [Node.js LTS](https://nodejs.org/en/download/).
+
+- Check if you have already installed [Yarn](https://yarnpkg.com):
+
+  ```sh
+  yarn -v
+  ```
+
+  Otherwise you'll need to install it, [Yarn Modern](https://yarnpkg.com/getting-started/install):
 
   ```sh
   corepack enable
