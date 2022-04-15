@@ -15,7 +15,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **09:50 BREAK (10 minutes)**
 
-**10:00 Hello, world!**
+**10:00 Hello, World!**
 
 **10:50 BREAK (20 minutes)**
 

@@ -1,6 +1,6 @@
-# Hello, world!
+# Hello, World!
 
-The most common way to start any programming course is to display the text "Hello, world!". Continuing with this tradition, we'll use React/Relay to display the famous text.
+The most common way to start any programming course is to display the text "Hello, World!". Continuing with this tradition, we'll use React/Relay to display the famous text.
 
 ## Create the scene and page host
 
@@ -8,7 +8,7 @@ The most common way to start any programming course is to display the text "Hell
 
    ```jsx title="@/scenes/Greetings.js"
    export default function Greetings() {
-     return <>Hello, world!</>;
+     return <>Hello, World!</>;
    }
    ```
 
