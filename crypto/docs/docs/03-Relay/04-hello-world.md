@@ -42,9 +42,9 @@ Now that we've created our code, let's see our app in action!
 
 1. Use the following command to start Next's development server:
 
-```sh
-yarn dev
-```
+   ```sh
+   yarn dev
+   ```
 
 1. A new page is now available at [http://localhost:3000](http://localhost:3000).
 
