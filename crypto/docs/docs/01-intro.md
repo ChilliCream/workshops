@@ -117,3 +117,18 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Feedback
 
 **17:00 FINISH**
+
+## Bootcamp
+
+### Start from Zero
+
+The most common way to start any programming course is to display the text "Hello, World!". Continuing with this tradition, we'll use _GraphQL & friends_ to display the famous text.
+
+![Start from Zero](images/bootcamp1.png)
+
+### Full Crypto App
+
+We will develop step-by-step a full crypto app to learn everything there is to know about data-driven applications that operate on a diverse set of data pulled from different sources, often in real-time.
+
+![Full Crypto App](images/bootcamp2.png)
+![Full Crypto App](images/bootcamp3.png)
