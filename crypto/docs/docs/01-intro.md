@@ -133,7 +133,7 @@ We will develop step-by-step a full crypto app to learn everything there is to k
 ![Full Crypto App](images/bootcamp2.png)
 ![Full Crypto App](images/bootcamp3.png)
 
-### Important Notes
+### Important Notice
 
 :::caution
 
