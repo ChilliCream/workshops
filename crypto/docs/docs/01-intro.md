@@ -132,3 +132,11 @@ We will develop step-by-step a full crypto app to learn everything there is to k
 
 ![Full Crypto App](images/bootcamp2.png)
 ![Full Crypto App](images/bootcamp3.png)
+
+### Important Notes
+
+:::caution
+
+Code snippets and materials are intended for learning purposes and might contain deliberate omissions. In case of doubt do not hesitate to make questions and check the documentation for further information.
+
+:::
