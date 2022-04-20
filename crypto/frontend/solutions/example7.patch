@@ -5952,7 +5952,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  import {CssBaseline, ThemeProvider} from '@mui/material';
  import {useEffect} from 'react';
 +import {RelayEnvironmentProvider} from 'react-relay';
- 
+
 +import {useEnvironment} from '@/client';
  import {
    Content,
@@ -5963,11 +5963,11 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  }) {
 +  const environment = useEnvironment(pageProps.initialRecords);
    const [theme, mode] = usePreferredTheme();
- 
+
    useEffect(() => {
 @@ -28,19 +31,21 @@ export default function MyApp({
    }, []);
- 
+
    return (
 -    <CacheProvider value={emotionCache}>
 -      <ThemeProvider theme={theme}>
@@ -7285,7 +7285,7 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..25a62d8bfffd36cfbc798de3c9cb0f92ae93c1e0
 --- /dev/null
 +++ b/crypto/frontend/scenes/screener/ScreenerList.js
-@@ -0,0 +1,172 @@
+@@ -0,0 +1,191 @@
 +import {
 +  Divider,
 +  InputAdornment,
@@ -7385,7 +7385,26 @@ index 0000000000000000000000000000000000000000..25a62d8bfffd36cfbc798de3c9cb0f92
 +
 +  useEffect(() => {
 +    if (qRef.current !== deferredQ || orderRef.current !== order) {
-+      // ... ?
++      qRef.current = deferredQ;
++      orderRef.current = order;
++
++      startTransition(() => {
++        const variables = Object.assign(
++          {},
++          !!deferredQ && {
++            where: {
++              or: [
++                {symbol: {contains: deferredQ}},
++                {name: {contains: deferredQ}},
++                {slug: {contains: deferredQ}},
++              ],
++            },
++          },
++          !!order && {order: Order[order].expression},
++        );
++
++        refetch(variables);
++      });
 +    }
 +  }, [deferredQ, order]);
 +
