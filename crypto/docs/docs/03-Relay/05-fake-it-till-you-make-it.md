@@ -361,6 +361,16 @@ Lets see what's going on here:
 
 We have explored how to get started with Relay, although a bit naive, anyway we will continue introducing other concepts and possibilities.
 
+If you want to go straight to the solution, stash any change and use the following:
+
+:::tip Use the `patch` as a shorthand to reproduce the mentioned changes
+
+```sh
+git apply solutions/example1.patch
+```
+
+:::
+
 ## One more thing
 
 In the example above we can see that `RelayEnvironmentProvider` is used just for a single route, but usually, a _single_ instance of this component should be rendered at the very root of the application, in order to set the Relay environment for the whole application. Therefore, we will move this context provider to `/pages/_app.js`.
