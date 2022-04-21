@@ -46,4 +46,4 @@ export {default as CurrencyIcon} from './currency-icon';
 
 export {default as BitcoinIcon} from './bitcoin-icon';
 export {default as CardanoIcon} from './cardano-icon';
-export {default as EthereumIcon} from './ethereum-icon';
+export {default as EthereumClassicIcon} from './ethereum-classic-icon';

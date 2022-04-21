@@ -12,7 +12,7 @@ import {
   CommandIcon,
   DarkModeIcon,
   DashboardIcon,
-  EthereumIcon,
+  EthereumClassicIcon,
   LightModeIcon,
   MenuIcon,
   ScreenerIcon,
@@ -25,7 +25,7 @@ import {NoSSR} from './no-ssr';
 
 const favorites = [
   ['BTC', BitcoinIcon, 'Bitcoin'],
-  ['ETH', EthereumIcon, 'Ethereum'],
+  ['ETC', EthereumClassicIcon, 'Ethereum Classic'],
   ['ADA', CardanoIcon, 'Cardano'],
 ];
 
