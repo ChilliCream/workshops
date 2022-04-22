@@ -2881,7 +2881,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..390f7c9918dfb37136c4bf7055216ff9
  import {CssBaseline, ThemeProvider} from '@mui/material';
  import {useEffect} from 'react';
 +import {RelayEnvironmentProvider} from 'react-relay';
- 
+
 +import {useEnvironment} from '@/client';
  import {
    Content,
@@ -2892,7 +2892,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..390f7c9918dfb37136c4bf7055216ff9
  import {usePreferredTheme} from '@/hooks';
 +import {Notifications} from '@/scenes';
  import {createEmotionCache} from '@/styles';
- 
+
  const clientSideEmotionCache = createEmotionCache();
 @@ -19,6 +22,7 @@ export default function MyApp({
    emotionCache = clientSideEmotionCache,
@@ -2900,11 +2900,11 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..390f7c9918dfb37136c4bf7055216ff9
  }) {
 +  const environment = useEnvironment(pageProps.initialRecords);
    const [theme, mode] = usePreferredTheme();
- 
+
    useEffect(() => {
 @@ -28,19 +32,22 @@ export default function MyApp({
    }, []);
- 
+
    return (
 -    <CacheProvider value={emotionCache}>
 -      <ThemeProvider theme={theme}>
@@ -9032,7 +9032,7 @@ index 0000000000000000000000000000000000000000..f83d9612cbca8794458ee7d28c0f29ae
 +
 +  const [q, setQ] = useState('');
 +  const qRef = useRef(q);
-+  const deferredQ = useDeferredValue(q, {timeoutMs: 1000});
++  const deferredQ = useDeferredValue(q);
 +
 +  const [order, setOrder] = useState(0);
 +  const orderRef = useRef(order);

@@ -1565,7 +1565,7 @@ index 0000000000000000000000000000000000000000..25a62d8bfffd36cfbc798de3c9cb0f92
 +
 +  const [q, setQ] = useState('');
 +  const qRef = useRef(q);
-+  const deferredQ = useDeferredValue(q, {timeoutMs: 1000});
++  const deferredQ = useDeferredValue(q);
 +
 +  const [order, setOrder] = useState(0);
 +  const orderRef = useRef(order);
@@ -2910,7 +2910,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  import {CssBaseline, ThemeProvider} from '@mui/material';
  import {useEffect} from 'react';
 +import {RelayEnvironmentProvider} from 'react-relay';
- 
+
 +import {useEnvironment} from '@/client';
  import {
    Content,
@@ -2921,11 +2921,11 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  }) {
 +  const environment = useEnvironment(pageProps.initialRecords);
    const [theme, mode] = usePreferredTheme();
- 
+
    useEffect(() => {
 @@ -28,19 +31,21 @@ export default function MyApp({
    }, []);
- 
+
    return (
 -    <CacheProvider value={emotionCache}>
 -      <ThemeProvider theme={theme}>
