@@ -17,11 +17,19 @@ public sealed class AssetPriceNode
         ChangeSpan span,
         [ScopedState("span")] SetState<ChangeSpan> setSpan,
         [Parent] AssetPrice parent,
-        AssetPriceChangeDataLoader assetPriceBySymbol,
+        [Service] IHttpClientFactory clientFactory,
         CancellationToken cancellationToken)
     {
         setSpan(span);
-        return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
+
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/asset/price/change/v2?symbols={parent.Symbol}&span={span}");
+        using var response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        var document = JsonDocument.Parse(content);
+        return document.RootElement.EnumerateArray().First();
     }
 
     [NodeResolver]

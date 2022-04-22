@@ -173,3 +173,23 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
+
+```graphql
+mutation ($input: UpdateUserProfileInput!) {
+  updateUserProfile(input: $input) {
+    updatedUser {
+      imageUrl
+    }
+  }
+}
+```
+
+![Banana Cake Pop - Refresh Schema](./images/example6-bcp1.png)
+
+![Banana Cake Pop - Refresh Schema](./images/example6-bcp2.png)
+
+![Banana Cake Pop - Refresh Schema](./images/example6-bcp3.png)
+
+![Banana Cake Pop - Refresh Schema](./images/example6-bcp4.png)
+
+## Summary
