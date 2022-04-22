@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Security.Claims;
 using System.Text.Json;
+using Demo.Types.Notifications;
 using HotChocolate.Subscriptions;
 
 namespace Demo.Helpers;
@@ -10,6 +12,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     private readonly IDbContextFactory<AssetContext> _contextFactory;
     private readonly IFileStorage _fileStorage;
     private readonly ITopicEventSender _sender;
+    private readonly ITopicEventReceiver _receiver;
+    private readonly CultureInfo _culture;
     private bool _disposed;
 
     private readonly string[] _symbols = new[]
@@ -186,11 +190,16 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     public AssetPriceChangeProcessor(
         IDbContextFactory<AssetContext> contextFactory,
         IFileStorage fileStorage,
-        ITopicEventSender sender)
+        ITopicEventSender sender,
+        ITopicEventReceiver receiver)
     {
         _contextFactory = contextFactory;
         _fileStorage = fileStorage;
         _sender = sender;
+        _receiver = receiver;
+
+        _culture = CultureInfo.GetCultureInfo("en-US", predefinedOnly: true) ??
+            CultureInfo.InvariantCulture;
     }
 
     public async Task StartAsync(CancellationToken stoppingToken)
@@ -200,6 +209,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
         await SeedAssetsAsync(stoppingToken);
         BeginUpdatePrices();
+        BeginProcessEvents();
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
@@ -446,6 +456,70 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         using var response = await client.SendAsync(request, cancellationToken);
         await using var stream = response.Content.ReadAsStream(cancellationToken);
         return await storage.UploadAsync(stream, cancellationToken);
+    }
+
+    private void BeginProcessEvents()
+        => Task.Factory.StartNew(
+            () => ProcessEventsAsync(_cts.Token),
+            _cts.Token,
+            TaskCreationOptions.LongRunning,
+            TaskScheduler.Default);
+
+    private async Task ProcessEventsAsync(CancellationToken cancellationToken)
+    {
+        var sourceStream = await _receiver.SubscribeAsync<string, UpdateAssetPriceDto>(Constants.OnPriceChangeProcessing, cancellationToken);
+
+        await foreach (UpdateAssetPriceDto price in sourceStream.ReadEventsAsync().WithCancellation(cancellationToken))
+        {
+            try
+            {
+                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                foreach (Alert alert in await context.Alerts.Where(t => t.Asset!.Symbol == price.Symbol).ToListAsync(cancellationToken))
+                {
+                    if ((alert.PercentageChange > 0 && alert.TargetPrice <= price.LastPrice) ||
+                        (alert.PercentageChange < 0 && alert.TargetPrice >= price.LastPrice))
+                    {
+                        await SendNotificationAsync(price, alert, context, cancellationToken);
+                    }
+                }
+            }
+            catch
+            {
+                // if there is an error we will retry
+            }
+        }
+    }
+
+    private async Task SendNotificationAsync(
+        UpdateAssetPriceDto price,
+        Alert alert,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        if (alert.Recurring)
+        {
+            alert.TargetPrice = (price.LastPrice * alert.PercentageChange) + price.LastPrice;
+        }
+        else
+        {
+            context.Alerts.Remove(alert);
+        }
+
+        var notification = new Notification
+        {
+            Message = string.Format(
+                _culture,
+                "{0} hit your target price of {1:c}.",
+                price.Symbol,
+                price.LastPrice),
+            Symbol = price.Symbol,
+            Username = alert.Username
+        };
+
+        context.Notifications.Add(notification);
+
+        await context.SaveChangesAsync(cancellationToken);
+        await _sender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(alert.Username!), new(notification.Id), cancellationToken);
     }
 
     public void Dispose()
