@@ -7376,7 +7376,7 @@ index 0000000000000000000000000000000000000000..25a62d8bfffd36cfbc798de3c9cb0f92
 +
 +  const [q, setQ] = useState('');
 +  const qRef = useRef(q);
-+  const deferredQ = useDeferredValue(q, {timeoutMs: 1000});
++  const deferredQ = useDeferredValue(q);
 +
 +  const [order, setOrder] = useState(0);
 +  const orderRef = useRef(order);
