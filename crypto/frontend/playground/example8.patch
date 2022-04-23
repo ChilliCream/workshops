@@ -5355,9 +5355,9 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..b2a0ca9b89db07890c4f4be7710227f568220817
 --- /dev/null
 +++ b/crypto/frontend/scenes/dashboard/DashboardTicker.js
-@@ -0,0 +1,52 @@
-+import {memo, useMemo} from 'react';
-+import {graphql, useFragment, useSubscription} from 'react-relay';
+@@ -0,0 +1,34 @@
++import {memo} from 'react';
++import {graphql, useFragment} from 'react-relay';
 +
 +import {Ticker} from '@/components';
 +
@@ -5381,24 +5381,6 @@ index 0000000000000000000000000000000000000000..b2a0ca9b89db07890c4f4be7710227f5
 +    fragmentRef,
 +  );
 +  const assets = data.ticker?.nodes;
-+
-+  useSubscription(
-+    useMemo(
-+      () => ({
-+        subscription: graphql`
-+          subscription DashboardTickerSubscription($symbols: [String!]!) {
-+            onPriceChange(symbols: $symbols) {
-+              currency
-+              lastPrice
-+              change24Hour
-+            }
-+          }
-+        `,
-+        variables: {symbols: assets?.map(({symbol}) => symbol) ?? []},
-+      }),
-+      [assets],
-+    ),
-+  );
 +
 +  return (
 +    <Ticker>
