@@ -1,12 +1,12 @@
 # File Upload
 
-In this chapter we will learn how we can enable file uploads with GraphQL server. If we reflect on the past chapters we can see that GraphQL is great with relational data as we can easily drill into connected data. But we have not talked about binary data and how to deal with those.
+In this chapter, we will learn how we can enable file uploads with the GraphQL server. Reflecting on the past chapters, we can see that GraphQL is great with relational data as we can easily drill into connected data. But we have not talked about binary data and how to deal with it.
 
-For our application we want the user to be able to upload a profile picture. For this we will introduce a new mutation `updateUserProfile`.
+For our application, we want the user to be able to upload a profile picture. For this, we will introduce a new mutation, `updateUserProfile`.
 
 ## Transport
 
-Just with the standard GraphQL specification we could only upload binary data as base64 strings since we only have the following scalars: `String`, `Int`, `Float`, `Boolean`. 
+With the standard GraphQL specification, we could only upload binary data as base64 strings since we only have the following built-in scalars: `String`, `Int`, `Float`, `Boolean`. 
 
 But using a base64 string will add overhead and is not ideal for efficient file transport. This is where the GraphQL MultiPart request specification comes in.
 
@@ -17,7 +17,7 @@ https://github.com/jaydenseric/graphql-multipart-request-spec
 
 :::
 
-With the GraphQL MultiPart request specification we are using a multipart form to post the request as well as the file attachments to the GraphQL server.  
+With the GraphQL MultiPart request specification, we are using a multipart form to post the request and the file attachments to the GraphQL server. 
 
 **Example Request**
 
@@ -41,7 +41,7 @@ Alpha file content.
 
 This allows us to stream the relevant files and remove the overhead of base64 encoding. Moreover, we can begin GraphQL execution before we have received all files, which enables faster execution of requests.
 
-For file downloads we will just provide URIs in our data objects to the client allowing parallelization of file downloads and easier handling for the API consumer.
+For file downloads, we will just provide URIs in our data objects to the client allowing parallelization of file downloads and easier handling for the API consumer.
 
 ## Setup
 
