@@ -173,6 +173,7 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
+Add the following mutation to the operations tab.
 
 ```graphql
 mutation ($input: UpdateUserProfileInput!) {
@@ -184,12 +185,38 @@ mutation ($input: UpdateUserProfileInput!) {
 }
 ```
 
+The mutation will allow us to update the user profile and will return the profile image URL.
+
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp1.png)
+
+Next, click on the **Add File** button in the variables section.
+
+:::note
+
+You need to be signed in to Banana Cake Pop to use the upload file feature.
+
+:::
 
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp2.png)
 
+Add a profile picture. We have some placeholder files located in the `./crypto/frontend/assets/placeholders` directory.
+
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp3.png)
+
+After uploading the profile picture select it in the variables pane.
+
+```json
+{
+  "input": {
+    "image": "green.png"
+  }
+}
+```
 
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp4.png)
 
+Execute the mutation and verify that the image was upload.
+
 ## Summary
+
+In this chapter we have explored how we can use the multipart request specification to enable file uploads with GraphQL and Hot Chocolate.
