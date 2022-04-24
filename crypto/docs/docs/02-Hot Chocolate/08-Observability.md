@@ -85,8 +85,7 @@ Instead of manually probing or monitoring our system we want to use observabilit
 
 ## OpenTelemetry
 
-OT INTRODUCTION.
-
+OpenTelemetry is a set of APIs, SDKs, tooling and integrations that are designed for the creation and management of telemetry data such as traces, metrics, and logs. The project provides a vendor-agnostic implementation that can be configured to send telemetry data to the backend(s) of your choice. It supports a variety of popular open-source projects including Jaeger, Prometheus and Elastic.
 
 ## Hot Chocolate Instrumentation
 
@@ -287,8 +286,11 @@ Once the cluster is up and running head over to `http://localhost:5601/` and ens
 
 :::info
 
-URL: http://localhost:5601/
-Username: admin
-Password: elastic
+URL: **http://localhost:5601/**
+
+Username: **admin**
+
+Password: **elastic**
 
 :::
+
