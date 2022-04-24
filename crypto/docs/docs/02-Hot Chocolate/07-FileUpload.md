@@ -49,7 +49,7 @@ The first thing we have to do to enable the GraphQL MultiPart request specificat
 
 :::Note
 
-The `Upload` scalar is a special scalar that only works as an input type. All other scalars are always input- and output-type.
+The `Upload` scalar is a unique scalar that only works as an input type. All other scalars are always input- and output-type.
 
 :::
 
