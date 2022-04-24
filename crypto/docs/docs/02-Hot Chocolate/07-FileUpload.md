@@ -17,7 +17,7 @@ https://github.com/jaydenseric/graphql-multipart-request-spec
 
 :::
 
-With the GraphQL MultiPart request specification, we are using a multipart form to post the request and the file attachments to the GraphQL server. 
+With the GraphQL MultiPart request specification, we use a multipart form to post the request and the file attachments to the GraphQL server. 
 
 **Example Request**
 
@@ -71,21 +71,21 @@ builder.Services
 
 ## Mutation
 
-After having added support for uploading files we can start work on our new mutation. The `updateUserProfile` will allow the user to update the user display name as well as the user`s profile picture. Since we might change the display name more often than the profile picture we want to have an input type for our mutation that allows us to patch the profile data.
+After adding support for uploading files, we can start working on our new mutation. The `updateUserProfile` will allow the user to update the user display name and the user`s profile picture. Since we might change the display name more often than the profile picture, we want to have an input type for our mutation that allows us to patch the profile data.
 
-This is where the `Optional<T>` type will help us. `Optional<T>` exposes to us if the user provided us with a value or if the field is filled with the default value.
+This is where the `Optional<T>` type will help us. `Optional<T>` exposes to us if the user-provided us with a value or if the field is filled with the default value.
 
 :::note
 
-`Optional<T>` is not about nullability but indicates if a value was provided by the user. If the user passes in a null value then the `Optional<T>` will indicate that it is set since the user explicitly set the null value. Also, we can have an `Optional<T>` for a non-null input field when this field has a default value.
+`Optional<T>` is not about nullability but indicates if the user provided a value. If the user passes in a null value, the `Optional<T>` will indicate that it is set since the user explicitly set the null value. Also, we can have an `Optional<T>` for a non-null input field when this field has a default value.
 
 ```graphql
 input FooInput {
-  bar: String! = "baz"
+ bar: String! = "baz"
 }
 ```
 
-if we for this type did not provide a value then the default value would be filled in by the execution engine. In this case even so `bar` would have a value `baz` the `Optional<T>` for the field would indicate that it is not set.
+If we, for this type, did not provide a value, then the default value would be filled in by the execution engine. Even so, `bar` would have a value `baz` the `Optional<T>` for the field would indicate that it is not set.
 
 :::
 
@@ -159,11 +159,11 @@ public async Task<User?> UpdateUserProfile(
 }
 ```
 
-As mentioned before we will first check if the fields provide any use specified value and only update the internal `User` entity if we have detected a change.
+As mentioned before, with optionals in place, we will first check if the fields provide any user-specified value. We only update the internal `User` entity if we detect any change.
 
 ## Testing
 
-With the new mutation in place let`s start start our server and test the file upload.
+With the new mutation in place, let`s start our server and test the file upload.
 
 ```bash
 dotnet run
@@ -185,7 +185,7 @@ mutation ($input: UpdateUserProfileInput!) {
 }
 ```
 
-The mutation will allow us to update the user profile and will return the profile image URL.
+The mutation will allow us to update the user profile and return the profile image URL.
 
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp1.png)
 
@@ -203,7 +203,7 @@ Add a profile picture. We have some placeholder files located in the `./crypto/f
 
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp3.png)
 
-After uploading the profile picture select it in the variables pane.
+After uploading the profile picture, select it in the variables pane.
 
 ```json
 {
@@ -215,8 +215,8 @@ After uploading the profile picture select it in the variables pane.
 
 ![Banana Cake Pop - Refresh Schema](./images/example6-bcp4.png)
 
-Execute the mutation and verify that the image was upload.
+Execute the mutation and verify that the image was uploaded.
 
 ## Summary
 
-In this chapter we have explored how we can use the multipart request specification to enable file uploads with GraphQL and Hot Chocolate.
+In this chapter, we have explored how we can use the multipart request specification to enable file uploads with GraphQL and Hot Chocolate.
