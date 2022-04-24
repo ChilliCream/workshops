@@ -6,9 +6,9 @@ public sealed class AssetNode
 {
     public async Task<AssetPrice> GetPriceAsync(
         [Parent] Asset asset,
-        AssetPriceBySymbolDataLoader priceBySymbol,
+        AssetContext context,
         CancellationToken cancellationToken)
-        => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
+        => await context.AssetPrices.FirstAsync(t => t.Symbol == asset.Symbol, cancellationToken);
 
     [BindMember(nameof(Asset.ImageKey))]
     public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor httpContextAccessor)
@@ -51,7 +51,7 @@ public sealed class AssetNode
 
     [NodeResolver]
     public static async Task<Asset> GetByIdAsync(
-        int id, 
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
