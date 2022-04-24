@@ -85,7 +85,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **15:15 BREAK (15 minutes)**
 
-**15:30 GraphQL in Production - Part 1**
+**15:30 GraphQL in Production - Part 2**
 
 - GraphQL Observability
 - Security Concepts
