@@ -12,23 +12,20 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 - Introduction
 - What is GraphQL?
+- Hello, World!
 
-**09:50 BREAK (10 minutes)**
+**10:30 BREAK (15 minutes)**
 
-**10:00 Hello, World!**
-
-**10:50 BREAK (20 minutes)**
-
-**11:10 Building a foundation**
+**10:45 Building a foundation**
 
 - Lists
 - Pagination
 - DataLoader
 - Object Identification
 
-**12:00 BREAK (10 minutes)**
+**12:30 BREAK (60 minutes)**
 
-**12:10 Building with components**
+**13:30 Building with components**
 
 - Collocation & Aggregation
 - Data Masking
@@ -37,27 +34,20 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Loading States with Suspense
 - Error States with ErrorBoundaries
 
-**13:00 LUNCH**
-
-**14:00 Rethinking Data Fetching**
+**14:30 Rethinking Data Fetching**
 
 - Field Middleware
 - Exposing sorting and filtering to the consumer
 - Defer and Stream
 
-**14:50 BREAK (10 minutes)**
+**15:15 BREAK (15 minutes)**
 
-**15:00 On-demand Data - Part 1**
+**15:30 On-demand Data - Part 1**
 
 - Filtering
 - Sorting
 - Pagination
 - Defer and Stream
-
-**15:50 BREAK (20 minutes)**
-
-**16:10 On-demand Data - Part 2**
-
 - Suspense and Transitions
 - Advanced Composition
 
@@ -70,29 +60,22 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Wrapping REST APIs with GraphQL
 - Migrating REST applications to GraphQL
 
-**09:50 BREAK (10 minutes)**
-
-**10:00 Real-Time Data**
-
-- Exploring data fetching approaches
-- GraphQL Subscriptions
-
-**10:50 BREAK (20 minutes)**
-
-**11:10 Mutating Data**
+**10:00 Mutating Data**
 
 - GraphQL Mutations
 - Optimistic Updates
 
-**12:00 BREAK (10 minutes)**
+**10:30 BREAK (15 minutes)**
 
-**12:10 Polishing**
+**10:45 Real-Time Data**
 
+- Exploring data fetching approaches
+- GraphQL Subscriptions
 - Advanced Subscription Concepts
 
-**13:00 LUNCH**
+**12:30 LUNCH**
 
-**14:00 GraphQL in Production - Part 1**
+**13:30 GraphQL in Production - Part 1**
 
 - Persisted Queries with Relay
 - Automatic Persisted Queries
@@ -100,17 +83,15 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Client Schema Extensions
 - Relay Developer Tools
 
-**14:50 BREAK (10 minutes)**
+**15:15 BREAK (15 minutes)**
 
-**15:00 GraphQL in Production - Part 1**
+**15:30 GraphQL in Production - Part 1**
 
 - GraphQL Observability
 - Security Concepts
 - Request Pipeline Exploration
 
-**15:50 BREAK (20 minutes)**
-
-**16:10 Looking ahead**
+**Looking ahead**
 
 - The future of GraphQL
 - Questions and Answers
