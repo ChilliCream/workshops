@@ -88,7 +88,207 @@ Instead of manually probing or monitoring our system we want to use observabilit
 OT INTRODUCTION.
 
 
+## Hot Chocolate Instrumentation
 
+Lets start and instrument our server. We added already the needed packages to our service for **OpenTelemetry** and for **Hot Chocolate** instrumentation.
+
+Head over to the `Program.cs` and add the **OpenTelemetry** service description at the top of the file.
+
+```csharp
+var api = ResourceBuilder.CreateEmpty()
+    .AddService("Coin-API", "Demo", "2.0.0")
+    .AddAttributes(new KeyValuePair<string, object>[]
+    {
+        new("deployment.environment", "development"),
+        new("telemetry.sdk.name", "dotnet"),
+        new("telemetry.sdk.version", "2.0.0")
+    });
+```
+
+Next, we need to register the **OpenTelemetry** services for tracing and metrics.
+
+```csharp
+builder.Services
+    .AddOpenTelemetryTracing(
+        b =>
+        {
+            b.AddHttpClientInstrumentation();
+            b.AddAspNetCoreInstrumentation();
+            b.AddHotChocolateInstrumentation();
+            b.SetResourceBuilder(api);
+            b.AddOtlpExporter();
+        })
+    .AddOpenTelemetryMetrics(
+        b =>
+        {
+            b.AddHttpClientInstrumentation();
+            b.AddAspNetCoreInstrumentation();
+            b.SetResourceBuilder(api);
+            b.AddOtlpExporter();
+        });
+```
+
+We added listeners for `HttpClient`, `AspNetCore` and `HotChocolate` instrumentation events.
+
+Further we need to instrument the schema so that **Hot Chocolate** will raise diagnostic events.
+
+```csharp
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType()
+    .AddMutationType()
+    .AddSubscriptionType()
+    .AddAssetTypes()
+    .AddType<UploadType>()
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
+    .AddFiltering()
+    .AddSorting()
+    .AddInMemorySubscriptions()
+    .AddInstrumentation(o => // <----
+    {
+        o.RenameRootActivity = true;
+        o.IncludeDocument = true;
+    })
+    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+```
+
+We specified two options for our instrumentation events. `RenameRootActivity` will rename the root instrumentation event to include the GraphQL operation name. The root instrumentation event in our case would be the ASP.NET Core HTTP event which would in almost all cases be a HTTP Post to the `/graphql`. By rewriting the name of the root event we make it more useful for our instrumentation. `IncludeDocument` will report the full GraphQL query as metadata of the GraphQL instrumentation events.
+
+The **Hot Chocolate** instrumentation events can be enriched with more information. In our case we want to customize how the root activity is renamed. More specifically we want to remove the route information since it is always `/graphql`.
+
+Create a new file located in the root of the project called `CustomActivityEnricher`.
+
+```csharp
+using System.Diagnostics;
+using System.Text;
+using HotChocolate.Diagnostics;
+using Microsoft.Extensions.ObjectPool;
+
+namespace Demo;
+
+public class CustomActivityEnricher : ActivityEnricher
+{
+    public CustomActivityEnricher(ObjectPool<StringBuilder> stringBuilderPoolPool, InstrumentationOptions options)
+        : base(stringBuilderPoolPool, options)
+    {
+    }
+
+    protected override string CreateRootActivityName(Activity activity, Activity root, string displayName)
+    {
+        if (root.GetCustomProperty("originalDisplayName") is not string)
+        {
+            root.SetCustomProperty("originalDisplayName", root.DisplayName);
+        }
+        return displayName;
+    }
+}
+```
+
+Next, we need to register our activity enricher as a service.
+
+```csharp
+builder.Services.AddSingleton<ActivityEnricher, CustomActivityEnricher>();
+```
+
+Our `Program.cs` should now look like the following.
+
+```csharp
+using HotChocolate.Diagnostics;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
+var api = ResourceBuilder.CreateEmpty()
+    .AddService("Coin-API", "Demo", "2.0.0")
+    .AddAttributes(new KeyValuePair<string, object>[]
+    {
+        new("deployment.environment", "development"),
+        new("telemetry.sdk.name", "dotnet"),
+        new("telemetry.sdk.version", "2.0.0")
+    });
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddHttpContextAccessor()
+    .AddCors()
+    .AddHelperServices();
+
+builder.Services
+    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+
+builder.Services
+    .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
+
+builder.Services
+    .AddOpenTelemetryTracing(
+        b =>
+        {
+            b.AddHttpClientInstrumentation();
+            b.AddAspNetCoreInstrumentation();
+            b.AddHotChocolateInstrumentation();
+            b.SetResourceBuilder(api);
+            b.AddOtlpExporter();
+        })
+    .AddOpenTelemetryMetrics(
+        b =>
+        {
+            b.AddHttpClientInstrumentation();
+            b.AddAspNetCoreInstrumentation();
+            b.SetResourceBuilder(api);
+            b.AddOtlpExporter();
+        })
+    .AddSingleton<ActivityEnricher, CustomActivityEnricher>();
+
+builder.Services
+    .AddGraphQLServer()
+    .AddQueryType()
+    .AddMutationType()
+    .AddSubscriptionType()
+    .AddAssetTypes()
+    .AddType<UploadType>()
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
+    .AddFiltering()
+    .AddSorting()
+    .AddInMemorySubscriptions()
+    .AddInstrumentation(o =>
+    {
+        o.RenameRootActivity = true;
+        o.IncludeDocument = true;
+    })
+    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+
+var app = builder.Build();
+
+app.UseWebSockets();
+app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseStaticFiles();
+app.MapGraphQL();
+
+app.Run();
+```
+
+With this our service is setup and ready to report **OpenTelemetry** events. We have configured our service to export events with the `OTLP` protocol exporter.
 
 ## Elastic APM
 
+We will use **Elastic APM** to analyze telemetry data. We have prepared an elastic cluster with docker compose.
+
+Head over to the `./crypto/backend/playground/example7/elastic` directory and use docker compose to run the cluster on your system.
+
+```bash
+cd ./crypto/backend/playground/example7/elastic
+docker compose up
+```
+
+Once the cluster is up and running head over to `http://localhost:5601/` and ensure that you can login.
+
+:::info
+
+URL: http://localhost:5601/
+Username: admin
+Password: elastic
+
+:::
