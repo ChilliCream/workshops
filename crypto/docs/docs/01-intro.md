@@ -42,7 +42,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **15:15 BREAK (15 minutes)**
 
-**15:30 On-demand Data - Part 1**
+**15:30 On-demand Data**
 
 - Filtering
 - Sorting
