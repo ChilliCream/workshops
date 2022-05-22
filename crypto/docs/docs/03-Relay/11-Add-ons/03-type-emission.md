@@ -160,6 +160,7 @@ export default node;
 
 'use strict';
 
+/*::
 import type {ConcreteRequest, Query} from 'relay-runtime';
 export type GreetingsQuery$variables = {|
   name: string,
@@ -171,6 +172,8 @@ export type GreetingsQuery = {|
   response: GreetingsQuery$data,
   variables: GreetingsQuery$variables,
 |};
+*/
+
 var node /*: ConcreteRequest */ = (function () {
   var v0 = [
       {
