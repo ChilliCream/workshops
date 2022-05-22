@@ -3,21 +3,22 @@ import {useEffect, useState} from 'react';
 
 import {direction, formatPercent} from '@/utils';
 
-const formatValue = (min, max) => (value) => {
-  const suffix =
-    value === min ? '(or less)' : value === max ? ' (or more)' : false;
+const formatValue = (min, max) =>
+  function FormatValue(value) {
+    const suffix =
+      value === min ? '(or less)' : value === max ? ' (or more)' : false;
 
-  return (
-    <>
-      {formatPercent(value / 100, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 1,
-      })}
-      {suffix && <br />}
-      {suffix}
-    </>
-  );
-};
+    return (
+      <>
+        {formatPercent(value / 100, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 1,
+        })}
+        {suffix && <br />}
+        {suffix}
+      </>
+    );
+  };
 
 export const PercentageSlider = (props) => {
   const [trend, setTrend] = useState();

@@ -13,46 +13,35 @@ const rotate = keyframes`
   }
 `;
 
-export const Loader = forwardRef((props, ref) => (
-  <div
-    ref={ref}
-    className={css`
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background-color: #202124;
-      z-index: 1000;
-    `}
-    {...props}
-  >
+export const Loader = forwardRef(function Loader(props, ref) {
+  return (
     <div
+      ref={ref}
       className={css`
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin-left: -75px;
-        margin-top: -75px;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: #202124;
+        z-index: 1000;
       `}
+      {...props}
     >
       <div
         className={css`
-          position: relative;
-          width: 150px;
-          height: 150px;
-          padding: 8px;
-          border-radius: 50%;
-          border: 2px solid transparent;
-
-          will-change: transform;
-          animation: ${rotate} linear 3.5s infinite;
-          border-top-color: #ff7e17;
-          border-left-color: #666;
-          border-right-color: #666;
-
-          & * {
-            height: 100%;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          margin-left: -75px;
+          margin-top: -75px;
+        `}
+      >
+        <div
+          className={css`
+            position: relative;
+            width: 150px;
+            height: 150px;
             padding: 8px;
             border-radius: 50%;
             border: 2px solid transparent;
@@ -62,15 +51,28 @@ export const Loader = forwardRef((props, ref) => (
             border-top-color: #ff7e17;
             border-left-color: #666;
             border-right-color: #666;
-          }
-        `}
-      >
-        <div>
+
+            & * {
+              height: 100%;
+              padding: 8px;
+              border-radius: 50%;
+              border: 2px solid transparent;
+
+              will-change: transform;
+              animation: ${rotate} linear 3.5s infinite;
+              border-top-color: #ff7e17;
+              border-left-color: #666;
+              border-right-color: #666;
+            }
+          `}
+        >
           <div>
             <div>
               <div>
                 <div>
-                  <div></div>
+                  <div>
+                    <div></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,5 +80,5 @@ export const Loader = forwardRef((props, ref) => (
         </div>
       </div>
     </div>
-  </div>
-));
+  );
+});
