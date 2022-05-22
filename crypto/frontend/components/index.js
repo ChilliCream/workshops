@@ -23,7 +23,6 @@ export * from './price';
 export * from './slots-provider';
 export * from './sort-button';
 export * from './span-selector';
-export * from './suspense-image';
 export * from './tabs';
 export * from './ticker';
 export * from './transition-indicator';
