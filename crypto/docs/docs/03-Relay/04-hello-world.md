@@ -26,7 +26,7 @@ git apply playground/example1-1.patch
 
 :::
 
-:::note Windows: If the `patch` is not applied due some difference of whitespace, most likely line-endings, add to your local Git config for this project the following settings:
+:::note Windows - If the `patch` is not applied due some difference of whitespace, most likely line-endings, add to your local Git config for this project the following settings:
 
 ```sh
 git config apply.ignoreWhitespace change
