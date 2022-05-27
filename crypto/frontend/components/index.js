@@ -1,3 +1,4 @@
+export * from './accordion-group';
 export * from './activity-indicator';
 export * from './busy-button';
 export * from './carousel';
