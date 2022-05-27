@@ -5088,47 +5088,6 @@ index 0000000000000000000000000000000000000000..2e2d0d78171896524958d485c3ebd729
 +(node/*: any*/).hash = "665255c3e58189f68d75003981770f1f";
 +
 +export default node;
-diff --git a/crypto/frontend/scenes/settings/Group.js b/crypto/frontend/scenes/settings/Group.js
-new file mode 100644
-index 0000000000000000000000000000000000000000..e083eb6997c21d97d563bd374c8e00293506cc6c
---- /dev/null
-+++ b/crypto/frontend/scenes/settings/Group.js
-@@ -0,0 +1,35 @@
-+import {Accordion, AccordionSummary, Stack, Typography} from '@mui/material';
-+
-+import {ExpandLockedIcon, ExpandMoreIcon} from '@/icons';
-+
-+export const Group = ({
-+  id,
-+  icon: Icon,
-+  title,
-+  active,
-+  disabled,
-+  children,
-+  onChange,
-+}) => (
-+  <Accordion
-+    expanded={id === active}
-+    disabled={disabled}
-+    onChange={(event, expanded) => {
-+      onChange(expanded ? id : false);
-+    }}
-+  >
-+    <AccordionSummary
-+      id={`panel-${id}-header`}
-+      expandIcon={disabled ? <ExpandLockedIcon /> : <ExpandMoreIcon />}
-+      aria-controls={`panel-${id}-content`}
-+    >
-+      <Stack direction="row" alignItems="center" gap={2}>
-+        <Icon color="action" />
-+        <Typography id={id} variant="h3">
-+          {title}
-+        </Typography>
-+      </Stack>
-+    </AccordionSummary>
-+    {children}
-+  </Accordion>
-+);
 diff --git a/crypto/frontend/generated/ScreenerListRefetchableQuery.graphql.js b/crypto/frontend/generated/ScreenerListRefetchableQuery.graphql.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..0a0ad39dd53a8766f0cbd556f5927cf05a29ca41
@@ -6717,7 +6676,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  import {CssBaseline, ThemeProvider} from '@mui/material';
  import {useEffect} from 'react';
 +import {RelayEnvironmentProvider} from 'react-relay';
- 
+
 +import {useEnvironment} from '@/client';
  import {
    Content,
@@ -6728,11 +6687,11 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  }) {
 +  const environment = useEnvironment(pageProps.initialRecords);
    const [theme, mode] = usePreferredTheme();
- 
+
    useEffect(() => {
 @@ -28,19 +31,21 @@ export default function MyApp({
    }, []);
- 
+
    return (
 -    <CacheProvider value={emotionCache}>
 -      <ThemeProvider theme={theme}>
