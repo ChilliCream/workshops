@@ -1590,7 +1590,7 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..844cef855ca05e7f46741a7413a07fb4bded16d5
 --- /dev/null
 +++ b/crypto/frontend/scenes/settings/SettingsProfile.js
-@@ -0,0 +1,198 @@
+@@ -0,0 +1,200 @@
 +import {
 +  AccordionActions,
 +  AccordionDetails,
@@ -1669,7 +1669,9 @@ index 0000000000000000000000000000000000000000..844cef855ca05e7f46741a7413a07fb4
 +  const [[image, previewUrl], setAvatar] = useState([]);
 +
 +  const {getRootProps, getInputProps, open} = useDropzone({
-+    accept: 'image/*',
++    accept: {
++      'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
++    },
 +    multiple: false,
 +    maxFiles: 1,
 +    maxSize: 1_024_000,
