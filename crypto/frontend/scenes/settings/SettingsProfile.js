@@ -76,7 +76,9 @@ export default memo(function SettingsProfile({active, onChange, fragmentRef}) {
   const [[image, previewUrl], setAvatar] = useState([]);
 
   const {getRootProps, getInputProps, open} = useDropzone({
-    accept: 'image/*',
+    accept: {
+      'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
+    },
     multiple: false,
     maxFiles: 1,
     maxSize: 1_024_000,
