@@ -10,7 +10,7 @@ new file mode 100644
 index 0000000000000000000000000000000000000000..844cef855ca05e7f46741a7413a07fb4bded16d5
 --- /dev/null
 +++ b/crypto/frontend/scenes/settings/SettingsProfile.js
-@@ -0,0 +1,198 @@
+@@ -0,0 +1,200 @@
 +import {
 +  AccordionActions,
 +  AccordionDetails,
@@ -89,7 +89,9 @@ index 0000000000000000000000000000000000000000..844cef855ca05e7f46741a7413a07fb4
 +  const [[image, previewUrl], setAvatar] = useState([]);
 +
 +  const {getRootProps, getInputProps, open} = useDropzone({
-+    accept: 'image/*',
++    accept: {
++      'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
++    },
 +    multiple: false,
 +    maxFiles: 1,
 +    maxSize: 1_024_000,
@@ -2521,7 +2523,7 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  import {CssBaseline, ThemeProvider} from '@mui/material';
  import {useEffect} from 'react';
 +import {RelayEnvironmentProvider} from 'react-relay';
- 
+
 +import {useEnvironment} from '@/client';
  import {
    Content,
@@ -2532,11 +2534,11 @@ index 8538cf3da3d9b697b1504a3947910a1823bea109..d430ee8773ac608e702e9e8de2c61235
  }) {
 +  const environment = useEnvironment(pageProps.initialRecords);
    const [theme, mode] = usePreferredTheme();
- 
+
    useEffect(() => {
 @@ -28,19 +31,21 @@ export default function MyApp({
    }, []);
- 
+
    return (
 -    <CacheProvider value={emotionCache}>
 -      <ThemeProvider theme={theme}>
