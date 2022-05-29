@@ -6,6 +6,12 @@ A potential attacker could craft very deep queries to create large responses and
 
 We could easily craft a large query by just drilling into this connection for ever.
 
+For this exercise head over to `workshops/crypto/backend/playground/example8b`.
+
+```bash
+code workshops/crypto/backend/playground/example8b
+```
+
 ## Preparations
 
 Before we limit our server to a certain query depth its important to inspect the the GraphQL requests in our system and decide on what an appropriate query depth is for our model.

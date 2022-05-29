@@ -6,10 +6,10 @@ In production however the introspection can also be the source of attacks. Eithe
 
 It is prudent to not allow introspection queries on production servers or at least limit the people who are allowed to execute introspection requests.
 
-For this exercise head over to `workshops/crypto/backend/playground/example2`.
+For this exercise head over to `workshops/crypto/backend/playground/example8a`.
 
 ```bash
-code workshops/crypto/backend/playground/example2
+code workshops/crypto/backend/playground/example8a
 ```
 
 Hot Chocolate comes with a `Introspection Allowed` validation rule which determines if a request is allowed to execute introspection requests. In order to opt into this rule we need to head over to the `Program.cs` and chain into the GraphQL configuration `AddIntrospectionAllowedRule`.
