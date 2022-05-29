@@ -1,5 +1,14 @@
 # Query Complexity
 
+In the previous exercises we have learned how we can 
+
+For this exercise head over to `workshops/crypto/backend/playground/example8c`.
+
+```bash
+code workshops/crypto/backend/playground/example8c
+```
+
+
 ```graphql
 query GetChartData{
   assets(order: { price: { change24Hour: DESC} }) {
@@ -11,25 +20,7 @@ query GetChartData{
       price {
         lastPrice
         change24Hour
-        day: change(span: DAY) {
-          percentageChange
-          history {
-            nodes {
-              epoch
-              price
-            }
-          }
-        }
-        week: change(span: WEEK) {
-          percentageChange
-          history {
-            nodes {
-              epoch
-              price
-            }
-          }
-        }
-        month: change(span: MONTH) {
+        change(span: DAY) {
           percentageChange
           history {
             nodes {
