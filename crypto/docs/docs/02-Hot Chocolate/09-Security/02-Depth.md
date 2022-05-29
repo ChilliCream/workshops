@@ -23,25 +23,7 @@ query GetChartData{
       price {
         lastPrice
         change24Hour
-        day: change(span: DAY) {
-          percentageChange
-          history {
-            nodes {
-              epoch
-              price
-            }
-          }
-        }
-        week: change(span: WEEK) {
-          percentageChange
-          history {
-            nodes {
-              epoch
-              price
-            }
-          }
-        }
-        month: change(span: MONTH) {
+        change(span: DAY) {
           percentageChange
           history {
             nodes {
@@ -120,4 +102,68 @@ app.MapGraphQL();
 app.Run();
 ```
 
-Lets test 
+## Testing
+
+Lets see if our new configuration works as expected.
+
+Lets quickly test our new validation rule **Banana Cake Pop**.
+
+Open http://localhost:5000/graphql and create a new tab.
+
+![Banana Cake Pop - New Tab](../images/example8a-bcp1.png)
+
+Next copy the above query into the operation tab and execute the query.
+
+The query will execute just fine since we explicitly defined the depth to match our query.
+
+Now lets try to create q query that fails. Copy the below query and execute it.
+
+```graphql
+query GetChartData{
+  assets(order: { price: { change24Hour: DESC} }) {
+    nodes{
+      price {
+        asset {
+          price {
+            asset {
+              price {
+                asset {
+                  name
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+This time we get the following error response.
+
+```json
+{
+  "errors": [
+    {
+      "message": "The GraphQL document has an execution depth of 9 which exceeds the max allowed execution depth of 7.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 1
+        }
+      ],
+      "extensions": {
+        "allowedExecutionDepth": 7,
+        "detectedExecutionDepth": 9
+      }
+    }
+  ]
+}
+```
+
+Query depth validation is done on the syntax tree of a GraphQL query and will not even hit the execution engine. This way we make sure that we reduce the attack surface and not waste execution resources.
+
+## Summary
+
+In this exercise we learned how we can make sure attackers cannot craft unlimited deep queries ....
