@@ -25,7 +25,7 @@ builder.Services
     .ModifyRequestOptions(o =>
     {
         o.Complexity.Enable = true;
-        o.Complexity.MaximumAllowed = 10;
+        o.Complexity.MaximumAllowed = 100;
     })
     .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
