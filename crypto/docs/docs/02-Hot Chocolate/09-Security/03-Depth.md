@@ -1,10 +1,10 @@
-# Query Depth
+# Execution Depth
 
-When we look at securing our GraphQL endpoint for production another tool for doing this is to make sure that we limit the query depth.
+When we look at securing our GraphQL endpoint for production, another tool for doing this is to make sure that we limit the execution depth.
 
-A potential attacker could craft very deep queries to create large responses and also cause many downstream requests by doing so. For instance in our example we have the two entities `Asset` and `AssetPrice` referencing each other.
+A potential attacker could craft very deep requests to create large responses and cause many downstream requests. For instance, in our example, we have the two entities `Asset` and `AssetPrice` referencing each other.
 
-We could easily craft a large query by just drilling into this connection for ever.
+A user with malicious intent could easily craft a large request by just drilling into this connection forever. If poorly written, it could cause database requests for each connection.
 
 For this exercise head over to `workshops/crypto/backend/playground/example8b`.
 
@@ -14,9 +14,9 @@ code workshops/crypto/backend/playground/example8b
 
 ## Preparations
 
-Before we limit our server to a certain query depth its important to inspect the the GraphQL requests in our system and decide on what an appropriate query depth is for our model.
+Before we limit our server to a specific execution depth, it's crucial to inspect the GraphQL schema and decide the appropriate execution depth for our model.
 
-Lets say we discovered that the following query is the deepest GraphQL request we do against our backend.
+Let's say we discovered that the following request is the deepest GraphQL request that actually makes sense since if we wanted to go deeper, we would create circular references in our graph.
 
 ```graphql
 query GetChartData{
@@ -44,11 +44,13 @@ query GetChartData{
 }
 ```
 
-The above query has a depth of 7, but the introspection has a much deeper query structure. In the previous exercise we have learned how to secure the introspection and my recommendation here is to skip introspection queries from the query depth validation. This means that people that have the right to access introspection queries could avoid the query depth for introspection fields, but that could be OK since these are our own developers.
+The above request has a depth of 7, but the typical introspection request has a much deeper request structure. In the previous exercise, we learned how to secure our server against introspection requests, and my recommendation here is to skip introspection requests from the execution depth validation. 
+
+This means that people that have the right to access introspection queries will avoid the execution depth analysis for introspection fields, but that could be OK since these people might be our developers anyway.
 
 ## Implementation
 
-In order to add the query depth validation rule like specified above we just need to chain in `.AddMaxExecutionDepthRule(7, skipIntrospectionFields: true)` to our GraphQL configuration.
+To add the execution depth validation rule specified above we just need to chain in `.AddMaxExecutionDepthRule(7, skipIntrospectionFields: true)` to our GraphQL configuration.
 
 ```csharp
 builder.Services
@@ -110,19 +112,17 @@ app.Run();
 
 ## Testing
 
-Lets see if our new configuration works as expected.
-
-Lets quickly test our new validation rule **Banana Cake Pop**.
+Let's see if our new configuration works as expected and test our new validation rule with **Banana Cake Pop**.
 
 Open http://localhost:5000/graphql and create a new tab.
 
 ![Banana Cake Pop - New Tab](../images/example8a-bcp1.png)
 
-Next copy the above query into the operation tab and execute the query.
+Next, copy the above request into the operation tab and execute it.
 
-The query will execute just fine since we explicitly defined the depth to match our query.
+The request will execute just fine since we explicitly defined the execution depth to match our request.
 
-Now lets try to create q query that fails. Copy the below query and execute it.
+Now let's try to create a request that fails. For this, copy the below request and execute it.
 
 ```graphql
 query GetChartData{
@@ -168,8 +168,8 @@ This time we get the following error response.
 }
 ```
 
-Query depth validation is done on the syntax tree of a GraphQL query and will not even hit the execution engine. This way we make sure that we reduce the attack surface and not waste execution resources.
+Execution depth validation is done on the syntax tree of a GraphQL request and will not even hit the execution engine. This way, we make sure that we reduce the attack surface and not waste precious execution resources.
 
 ## Summary
 
-In this exercise we learned how we can make sure attackers cannot craft unlimited deep queries ....
+In this exercise, we learned how we can make sure attackers cannot craft unlimited deep requests and target our server by letting it do costly database calls or trying to create a large response that consumes a lot of memory.
