@@ -1,18 +1,33 @@
 # Introduction
 
-In this chapter we will have a look at a couple of security concepts. There are a couple of fundamental decision we need to do before choosing which security concepts are needed for a GraphQL server.
+In this chapter, we will look at a couple of security concepts for GraphQL servers. We need to make a fundamental decision before choosing which security concepts are the best for our environment.
 
-First we need to decide if we have a public API or a private API. A public API is an API where we allow others to use it. 
+We need to decide if we have a public GraphQL API or a private GraphQL API.
 
-So what does a public API mean?
+**So, what does a public GraphQL API mean?**
 
-Think about GitHub, GitHub has a public GraphQL API so that people can write extensions on top of GitHub and can automate things.
+Think about GitHub; GitHub has a public GraphQL API so that people can write extensions on top of GitHub to automate things like builds and whatnot.
 
-Most companies however really only have a private GraphQL API, meaning a GraphQL API that is only used by themselves. Facebook for instance has a private GraphQL API. Although, the GraphQL API is used by Facebook, Instagram, Whats App and so on its private in the sense that only Facebook developers can use the GraphQL API to build things with it. The Graph API of Facebook that developers outside of Facebook use is actually a REST API.
+However, most companies only have private GraphQL APIs, meaning a GraphQL API that is only used by themselves. 
 
-Same goes for Netflix, while the Netflix frontend uses GraphQL, the GraphQL API is private in the sense that only Netflix developers can use it.
+Meta, for instance, has a private GraphQL API. Although Meta uses its GraphQL API for Facebook and Instagram, it is a private GraphQL API because only Facebook's developers can use the GraphQL API to build things with it. The Graph API of Facebook that developers outside of Facebook can use is actually a REST API.
 
-Depending on whether you want to create an API for external users or only for users within your company we can use different security concepts.
+The same goes for Netflix; while the Netflix frontend uses GraphQL, the GraphQL API is private because only Netflix developers can use it.
 
-## Security Concepts for Public GraphQL APIs
+Whether you want to create an API for external users or only for users within your company, define which security concepts are the best for your environment.
 
+## Public GraphQL APIs
+
+When we expose a GraphQL endpoint to external users, we have no control over what requests they will craft. In this scenario, we need to make sure that our servers do not get overwhelmed by overly large or complex requests. To ensure that we can control the pressure on the servers, we can do the following things.
+
+1. Securing Introspection
+2. Controlling Query Depth
+3. Controlling Query Complexity
+
+## Private GraphQL APIs
+
+When we only use our GraphQL API within our own company to build tools, frontends, and whatnot, we actually can simplify security quite a lot.
+
+There is a concept of advanced persisted queries which we can use to make communication with our server much more resilient and more performant.
+
+We will explore each of the concepts mentioned here in the following exercises.
