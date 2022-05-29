@@ -1,5 +1,17 @@
 # Query Depth
 
+When we look at securing our GraphQL endpoint for production another tool for doing this is to make sure that we limit the query depth.
+
+A potential attacker could craft very deep queries to create large responses and also cause many downstream requests by doing so. For instance in our example we have the two entities `Asset` and `AssetPrice` referencing each other.
+
+We could easily craft a large query by just drilling into this connection for ever.
+
+## Preparations
+
+Before we limit our server to a certain query depth its important to inspect the the GraphQL requests in our system and decide on what an appropriate query depth is for our model.
+
+Lets say we discovered that the following query is the deepest GraphQL request we do against our backend.
+
 ```graphql
 query GetChartData{
   assets(order: { price: { change24Hour: DESC} }) {
@@ -44,6 +56,12 @@ query GetChartData{
 }
 ```
 
+The above query has a depth of 7, but the introspection has a much deeper query structure. In the previous exercise we have learned how to secure the introspection and my recommendation here is to skip introspection queries from the query depth validation. This means that people that have the right to access introspection queries could avoid the query depth for introspection fields, but that could be OK since these are our own developers.
+
+## Implementation
+
+In order to add the query depth validation rule like specified above we just need to chain in `.AddMaxExecutionDepthRule(7, skipIntrospectionFields: true)` to our GraphQL configuration.
+
 ```csharp
 builder.Services
     .AddGraphQLServer()
@@ -60,6 +78,8 @@ builder.Services
     .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
+
+The overall `Program.cs` should now look like the following:
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
@@ -99,3 +119,5 @@ app.MapGraphQL();
 
 app.Run();
 ```
+
+Lets test 
