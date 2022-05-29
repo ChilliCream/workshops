@@ -1,10 +1,10 @@
 # Securing Introspection
 
-Introspection is the ability to query the types of a GraphQL schema and with this allows for great tooling, since GraphQL tools can use this capability to allow for IntelliSense or to provide the the data for schema graphs and many, many more things.
+Introspection is the ability to query the type system of GraphQL, which allows for great tooling since GraphQL tools can use this capability to allow for IntelliSense or to provide the data for schema graphs and many, many more things.
 
-In production however the introspection can also be the source of attacks. Either an attacker can use schema introspection to craft large queries that consume a lot of memory and put your server under stress or they use the schema information to try and attack certain aspects of your schema.
+In production, however, introspection can also be the source of attacks. Either an attacker can use schema introspection to craft large queries that consume a lot of memory and put your server under stress, or they use the schema information to try and attack certain aspects of your schema.
 
-It is prudent to not allow introspection queries on production servers or at least limit the people who are allowed to execute introspection requests.
+It is prudent not to allow introspection queries on production servers or limit introspection to developers.
 
 For this exercise head over to `workshops/crypto/backend/playground/example8a`.
 
@@ -12,7 +12,7 @@ For this exercise head over to `workshops/crypto/backend/playground/example8a`.
 code workshops/crypto/backend/playground/example8a
 ```
 
-Hot Chocolate comes with a `Introspection Allowed` validation rule which determines if a request is allowed to execute introspection requests. In order to opt into this rule we need to head over to the `Program.cs` and chain into the GraphQL configuration `AddIntrospectionAllowedRule`.
+Hot Chocolate comes with an `Introspection Allowed` validation rule which determines if a request is allowed to execute introspection fields. We need to head over to the `Program.cs` and chain into the GraphQL configuration `AddIntrospectionAllowedRule` to opt into this rule.
 
 ```csharp
 builder.Services
@@ -72,9 +72,9 @@ app.MapGraphQL();
 app.Run();
 ```
 
-With this in place our GraphQL server will deny any GraphQL introspection request by default. But we want to allow signed-in users to execute introspection requests in our case.
+With this in place, our GraphQL server will deny any GraphQL request containing introspection fields.
 
-For this we will implement a `IHttpRequestInterceptor` and define in this interceptor which requests are allowed to execute introspection.
+In our example, we actually want to allow signed-in users to execute introspection requests. For this, we need to implement an `IHttpRequestInterceptor` and define in this interceptor which requests are allowed to execute introspection fields.
 
 :::note
 
@@ -82,9 +82,9 @@ In order to enrich GraphQL requests you can implement the `IHttpRequestIntercept
 
 :::
 
-Hot Chocolate comes with a default implementation of the `IHttpRequestInterceptor` interface which we can use and override the `OnCreateAsync` method to enrich the request. In our concrete example we already have done this and you will find the `CustomHttpRequestInterceptor` in the `Transport` directory.
+Hot Chocolate comes with a default implementation of the `IHttpRequestInterceptor` interface called the `DefaultHttpRequestInterceptor`. When inheriting from the default implementation, we just need to override the `OnCreateAsync` method to enrich a GraphQL request. In our concrete example, we already have done this. You will find the `CustomHttpRequestInterceptor` in the `Transport` directory, which enriches the GraphQL request with information about the signed-in user.
 
-We want to add after enriching the request with the currently signed in user a small if statement that allows for introspection if we have a user.
+So, to mark a request as being allowed to execute introspection fields, we need to check if the current user is authenticated and then mark the request as being allowed to execute introspection.
 
 ```csharp
 if (context.User.Identities.Any(t => t.IsAuthenticated))
@@ -149,7 +149,7 @@ public sealed class CustomHttpRequestInterceptor : DefaultHttpRequestInterceptor
 }
 ```
 
-Lets quickly test our new validation rule **Banana Cake Pop**.
+With this in place, let's quickly test our new validation rule in **Banana Cake Pop**.
 
 Open http://localhost:5000/graphql and create a new tab.
 
@@ -171,11 +171,11 @@ Now click **Apply** and execute the following GraphQL query.
 }
 ```
 
-The query will execute and we get the list of types in our schema.
+The query will execute, and we get the list of types exposed by our GraphQL schema.
 
 ![Banana Cake Pop - Operation Result Success](../images/example8a-bcp3.png)
 
-Click on the settings button of the current document, switch to no authentication and click **Apply**.
+Click on the settings button of the current document, switch to no auth, and click **Apply**.
 
 ![Banana Cake Pop - Authentication Details - No Auth Selected](../images/example8a-bcp4.png)
 
@@ -207,11 +207,10 @@ We will get the following error result:
 
 :::note
 
-The rule will make sure that the fields `__schema` and `__type` are secured but will always allow `__typename` since `__typename` is used by many generated GraphQL clients and only returns a string specifying the type name of an object.
+The introspection rule will make sure that the fields `__schema` and `__type` are secured but will always allow `__typename` since `__typename` is used by many generated GraphQL clients and only returns a string specifying the type name of an object.
 
 :::
 
 ## Summary
 
-In this chapter we have learned why we should secure the GraphQL introspection and how we can do that with Hot Chocolate. We also learned that we can secure the introspection depending on the request and by doing that allowing for instance developers to still use introspection on production servers.
-
+In this exercise, we have learned why we should secure the GraphQL introspection and how we can do that with Hot Chocolate. We also learned that we can secure the introspection depending on the HTTP request properties like the signed-in user. This allows for great flexibility and is often used to allow requests with a developer token to still execute introspection requests.
