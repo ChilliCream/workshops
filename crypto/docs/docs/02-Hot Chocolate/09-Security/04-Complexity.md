@@ -69,6 +69,7 @@ builder.Services
     })
     .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+```
 
 The completed `Program.cs` should look like the following:
 
@@ -155,7 +156,7 @@ If we calculate the rest of the field costs, we will get a total cost of 103 for
 
 Complexity describes two things here, the impact on the system in the sense that we have to do expensive I/O calls as well as the cost of sending a large result to our client, essentially the transport costs.
 
-::: note
+:::note
 
 If a field has an even higher cost, like our fields that call a REST endpoint, we can always annotate the field with the cost directive and specify the cost manually.
 
