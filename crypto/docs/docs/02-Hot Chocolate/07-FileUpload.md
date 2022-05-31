@@ -47,7 +47,7 @@ For file downloads, we will just provide URIs in our data objects to the client 
 
 The first thing we have to do to enable the GraphQL MultiPart request specification is to add the `Upload` scalar,
 
-:::Note
+:::note
 
 The `Upload` scalar is a unique scalar that only works as an input type. All other scalars are always input- and output-type.
 
