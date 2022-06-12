@@ -5,10 +5,8 @@ module.exports = {
   schemaExtensions: ['schema'],
   src: 'scenes',
   customScalars: {
-    Date: 'String',
-    DateTime: 'String',
-    Upload: 'null',
-    Uuid: 'String',
+    DateTime: 'string',
+    Upload: 'File | null',
   },
   eagerEsModules: true,
   noFutureProofEnums: false,
