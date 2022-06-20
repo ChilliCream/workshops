@@ -3,7 +3,6 @@ generates:
   schema/server.graphql:
     plugins:
       - schema-ast
-
-hooks:
-  afterOneFileWrite:
-    - prettier --write
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
