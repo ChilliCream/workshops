@@ -1,0 +1,24 @@
+query GetAssets($after: String) {
+    assets(after: $after) {
+        nodes {
+          ... AssetInfo  
+        }
+        pageInfo {
+            endCursor
+        }
+    }
+}
+
+subscription OnPriceChange {
+    onPriceChange {
+        lastPrice
+    }
+}
+
+fragment AssetInfo  on Asset {
+    symbol
+    name
+    price {
+        lastPrice
+    }
+}
