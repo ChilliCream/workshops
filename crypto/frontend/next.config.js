@@ -14,8 +14,4 @@ module.exports = {
   compiler: {
     relay,
   },
-  experimental: {
-    reactRoot: 'concurrent',
-    concurrentFeatures: true,
-  },
 };
