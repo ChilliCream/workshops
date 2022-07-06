@@ -26,7 +26,6 @@ tmp/
 # misc
 .DS_Store
 .env.local
-.env.*.local
 
 # logs
 *.log*
