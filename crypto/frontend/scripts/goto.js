@@ -52,7 +52,7 @@ const runner = async () => {
 
     const sources = await getSources('playground', 'solutions');
     const argv = yargs
-      .usage('Usage: $0 <source>')
+      .usage('Usage: goto <source>')
       .choices('source', sources)
       .command('$0 <source>', 'setup an example', (yargs) => {
         yargs.positional('source', {
@@ -61,7 +61,7 @@ const runner = async () => {
           demandOption: true,
         });
       })
-      .example([['$0 playground/example1-1'], ['$0 solutions/example1']])
+      .example([['goto playground/01-1'], ['goto solutions/01']])
       .demandCommand(1, 'You need at least one command before moving on')
       .version(false)
       .help().argv;
@@ -74,14 +74,19 @@ const runner = async () => {
 
     const source = path.resolve(argv.source);
 
-    const folders = await getDirent(source);
+    const resources = await getDirent(source);
 
-    for (const item of folders) {
-      const from = path.join(source, item.name);
-      const to = path.join(target, item.name);
+    // do not link these resources
+    const skiplist = ['.DS_Store', 'README.md'];
 
-      await fs.rm(to, {recursive: true, force: true});
-      await fs.symlink(from, to, item.isDirectory() ? 'dir' : 'file');
+    for (const item of resources) {
+      if (!skiplist.includes(item.name)) {
+        const from = path.join(source, item.name);
+        const to = path.join(target, item.name);
+
+        await fs.rm(to, {recursive: true, force: true});
+        await fs.symlink(from, to, item.isDirectory() ? 'dir' : 'file');
+      }
     }
 
     logger.info('Done.');

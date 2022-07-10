@@ -1,4 +1,4 @@
-schema: https://api-crypto-workshop.chillicream.com/graphql
+schema: ${NEXT_PUBLIC_HTTP_ENDPOINT}
 generates:
   schema/server.graphql:
     plugins:
