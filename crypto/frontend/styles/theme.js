@@ -158,12 +158,44 @@ export const createTheme = (mode) => {
               neutral: '#cdcdcd',
             },
           },
+          components: {
+            MuiCssBaseline: {
+              styleOverrides: {
+                body: {
+                  color: `${base.palette.text.primary} !important`,
+                  background: '#fff !important',
+                },
+                '.next-error-h1': {
+                  borderRight: `1px solid ${alpha(
+                    base.palette.text.primary,
+                    0.3,
+                  )} !important`,
+                },
+              },
+            },
+          },
         }
       : {
           palette: {
             line: darken(alpha(base.palette.divider, 1), 0.68),
             background: {
               neutral: '#4c4c4c',
+            },
+          },
+          components: {
+            MuiCssBaseline: {
+              styleOverrides: {
+                body: {
+                  color: `${base.palette.text.primary} !important`,
+                  background: '#121212 !important',
+                },
+                '.next-error-h1': {
+                  borderRight: `1px solid ${alpha(
+                    base.palette.text.primary,
+                    0.3,
+                  )} !important`,
+                },
+              },
             },
           },
         },

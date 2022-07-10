@@ -2,14 +2,12 @@ diff --git a/lib/src/index.js b/lib/src/index.js
 index bab4d705b25455c61c59d72841b0f5e8a10a828e..0e1c7ff30fe86652a61abf73e9986d5b7d0b68d1 100644
 --- a/lib/src/index.js
 +++ b/lib/src/index.js
-@@ -20,7 +20,12 @@ var options = {
+@@ -20,7 +20,10 @@ var options = {
          type: 'path',
          category: 'Global',
          array: true,
 -        default: [{ value: [] }],
 +        default: [{ value: [
-+            '^@swisslife/(.*)$',
-+            '^@sl/(.*)$',
 +            '@/(.*)$',
 +            '^[./]',
 +        ] }],

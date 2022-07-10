@@ -23,9 +23,16 @@ tmp/
 *.tmp
 .next/
 
+# demo
+/client
+/generated
+/pages
+/scenes
+/schema
+
 # misc
 .DS_Store
-.env.local
+.env
 
 # logs
 *.log*

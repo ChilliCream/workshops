@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import {Divider, Fade, IconButton, Stack, Tooltip, alpha} from '@mui/material';
+import {Divider, Fade, IconButton, Stack, Tooltip} from '@mui/material';
 import {useRouter} from 'next/router';
 import {useState} from 'react';
 
@@ -75,18 +75,6 @@ const Main = styled.div(
   flex-direction: column;
   position: relative;
   overflow: scroll;
-
-  & > div[style] {
-    color: inherit !important;
-    background: inherit !important;
-
-    & h1[style] {
-      border-right: 1px solid ${alpha(
-        theme.palette.text.primary,
-        0.3,
-      )} !important;
-    }
-  }
 `,
 );
 
