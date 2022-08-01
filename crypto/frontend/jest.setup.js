@@ -1,1 +1,3 @@
-import '@testing-library/jest-dom/extend-expect';
+//#region 1: setup TL (jest-dom)
+require('@testing-library/jest-dom');
+//#endregion

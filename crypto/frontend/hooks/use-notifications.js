@@ -2,27 +2,26 @@ import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 
 const Status = {
-  ON: true,
-  OFF: false,
+  ON: 'on',
+  OFF: 'off',
 };
 
-export const useNotifications = (initial = Status.OFF) => {
+export const useNotifications = () => {
   const router = useRouter();
-  const [active, setActive] = useState(initial);
-
-  useEffect(() => {
-    router.events.on('routeChangeStart', () => {
-      setActive(Status.OFF);
-    });
-  }, []);
+  const [active, setActive] = useState(
+    () => router.query.notifications === Status.ON,
+  );
 
   const handler = (next) => () => {
-    setActive(next);
+    setActive(next === Status.ON);
   };
 
-  return {
-    active,
-    show: handler(Status.ON),
-    hide: handler(Status.OFF),
-  };
+  const show = handler(Status.ON);
+  const hide = handler(Status.OFF);
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', hide);
+  }, []);
+
+  return {active, show, hide};
 };

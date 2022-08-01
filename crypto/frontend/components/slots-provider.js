@@ -4,6 +4,7 @@ export const SlotsContext = createContext({
   menubar: {current: null},
   statusbar: {current: null},
 });
+SlotsContext.displayName = 'SlotsContext';
 
 /**
  * @example

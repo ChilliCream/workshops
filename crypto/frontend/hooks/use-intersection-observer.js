@@ -26,9 +26,9 @@ import {useIsomorphicEffect} from './use-isomorphic-effect';
 export const useIntersectionObserver = (target, callback, options) => {
   useIsomorphicEffect(() => {
     if (target.current) {
-      const observer = new IntersectionObserver(callback);
+      const observer = new IntersectionObserver(callback, options);
 
-      observer.observe(target.current, options);
+      observer.observe(target.current);
 
       return () => {
         observer.disconnect();

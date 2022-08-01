@@ -2,6 +2,10 @@ import {Component} from 'react';
 
 export class ErrorBoundary extends Component {
   static getDerivedStateFromError(error) {
+    if (error instanceof Error) {
+      error._suppressLogging = true;
+    }
+
     return {error};
   }
 

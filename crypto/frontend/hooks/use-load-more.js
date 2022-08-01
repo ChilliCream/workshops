@@ -1,5 +1,7 @@
 import {useCallback, useRef} from 'react';
 
+import {findScrollContainer} from '@/utils';
+
 import {useIntersectionObserver} from './use-intersection-observer';
 
 /**
@@ -30,6 +32,7 @@ export const useLoadMore = (callback, deps) => {
   const loadMore = useCallback(callback, deps);
 
   const targetRef = useRef(null);
+  const containerRef = useRef();
   const cbRef = useRef(loadMore);
   const autoRef = useRef(null);
 
@@ -40,11 +43,16 @@ export const useLoadMore = (callback, deps) => {
 
   useIntersectionObserver(targetRef, (entries) => {
     if (targetRef.current) {
+      if (!containerRef.current) {
+        containerRef.current = findScrollContainer(targetRef.current);
+      }
+
       const reached = entries.some((entry) => entry.isIntersecting);
 
       if (reached) {
         if (!autoRef.current) {
-          autoRef.current = targetRef.current.offsetTop > window.innerHeight;
+          autoRef.current =
+            targetRef.current.offsetTop > containerRef.current.offsetHeight;
         }
 
         if (autoRef.current) {
@@ -54,5 +62,5 @@ export const useLoadMore = (callback, deps) => {
     }
   });
 
-  return [targetRef, loadMore];
+  return [targetRef, loadMore, containerRef];
 };

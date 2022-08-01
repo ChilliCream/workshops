@@ -20,7 +20,9 @@ export const TabPanel = ({value, index, ...rest}) =>
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
       role="tabpanel"
-      p={4}
+      py={2}
+      px={4}
+      overflow="auto"
       {...rest}
     />
   );

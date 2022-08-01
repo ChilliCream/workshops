@@ -9,6 +9,7 @@ export const ModeContext = createContext({
   setModeAuto: noop,
   toggleMode: noop,
 });
+ModeContext.displayName = 'ModeContext';
 
 /**
  * @example

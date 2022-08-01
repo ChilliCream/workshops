@@ -5,9 +5,9 @@ import {direction, formatPercent} from '@/utils';
 
 const Root = styled.div(
   ({theme, trend}) => `
-font-size: 1.125rem;
-font-weight: 400;
-color: ${theme.palette.trend[trend]};
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: ${theme.palette.trend[trend]};
 `,
 );
 

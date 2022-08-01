@@ -2,7 +2,7 @@
   "name": "crypto",
   "private": true,
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.1.0"
   },
   "workspaces": [
     ".proactive/*"
@@ -24,6 +24,7 @@
     "d3-shape": "^3.1.0",
     "d3-transition": "^3.0.1",
     "extract-files": "latest",
+    "graphql": "15.3.0",
     "graphql-ws": "latest",
     "lodash": "latest",
     "meros": "latest",
@@ -34,16 +35,19 @@
     "react-relay": "main"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.6",
     "@graphql-codegen/cli": "latest",
     "@graphql-codegen/schema-ast": "latest",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@types/react": "latest",
+    "@types/relay-test-utils": "latest",
     "babel-jest": "latest",
     "babel-plugin-relay": "main",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "jest": "latest",
+    "jest-environment-jsdom": "latest",
     "prettier": "latest",
     "relay-compiler": "main",
     "relay-test-utils": "main"
@@ -55,7 +59,8 @@
     "goto": "node scripts/goto.js",
     "lint": "next lint",
     "prettify": "prettier . --write --ignore-unknown",
-    "relay": "graphql-codegen --require dotenv/config && relay-compiler",
+    "codegen": "graphql-codegen --require dotenv/config",
+    "relay": "relay-compiler",
     "start": "next start"
   }
 }
