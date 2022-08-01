@@ -134,7 +134,7 @@ And it returns:
 
 Mutations can have both optimistic and regular updaters. Optimistic updaters are executed when a mutation is triggered. When that mutation completes or errors, the optimistic update is rolled back. When a mutation completes successfully, the mutation response is written to the store and regular updaters are executed.
 
-For a better UX, we can use `optimisticUpdater` like in the example above, or `optimisticResponse`. We’ve also used the `updater` to invalidate specific records in the store. That means that any query that is cached and references that invalidated records will now be considered stale, and will require to be refetched again the next time it’s evaluated.
+For a snappy UX, we can use `optimisticUpdater` like in the example above, or `optimisticResponse`. We’ve also used the `updater` to invalidate specific records in the store. That means that any query that is cached and references that invalidated records will now be considered stale, and will require to be refetched again the next time it’s evaluated.
 
 :::
 
