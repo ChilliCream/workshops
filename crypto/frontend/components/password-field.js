@@ -18,8 +18,8 @@ export const PasswordField = (props) => {
               onClick={() => {
                 setType(type === 'password' ? 'text' : 'password');
               }}
-              onMouseDown={(e) => {
-                e.preventDefault();
+              onMouseDown={(event) => {
+                event.preventDefault();
               }}
               edge="end"
             >

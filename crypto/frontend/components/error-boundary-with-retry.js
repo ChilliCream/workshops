@@ -82,20 +82,20 @@ const Commands = ({active, toggle, refetch, rerender}) => {
 
 export const ErrorBoundaryWithRetry = ({children}) => {
   const [active, toggle] = useToggle(true);
-  const [cacheBuster, refetch] = useCounter();
-  const [, rerender] = useCounter();
-  const [key, retry] = useCounter();
+  const [token1, refetch] = useCounter();
+  const [token2, rerender] = useCounter();
+  const [token3, retry] = useCounter();
 
   return (
     <>
       {active && (
         <ErrorBoundary
-          key={key}
+          key={token3}
           fallback={({error}) => (
             <Fallback {...{error, dismiss: toggle, retry}} />
           )}
         >
-          {children({cacheBuster})}
+          {children({cacheBuster: `${token1}|${token2}|${token3}`})}
         </ErrorBoundary>
       )}
       <Commands {...{active, toggle, refetch, rerender}} />

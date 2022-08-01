@@ -41,6 +41,12 @@ const getSources = (...dirs) =>
     ),
   ).then((items) => items.flat());
 
+// swappable folders
+const swaps = ['client', 'generated', 'pages', 'scenes', 'schema'];
+
+// do not link these resources
+const skiplist = ['.DS_Store', 'README.md'];
+
 const runner = async () => {
   try {
     const root = path.resolve(__dirname, '..');
@@ -50,7 +56,7 @@ const runner = async () => {
       throw 'Invalid root directory.';
     }
 
-    const sources = await getSources('playground', 'solutions');
+    const sources = await getSources('playground');
     const argv = yargs
       .usage('Usage: goto <source>')
       .choices('source', sources)
@@ -61,23 +67,22 @@ const runner = async () => {
           demandOption: true,
         });
       })
-      .example([['goto playground/01-1'], ['goto solutions/01']])
+      .example([['goto playground/1-hello.1'], ['goto playground/X-final']])
       .demandCommand(1, 'You need at least one command before moving on')
       .version(false)
       .help().argv;
 
-    for (const item of ['client', 'generated', 'pages', 'scenes', 'schema']) {
+    const source = path.resolve(argv.source);
+
+    for (const item of swaps) {
+      const from = path.join(source, item);
       const to = path.join(target, item);
 
+      await fs.mkdir(from, {recursive: true});
       await fs.rm(to, {recursive: true, force: true});
     }
 
-    const source = path.resolve(argv.source);
-
     const resources = await getDirent(source);
-
-    // do not link these resources
-    const skiplist = ['.DS_Store', 'README.md'];
 
     for (const item of resources) {
       if (!skiplist.includes(item.name)) {

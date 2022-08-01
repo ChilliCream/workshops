@@ -15,7 +15,7 @@ const $SwipeableDrawer = styled(SwipeableDrawer)(
 
   .MuiDrawer-paper {
     width: 100%;
-    max-height: 80%;
+    max-height: 50%;
 
     position: absolute;
     overflow: hidden;

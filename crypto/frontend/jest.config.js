@@ -4,6 +4,7 @@ const path = require('path');
 
 module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  cacheDirectory: path.join(process.env.CACHE_DIR, 'jest'),
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
@@ -23,4 +24,5 @@ module.exports = {
       },
     ],
   },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!d3-.*)/'],
 };

@@ -6,10 +6,10 @@ module.exports = {
   src: 'scenes',
   customScalars: {
     DateTime: 'string',
-    Upload: 'File | null',
+    Upload: 'File',
   },
-  eagerEsModules: true,
-  noFutureProofEnums: false,
+  eagerEsModules: false,
+  noFutureProofEnums: true,
   // @see https://github.com/vercel/next.js/discussions/35904
   language: 'flow',
 

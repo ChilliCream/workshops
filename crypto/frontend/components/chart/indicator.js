@@ -37,9 +37,9 @@ export const Indicator = memo(function Indicator({
     setState((prev) => ({...prev, active: false}));
   }, []);
   const handleMove = useCallback(
-    (e) => {
+    (event) => {
       const posX =
-        (e.touches?.[0]?.clientX ?? e.clientX) -
+        (event.touches?.[0]?.clientX ?? event.clientX) -
         rootRef.current.getBoundingClientRect().left;
 
       setState((prev) => {
