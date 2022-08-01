@@ -2,6 +2,9 @@
   "name": "docs",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=16.14.0"
+  },
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start --port 4000",
