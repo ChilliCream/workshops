@@ -133,12 +133,18 @@ In order to prepare the workspace for an example we’ll link some folders (e.g.
 
 ```sh
 # for the kick-off
+yarn goto --initial
+# or
 yarn goto playground/0-initial
 
 # for the first example (`.n` for multi-step)
 yarn goto playground/1-hello.1
 
+# for your
+
 # for the full app
+yarn goto --final
+# or
 yarn goto playground/X-final
 ```
 
@@ -151,10 +157,10 @@ yarn goto --help
 It’ll print something like:
 
 ```text
-Usage: goto <source>
+Usage: goto [source]
 
 Positionals:
-  source  path to content source
+  source  Path to content folder
               [string] [choices: "playground/0-initial", "playground/1-hello.1",
         "playground/1-hello.2", "playground/1-hello.3", "playground/2-screener",
       "playground/3-dashboard", "playground/4-viewer", "playground/5-watchlist",
@@ -162,11 +168,15 @@ Positionals:
                                                            "playground/X-final"]
 
 Options:
-  --help  Show help                                                    [boolean]
+  -i, --initial  Initial sandbox                                       [boolean]
+  -f, --final    Final sandbox                                         [boolean]
+  -h, --help     Show help                                             [boolean]
 
 Examples:
+  goto --initial
   goto playground/1-hello.1
-  goto playground/X-final
+  goto playground/mysandbox
+  goto --final
 ```
 
 Examples are not coupled with each other in any way. You can switch between them and the changes will stay in their respective “source” folder.
@@ -177,9 +187,11 @@ Examples are not coupled with each other in any way. You can switch between them
 
 1. Open the integrated terminal in Visual Studio Code by selecting `View > Terminal` or by selecting `Ctrl+`. On a Mac, select `Cmd+` instead.
 
-1. Use the following command to setup the `playground/0-initial`:
+1. Use the `goto` script to setup the sandbox:
 
    ```sh
+   yarn goto --initial
+   # or
    yarn goto playground/0-initial
    ```
 
