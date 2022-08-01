@@ -10,7 +10,7 @@ In order to start an example we’ll link some folders (e.g., client, generated,
 yarn goto playground/1-hello.1
 ```
 
-You can also create your own folders and use the same `goto` command to prepare the workspace:
+You can also create your own folders and use the same `goto` script to setup the sandbox:
 
 ```sh
 yarn goto playground/mysandbox

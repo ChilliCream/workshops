@@ -58,19 +58,50 @@ const runner = async () => {
 
     const sources = await getSources('playground');
     const argv = yargs
-      .usage('Usage: goto <source>')
-      .choices('source', sources)
-      .command('$0 <source>', 'setup an example', (yargs) => {
-        yargs.positional('source', {
-          describe: 'path to content source',
-          type: 'string',
-          demandOption: true,
-        });
+      .usage('Usage: goto [source]')
+      .command('$0 [source]', 'setup an example', (yargs) => {
+        if (!yargs.argv._.length && (yargs.argv.initial || yargs.argv.final)) {
+          yargs.default(
+            'source',
+            yargs.argv.initial ? 'playground/0-initial' : 'playground/X-final',
+          );
+        } else {
+          yargs
+            .positional('source', {
+              describe: 'Path to content folder',
+              type: 'string',
+              choices: sources,
+              conflicts: ['initial', 'final'],
+            })
+            .demandOption(
+              'source',
+              'You need to specify the content folder before moving on',
+            );
+        }
       })
-      .example([['goto playground/1-hello.1'], ['goto playground/X-final']])
-      .demandCommand(1, 'You need at least one command before moving on')
+      .options({
+        initial: {
+          description: 'Initial sandbox',
+          boolean: true,
+          alias: 'i',
+          conflicts: ['final'],
+        },
+        final: {
+          description: 'Final sandbox',
+          boolean: true,
+          alias: 'f',
+          conflicts: ['initial'],
+        },
+      })
+      .example([
+        ['goto --initial'],
+        ['goto playground/1-hello.1'],
+        ['goto playground/mysandbox'],
+        ['goto --final'],
+      ])
       .version(false)
-      .help().argv;
+      .help('h')
+      .alias('h', 'help').argv;
 
     const source = path.resolve(argv.source);
 
