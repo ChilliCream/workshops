@@ -10,7 +10,7 @@ Take a look to the `Greetings` example and how we can emit different type inform
 <Tabs>
   <TabItem value="javascript" label="Javascript" default>
 
-```js title="/generated/GreetingsQuery.graphql.js"
+```js title="@/generated/GreetingsQuery.graphql.js"
 /**
  * @generated SignedSource<<15df7b8fa3fd9ffaa2a9d7c02fcce998>>
  * @lightSyntaxTransform
@@ -80,7 +80,7 @@ module.exports = node;
   </TabItem>
   <TabItem value="typescript" label="Typescript">
 
-```js title="/generated/GreetingsQuery.graphql.ts"
+```js title="@/generated/GreetingsQuery.graphql.ts"
 /**
  * @generated SignedSource<<9f91a9c7cb9c50a7ee64374005b6cf3d>>
  * @lightSyntaxTransform
@@ -162,7 +162,7 @@ export default node;
   </TabItem>
   <TabItem value="flow" label="Flow">
 
-```js title="/generated/GreetingsQuery.graphql.js"
+```js title="@/generated/GreetingsQuery.graphql.js"
 /**
  * @generated SignedSource<<c8a3e7085ae35da7c834bf2d0ca866b5>>
  * @flow
@@ -251,5 +251,12 @@ module.exports = ((node/*: any*/)/*: Query<
 </Tabs>
 
 For more information, read the docs [here](https://relay.dev/docs/guides/type-emission/).
+
+:::tip Hidden Gem
+
+Relay data masking is really powerful, but it comes with some drawbacks. Especially when using fragments’ spread, the generated types reflect the data masking but it would be useful to generate types that match the response from the server (e.g., for testing).
+This barely documented `@raw_response_type` directive will enable the emission of such types.
+
+:::
 
 ---

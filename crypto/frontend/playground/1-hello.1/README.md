@@ -6,13 +6,15 @@ Let’s warm up with a static version of “Hello, World!”.
 
 ## Outline
 
-- Getting Started
+- Hello, World!
 
-  → React Components
+  - Getting Started
 
-  → Next.js Routing, `App` and `Document`
+    → React Components
 
-  → Next.js in Development Mode
+    → Next.js Routing, `App` and `Document`
+
+    → Next.js in Development Mode
 
 <!-- -->
 

@@ -6,9 +6,11 @@ Let’s use GraphQL to create a data-driven version of “Hello, World!”.
 
 ## Outline
 
-- Fetching without Relay
+- Hello, World!
 
-  → A Naive GraphQL Client
+  - Fetching without Relay
+
+    → A Naive GraphQL Client
 
 <!-- -->
 
