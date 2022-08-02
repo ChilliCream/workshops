@@ -19,7 +19,7 @@ Most of GraphQL type information for a specific field in the selection is not av
 
 For example, this test covers the `Greetings` shown before.
 
-```js title="/scenes/Greetings.test.js"
+```js title="@/scenes/Greetings.test.js"
 import {act, render, waitFor} from '@testing-library/react';
 import {Component, Suspense} from 'react';
 import {RelayEnvironmentProvider} from 'react-relay';

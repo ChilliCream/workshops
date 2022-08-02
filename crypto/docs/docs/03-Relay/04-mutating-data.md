@@ -218,7 +218,7 @@ const fetchFn = (operation, variables, cacheConfig, uploadables) => {
 
 Here’s how we can instrument a mutation to upload a profile image:
 
-```js title="/scenes/settings/SettingsProfile.js"
+```js title="@/scenes/settings/SettingsProfile.js"
 import {
   AccordionActions,
   AccordionDetails,

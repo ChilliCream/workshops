@@ -4,4 +4,14 @@ Let’s check that the environment is configured correctly. Launch the app and y
 
 ## Outline
 
-- Preflight Checklist
+- Preparations
+
+  - Prerequisites
+
+  - Requirements
+
+  - Setup
+
+  - Examples
+
+  - Preflight Checklist

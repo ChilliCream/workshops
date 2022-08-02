@@ -6,21 +6,23 @@ Let’s use Relay to create a data-driven version of “Hello, Luke!”.
 
 ## Outline
 
-- Fetching with Relay
+- Hello, World!
 
-  - Adding Relay to Our Project
+  - Fetching with Relay
 
-    → Include Dependencies
+    - Adding Relay to Our Project
 
-    → Configure Relay Compiler
+      → Include Dependencies
 
-    → Configure Relay Runtime
+      → Configure Relay Compiler
 
-  - Executing a Query
+      → Configure Relay Runtime
 
-    → Loading States with `Suspense`
+    - Executing a Query
 
-    → Refreshing and Refetching
+      → Loading States with `Suspense`
+
+      → Refreshing and Refetching
 
   - Recap
 

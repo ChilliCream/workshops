@@ -14,7 +14,7 @@ With GraphQL, an app can specify the exact data it needs, aggregate the data fro
 
 - **Highly Performant**:
   Clients have the power to ask for what they need and get exactly that, nothing more and nothing less, which leads to better UX especially on slow network connections.
-- **Ahead-of-time Safety**:
+- **Ahead-Of-Time Safety**:
   GraphQL has a type system in its core principles. We can use it to make type-safe API calls by propagating our backend types to the frontend.
 - **Unified API**:
   Typical REST APIs require loading from multiple URLs, with GraphQL APIs we get all the data needed in a single request.

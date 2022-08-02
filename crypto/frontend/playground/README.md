@@ -20,29 +20,45 @@ Due to the time constraints of the workshop and the different knowledge levels o
 
 ## Outline
 
-- Getting Started
+- Preparations
 
-  → React Components
+  - Prerequisites
 
-  → Next.js Routing, `App` and `Document`
+  - Requirements
 
-  → Next.js in Development Mode
+  - Setup
 
-- Fetching with Relay
+  - Examples
 
-  - Adding Relay to Our Project
+  - Preflight Checklist
 
-    → Include Dependencies
+- Hello, World!
 
-    → Configure Relay Compiler
+  - Getting Started
 
-    → Configure Relay Runtime
+    → React Components
 
-  - Executing a Query
+    → Next.js Routing, `App` and `Document`
 
-    → Loading States with `Suspense`
+    → Next.js in Development Mode
 
-    → Refreshing and Refetching
+  - Fetching without Relay
+
+  - Fetching with Relay
+
+    - Adding Relay to Our Project
+
+      → Include Dependencies
+
+      → Configure Relay Compiler
+
+      → Configure Relay Runtime
+
+    - Executing a Query
+
+      → Loading States with `Suspense`
+
+      → Refreshing and Refetching
 
   - Recap
 

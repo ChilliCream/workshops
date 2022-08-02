@@ -8,34 +8,6 @@ Let’s explore the whole app. It contains multiple GraphQL features implemented
 
 ## Outline
 
-- Getting Started
-
-  → React Components
-
-  → Next.js Routing, `App` and `Document`
-
-  → Next.js in Development Mode
-
-- Fetching with Relay
-
-  - Adding Relay to Our Project
-
-    → Include Dependencies
-
-    → Configure Relay Compiler
-
-    → Configure Relay Runtime
-
-  - Executing a Query
-
-    → Loading States with `Suspense`
-
-    → Refreshing and Refetching
-
-  - Recap
-
-    → Fetching Patterns
-
 - On-Demand Data
 
   - Rethinking Data Fetching
