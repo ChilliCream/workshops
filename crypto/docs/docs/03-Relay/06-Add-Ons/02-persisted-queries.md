@@ -20,7 +20,7 @@ Take a look to the `Greetings` example and the difference of the compiled output
 <Tabs>
   <TabItem value="non-persisted" label="Non-persisted" default>
 
-```js title="/generated/GreetingsQuery.graphql.js"
+```js title="@/generated/GreetingsQuery.graphql.js"
 /**
  * @generated SignedSource<<13cc28d6173216c5c2051e50cb5b41e1>>
  * @lightSyntaxTransform
@@ -89,7 +89,7 @@ export default node;
   </TabItem>
   <TabItem value="persisted" label="Persisted">
 
-```js title="/generated/GreetingsQuery.graphql.js"
+```js title="@/generated/GreetingsQuery.graphql.js"
 /**
  * @generated SignedSource<<fc6dfc4b6ead64af0e00f1091a2672eb>>
  * @relayHash df17284c16608f10e79c40f215176912
