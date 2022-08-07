@@ -13,11 +13,13 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 ### 09:00 Hello, Intro, Tech Check
 
 - Introduction
-- What is GraphQL?
+- What Is GraphQL?
+- Why Use GraphQL?
+- How to GraphQL
 - Hello, World!
-  - Fetching Approaches
-  - Loading States with Suspense
-  - Error States with ErrorBoundary
+  - Getting Started
+  - Fetching without Relay
+  - Fetching with Relay
 
 ### 10:30 BREAK (15 minutes)
 
