@@ -78,7 +78,7 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 
 ### 12:30 LUNCH
 
-### 13:30 GraphQL in Production 1
+### 13:30 Add-Ons 1
 
 - Relay Developer Tools
 - Persisted Queries
@@ -88,7 +88,7 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 
 ### 15:15 BREAK (15 minutes)
 
-### 15:30 GraphQL in Production 2
+### 15:30 Add-Ons 2
 
 - GraphQL Observability
 - Security Concepts
