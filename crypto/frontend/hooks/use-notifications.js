@@ -21,6 +21,10 @@ export const useNotifications = () => {
 
   useEffect(() => {
     router.events.on('routeChangeStart', hide);
+
+    return () => {
+      router.events.off('routeChangeStart', hide);
+    };
   }, []);
 
   return {active, show, hide};
