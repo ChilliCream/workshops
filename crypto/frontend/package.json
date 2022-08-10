@@ -7,7 +7,7 @@
   "workspaces": [
     ".proactive/*"
   ],
-  "packageManager": "yarn@3.2.0",
+  "packageManager": "yarn@3.2.2",
   "dependencies": {
     "@emotion/cache": "latest",
     "@emotion/css": "latest",

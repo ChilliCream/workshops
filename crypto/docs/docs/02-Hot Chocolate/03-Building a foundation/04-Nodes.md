@@ -4,7 +4,7 @@ So far, we can fetch all assets with pagination activated. This allows us to fet
 
 ## Fetch single Asset
 
-We need to introduce a new resolver to our `Query` type to fetch an asset by its identifier. 
+We need to introduce a new resolver to our `Query` type to fetch an asset by its identifier.
 
 First, we will create a new DataLoader called `AssetByIdDataLoader`.
 
@@ -96,7 +96,7 @@ query {
 
 ## Global Object Identification
 
-With the new resolver in place, we can fetch a single `Asset` by its identifier. This is good for us human beings but not good for GraphQL tools and GraphQL clients. For tools or clients, we need something more generic. The relay team introduced the `Global Object Identification` specification for this purpose. 
+With the new resolver in place, we can fetch a single `Asset` by its identifier. This is good for us human beings but not good for GraphQL tools and GraphQL clients. For tools or clients, we need something more generic. The relay team introduced the `Global Object Identification` specification for this purpose.
 
 :::info
 
@@ -168,7 +168,7 @@ Next, we need to introduce a node resolver, which can resolve the entity by its 
 ```csharp
 [NodeResolver]
 public static async Task<Asset> GetByIdAsync(
-    int id, 
+    int id,
     AssetByIdDataLoader assetById,
     CancellationToken cancellationToken)
     => await assetById.LoadAsync(id, cancellationToken);
@@ -191,7 +191,7 @@ public sealed class AssetNode
 
     [NodeResolver]
     public static async Task<Asset> GetByIdAsync(
-        int id, 
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
@@ -279,7 +279,7 @@ query {
 You could compare the **InlineFragment** to an is check in C#.
 
 ```csharp
-if(node is Asset asset) 
+if(node is Asset asset)
 {
     Console.WriteLine(asset.Symbol);
 }
@@ -367,7 +367,7 @@ public sealed class AssetBySymbolDataLoader : BatchDataLoader<string, Asset>
 }
 ```
 
-We need one more **DataLoader** to complete our schema, so we need to add another file called `AssetPriceByIdDataLoader.cs` to the `DataLoader` directory. 
+We need one more **DataLoader** to complete our schema, so we need to add another file called `AssetPriceByIdDataLoader.cs` to the `DataLoader` directory.
 
 ```csharp title="/DataLoader/AssetPriceByIdDataLoader.cs"
 namespace Demo.DataLoader;
@@ -408,7 +408,7 @@ public sealed class AssetPriceNode
     public async Task<Asset> GetAssetAsync(
         [Parent] AssetPrice parent,
         AssetBySymbolDataLoader assetBySymbol,
-        CancellationToken cancellationToken) 
+        CancellationToken cancellationToken)
         => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
 
     [NodeResolver]
@@ -436,7 +436,6 @@ query {
   }
 }
 ```
-
 
 ```graphql
 query {

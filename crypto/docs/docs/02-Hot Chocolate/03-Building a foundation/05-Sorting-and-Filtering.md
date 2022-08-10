@@ -8,7 +8,7 @@ public IQueryable<Asset> GetAssets(AssetContext context)
     => context.Assets.OrderBy(t => t.Symbol);
 ```
 
-But in our frontend component for the ticker, we want to sort the assets by the `tradableMarketCapRank`. Further, we also want to introduce new UI components that allow sorting of the assets in lists. **Hot Chocolate** comes with integrations for many data sources to rewrite exposed filters and sort order into the native query language. 
+But in our frontend component for the ticker, we want to sort the assets by the `tradableMarketCapRank`. Further, we also want to introduce new UI components that allow sorting of the assets in lists. **Hot Chocolate** comes with integrations for many data sources to rewrite exposed filters and sort order into the native query language.
 
 In our case, we want to again apply these custom filters and sort orders onto the returned `IQueryable<Asset>`. While paging is actually built into the core of **Hot Chocolate**, the data integrations like sorting and filtering come with the `HotChocolate.Data.*` packages. We have already added the `HotChocolate.Data.EntityFramework` package to the current project.
 
@@ -122,15 +122,15 @@ By annotating this attribute to your resolver, it will intercept the field descr
           descriptor.Field(t => t.Price);
       }
   }
-  ``` 
+  ```
 
 - **schema-first**
-  
+
   The schema-first approach leverages the GraphQL schema definition language to declare the schema types. The first version of **Hot Chocolate** was actually a schema-first-only server.
 
   ```graphql
   type Query {
-      assets: [Asset!]!
+    assets: [Asset!]!
   }
   ```
 
@@ -170,11 +170,11 @@ public sealed class AssetPriceChangeType : ObjectType
     {
         descriptor
             .Field("somefield")
-            .Use(next => context => 
+            .Use(next => context =>
             {
                 await next(context);
-                
-                if(context.Result is string s) 
+
+                if(context.Result is string s)
                 {
                     context.Result = s.ToUpper();
                 }
@@ -262,7 +262,7 @@ Next, head over to the file `Query.cs` and pass in the `AssetFilterInputType` ty
 [UseFiltering(typeof(AssetFilterInputType))]
 ```
 
-With the filtering configured, we still need to configure our sorting middleware. 
+With the filtering configured, we still need to configure our sorting middleware.
 
 Create a new file `AssetSortInputType.cs` located in the `Types` directory.
 
@@ -317,8 +317,8 @@ Check that we now only expose the fields defined in our types.
 ```graphql
 query {
   assets(
-    where: { price: { tradableMarketCapRank: { gt: 163 } } }
-    order: { price: { tradableMarketCapRank: DESC } }
+    where: {price: {tradableMarketCapRank: {gt: 163}}}
+    order: {price: {tradableMarketCapRank: DESC}}
   ) {
     nodes {
       name
@@ -364,7 +364,6 @@ query {
 Before wrapping up this last part of our chapter, we need to add one more thing to our `Asset` type. As of now, the `Asset` exposes an image key that the UI cannot leverage to fetch the `Asset` icon.
 
 We need to rewrite this file to expose a URL for that image. For this, we will add a new resolver to our `AssetNode` class.
-
 
 ```csharp
 [BindMember(nameof(Asset.ImageKey))]
@@ -423,7 +422,7 @@ public sealed class AssetNode
 
     [NodeResolver]
     public static async Task<Asset> GetByIdAsync(
-        int id, 
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
@@ -446,7 +445,6 @@ query {
     }
   }
 }
-
 ```
 
 ## Summary

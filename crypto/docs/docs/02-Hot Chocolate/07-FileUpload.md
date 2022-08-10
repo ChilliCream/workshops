@@ -6,7 +6,7 @@ For our application, we want the user to be able to upload a profile picture. Fo
 
 ## Transport
 
-With the standard GraphQL specification, we could only upload binary data as base64 strings since we only have the following built-in scalars: `String`, `Int`, `Float`, `Boolean`. 
+With the standard GraphQL specification, we could only upload binary data as base64 strings since we only have the following built-in scalars: `String`, `Int`, `Float`, `Boolean`.
 
 But using a base64 string will add overhead and is not ideal for efficient file transport. This is where the GraphQL MultiPart request specification comes in.
 
@@ -17,7 +17,7 @@ https://github.com/jaydenseric/graphql-multipart-request-spec
 
 :::
 
-With the GraphQL MultiPart request specification, we use a multipart form to post the request and the file attachments to the GraphQL server. 
+With the GraphQL MultiPart request specification, we use a multipart form to post the request and the file attachments to the GraphQL server.
 
 **Example Request**
 
@@ -81,7 +81,7 @@ This is where the `Optional<T>` type will help us. `Optional<T>` exposes to us i
 
 ```graphql
 input FooInput {
- bar: String! = "baz"
+  bar: String! = "baz"
 }
 ```
 
