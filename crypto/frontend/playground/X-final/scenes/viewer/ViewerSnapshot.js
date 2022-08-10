@@ -97,7 +97,11 @@ export default memo(function ViewerSnapshot({fragmentRef}) {
   return (
     <Stack justifyContent="center" alignItems="center" gap={2}>
       <Stack direction="row" gap={2}>
-        <Price value={price.lastPrice} options={{currency: price.currency}} />
+        <Price
+          key={asset.symbol}
+          value={price.lastPrice}
+          options={{currency: price.currency}}
+        />
         <Change value={price.change.percentageChange} />
       </Stack>
       <SpanSelector span={span} busy={busy} onChange={handleSpanChange} />
