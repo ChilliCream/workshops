@@ -1,7 +1,7 @@
 # Pagination
 
 In the first part, we exposed the `Asset` entity through GraphQL. Fetching the `assets` field would return all of the elements in the table, which would not scale for a real-world application.
- 
+
 With **Hot Chocolate**, we can use the default paging middleware, which will rewrite the queryable to only fetch a segment of the asset table.
 
 <img src="/img/backend/example2-part1-middleware.png" width="300" />
@@ -37,6 +37,7 @@ builder.Services
         IncludeTotalCount = true
     });
 ```
+
 :::
 
 Now restart your server and refetch the schema with Banana Cake Pop.

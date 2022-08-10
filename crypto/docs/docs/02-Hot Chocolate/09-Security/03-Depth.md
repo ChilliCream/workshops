@@ -19,9 +19,9 @@ Before we limit our server to a specific execution depth, it's crucial to inspec
 Let's say we discovered that the following request is the deepest GraphQL request that actually makes sense since if we wanted to go deeper, we would create circular references in our graph.
 
 ```graphql
-query GetChartData{
-  assets(order: { price: { change24Hour: DESC} }) {
-    nodes{
+query GetChartData {
+  assets(order: {price: {change24Hour: DESC}}) {
+    nodes {
       symbol
       name
       description
@@ -44,7 +44,7 @@ query GetChartData{
 }
 ```
 
-The above request has a depth of 7, but the typical introspection request has a much deeper request structure. In the previous exercise, we learned how to secure our server against introspection requests, and my recommendation here is to skip introspection requests from the execution depth validation. 
+The above request has a depth of 7, but the typical introspection request has a much deeper request structure. In the previous exercise, we learned how to secure our server against introspection requests, and my recommendation here is to skip introspection requests from the execution depth validation.
 
 This means that people that have the right to access introspection queries will avoid the execution depth analysis for introspection fields, but that could be OK since these people might be our developers anyway.
 
@@ -125,9 +125,9 @@ The request will execute just fine since we explicitly defined the execution dep
 Now let's try to create a request that fails. For this, copy the below request and execute it.
 
 ```graphql
-query GetChartData{
-  assets(order: { price: { change24Hour: DESC} }) {
-    nodes{
+query GetChartData {
+  assets(order: {price: {change24Hour: DESC}}) {
+    nodes {
       price {
         asset {
           price {
