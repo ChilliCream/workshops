@@ -68,8 +68,7 @@ const Controlbar = styled(Stack)`
 `;
 
 const Main = styled.div(
-  ({theme, variant}) =>
-    `
+  ({theme, variant}) => `
   padding: ${theme.spacing(3)};
   flex: 1;
   display: flex;
