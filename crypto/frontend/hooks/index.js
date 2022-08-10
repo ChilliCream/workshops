@@ -12,6 +12,7 @@ export * from './use-notifications';
 export * from './use-on-screen';
 export * from './use-preferred-theme';
 export * from './use-resize-observer';
+export * from './use-scroll-restore';
 export * from './use-size';
 export * from './use-slots';
 export * from './use-toggle';
