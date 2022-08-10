@@ -3,7 +3,12 @@ import {Divider, Fade, IconButton, Stack, Tooltip} from '@mui/material';
 import {useRouter} from 'next/router';
 import {useState} from 'react';
 
-import {useMode, useMutationObserver, useSlots} from '@/hooks';
+import {
+  useMode,
+  useMutationObserver,
+  useScrollRestore,
+  useSlots,
+} from '@/hooks';
 import {
   AppIcon,
   BitcoinIcon,
@@ -114,6 +119,8 @@ const Full = ({children}) => {
     {childList: true},
   );
 
+  const [scrollRef] = useScrollRestore();
+
   return (
     <Root>
       <Menu
@@ -155,7 +162,7 @@ const Full = ({children}) => {
         </Tooltip>
       </Menubar>
       <Divider />
-      <Main variant="full">
+      <Main ref={scrollRef} variant="full">
         <NoSSR>
           <ErrorBoundary>{children}</ErrorBoundary>
         </NoSSR>
