@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import {Divider, Fade, IconButton, Stack, Tooltip} from '@mui/material';
 import {useRouter} from 'next/router';
 import {useState} from 'react';
-import {flushSync} from 'react-dom';
 
 import {useMode, useMutationObserver, useSlots} from '@/hooks';
 import {
