@@ -132,16 +132,23 @@ In order to prepare the workspace for an example we’ll link some folders (e.g.
 
 ```sh
 # for the kick-off
+yarn goto --initial
+# or
 yarn goto playground/0-initial
 
 # for the first example (`.n` for multi-step)
 yarn goto playground/1-hello.1
 
+# for your own sandbox
+yarn goto playground/mysandbox
+
 # for the full app
+yarn goto --final
+# or
 yarn goto playground/X-final
 ```
 
-The command has the form `yarn goto <source>`, where sources are all the possible examples. To print the available sources:
+You can also print more details about this command by calling:
 
 ```sh
 yarn goto --help
@@ -150,20 +157,14 @@ yarn goto --help
 It’ll print something like:
 
 ```text
-Usage: goto [source]
-
-Positionals:
-  source  Path to content folder
-              [string] [choices: "playground/0-initial", "playground/1-hello.1",
-        "playground/1-hello.2", "playground/1-hello.3", "playground/2-screener",
-      "playground/3-dashboard", "playground/4-viewer", "playground/5-watchlist",
-   "playground/6-alerts", "playground/7-notifications", "playground/8-settings",
-                                                           "playground/X-final"]
+Usage:
+ㅤgoto PLAYGROUND_SUBFOLDER
+ㅤgoto {--initial | --final | --source=PLAYGROUND_SUBFOLDER}
 
 Options:
-  -i, --initial  Initial sandbox                                       [boolean]
-  -f, --final    Final sandbox                                         [boolean]
-  -h, --help     Show help                                             [boolean]
+  --initial  Initial sandbox                                           [boolean]
+  --final    Final sandbox                                             [boolean]
+  --source   Path to content folder                                     [string]
 
 Examples:
   goto --initial

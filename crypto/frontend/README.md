@@ -140,7 +140,8 @@ yarn goto playground/0-initial
 # for the first example (`.n` for multi-step)
 yarn goto playground/1-hello.1
 
-# for your
+# for your own sandbox
+yarn goto playground/mysandbox
 
 # for the full app
 yarn goto --final
@@ -148,7 +149,7 @@ yarn goto --final
 yarn goto playground/X-final
 ```
 
-The command has the form `yarn goto <source>`, where sources are all the possible examples. To print the available sources:
+You can also print more details about this command by calling:
 
 ```sh
 yarn goto --help
@@ -157,20 +158,14 @@ yarn goto --help
 It’ll print something like:
 
 ```text
-Usage: goto [source]
-
-Positionals:
-  source  Path to content folder
-              [string] [choices: "playground/0-initial", "playground/1-hello.1",
-        "playground/1-hello.2", "playground/1-hello.3", "playground/2-screener",
-      "playground/3-dashboard", "playground/4-viewer", "playground/5-watchlist",
-   "playground/6-alerts", "playground/7-notifications", "playground/8-settings",
-                                                           "playground/X-final"]
+Usage:
+ㅤgoto PLAYGROUND_SUBFOLDER
+ㅤgoto {--initial | --final | --source=PLAYGROUND_SUBFOLDER}
 
 Options:
-  -i, --initial  Initial sandbox                                       [boolean]
-  -f, --final    Final sandbox                                         [boolean]
-  -h, --help     Show help                                             [boolean]
+  --initial  Initial sandbox                                           [boolean]
+  --final    Final sandbox                                             [boolean]
+  --source   Path to content folder                                     [string]
 
 Examples:
   goto --initial
@@ -194,6 +189,8 @@ Examples are not coupled with each other in any way. You can switch between them
    # or
    yarn goto playground/0-initial
    ```
+
+````
 
 1. Use the following command to start the Next.js development server:
 
@@ -225,3 +222,4 @@ Awesome! Cleared for takeoff. Let’s go ahead.
 [learn-relay]: https://relay.dev/docs/getting-started/step-by-step-guide/
 [learn-next]: https://nextjs.org/learn/foundations/about-nextjs
 [learn-node]: https://nodejs.dev/learn
+````
