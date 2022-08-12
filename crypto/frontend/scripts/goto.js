@@ -58,41 +58,48 @@ const runner = async () => {
 
     const sources = await getSources('playground');
     const argv = yargs
-      .usage('Usage: goto [source]')
-      .command('$0 [source]', 'setup an example', (yargs) => {
-        if (!yargs.argv._.length && (yargs.argv.initial || yargs.argv.final)) {
-          yargs.default(
-            'source',
-            yargs.argv.initial ? 'playground/0-initial' : 'playground/X-final',
-          );
-        } else {
-          yargs
-            .positional('source', {
-              describe: 'Path to content folder',
-              type: 'string',
-              choices: sources,
-              conflicts: ['initial', 'final'],
-            })
-            .demandOption(
-              'source',
-              'You need to specify the content folder before moving on',
-            );
-        }
-      })
-      .options({
-        initial: {
-          description: 'Initial sandbox',
-          boolean: true,
-          alias: 'i',
-          conflicts: ['final'],
-        },
-        final: {
-          description: 'Final sandbox',
-          boolean: true,
-          alias: 'f',
-          conflicts: ['initial'],
-        },
-      })
+      .usage(
+        `Usage:
+          ㅤgoto PLAYGROUND_SUBFOLDER
+          ㅤgoto {--initial | --final | --source=PLAYGROUND_SUBFOLDER}`,
+      )
+      .command('$0 [source]', false, (yargs) =>
+        yargs
+          .option('initial', {
+            description: 'Initial sandbox',
+            type: 'boolean',
+            conflicts: ['final', 'source'],
+          })
+          .option('final', {
+            description: 'Final sandbox',
+            type: 'boolean',
+            conflicts: ['initial', 'source'],
+          })
+          .option('source', {
+            describe: 'Path to content folder',
+            type: 'string',
+            conflicts: ['initial', 'final'],
+          })
+          .middleware((argv) => {
+            if (argv.initial) {
+              argv.source = 'playground/0-initial';
+            } else if (argv.final) {
+              argv.source = 'playground/X-final';
+            }
+          })
+          .check((argv) => {
+            if (argv.source?.trim()) {
+              if (sources.includes(path.join(argv.source, '.'))) {
+                return true;
+              }
+
+              throw new Error('Argument source is invalid');
+            }
+
+            throw new Error('Argument source is missing');
+          }),
+      )
+      .strict()
       .example([
         ['goto --initial'],
         ['goto playground/1-hello.1'],
@@ -100,8 +107,8 @@ const runner = async () => {
         ['goto --final'],
       ])
       .version(false)
-      .help('h')
-      .alias('h', 'help').argv;
+      .alias('h', 'help')
+      .hide('h').argv;
 
     const source = path.resolve(argv.source);
 
