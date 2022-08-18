@@ -14,8 +14,12 @@ import {useIsomorphicEffect} from './use-isomorphic-effect';
  *
  *   useIntersectionObserver(
  *     targetRef,
- *     () => {
- *       console.log('threshold reached');
+ *     (entries) => {
+ *       const reached = entries.some((entry) => entry.isIntersecting);
+ *
+ *       if (reached) {
+ *         console.log('threshold reached');
+ *       }
  *     },
  *     {threshold: 0.5},
  *   );
