@@ -46,18 +46,17 @@
 	  <PackageReference Include="CommunityToolkit.Maui" Version="1.2.0" />
 	  <PackageReference Include="CommunityToolkit.Maui.Markup" Version="1.0.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	  <PackageReference Include="StrawberryShake.Transport.Http" Version="13.0.0-preview.24" />
+	  <PackageReference Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="13.0.0-preview.24" />
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+	  <PackageReference Include="StrawberryShake.Transport.WebSockets" Version="13.0.0-preview.24" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Theme\" />
-	  <None Remove="Views\" />
-	  <None Remove="Views\Dashboard\" />
-	  <None Remove="Models\" />
+	  <GraphQL Remove="schema.graphql" />
+	  <GraphQL Remove="schema.extensions.graphql" />
+	  <GraphQLConfig Remove=".graphqlrc.json" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Resources\Theme\" />
-	  <Folder Include="Views\" />
-	  <Folder Include="Views\Dashboard\" />
-	  <Folder Include="Models\" />
-	</ItemGroup>
+
 </Project>

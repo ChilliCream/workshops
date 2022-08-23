@@ -41,7 +41,7 @@ class StockTickerView : CollectionView
 			Children =
 			{
 				new BoxView()
-					.Size(2, -1)
+					.Width(2)
 					.Start()
 					.RowSpan(All<Row>()).Column(Column.Separator)
 					.DynamicResource(BoxView.BackgroundColorProperty, nameof(BaseTheme.SeparatorColor)),

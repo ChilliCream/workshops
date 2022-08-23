@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MauiCrypto;
 
@@ -27,12 +26,14 @@ public static class MauiProgram
 		builder.Services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
 
 		// Add Services
+		builder.Services.AddMauiCryptoClient()
+						.ConfigureHttpClient(client => client.BaseAddress = new Uri("https://api-crypto-workshop.chillicream.com/GraphQL"));
 
 		return builder.Build();
 	}
 
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BasePage<TViewModel>
-																													where TViewModel : BaseViewModel
+																												where TViewModel : BaseViewModel
 	{
 		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetRoute<TPage, TViewModel>());
 	}

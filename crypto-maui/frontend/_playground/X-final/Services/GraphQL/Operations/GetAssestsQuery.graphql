@@ -1,0 +1,27 @@
+﻿query GetAssestsQuery
+{
+  assets {
+    nodes
+    {
+      id,
+      imageUrl,
+      isInWatchlist,
+      hasAlerts,
+      symbol,
+      name,
+      slug,
+      description,
+      color,
+      website,
+      whitePaper,
+      price {
+        change(span: DAY) {
+          percentageChange
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+    }
+  }
+}
