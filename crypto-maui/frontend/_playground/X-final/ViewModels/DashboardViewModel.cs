@@ -9,7 +9,7 @@ namespace MauiCrypto;
 sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 {
     readonly IDisposable _subscribeOnPriceChangeSession;
-    readonly CryptoGraphQLService _cryptoGraphQLService;
+    readonly CryptoGraphQLService _cryptoGraphQLService;	
 
     public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService, MauiCryptoClient client)
     {
