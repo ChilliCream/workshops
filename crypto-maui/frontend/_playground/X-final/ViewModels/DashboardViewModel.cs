@@ -2,28 +2,54 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StrawberryShake;
+using StrawberryShake.Transport.WebSockets;
 
 namespace MauiCrypto;
 
-partial class DashboardViewModel : BaseViewModel
+sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 {
-	readonly CryptoGraphQLService _cryptoGraphQLService;
+    readonly IDisposable _subscribeOnPriceChangeSession;
+    readonly CryptoGraphQLService _cryptoGraphQLService;
 
-	public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService)
-	{
-		_cryptoGraphQLService = cryptoGraphQLService;
-	}
+    public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService, MauiCryptoClient client)
+    {
+        _cryptoGraphQLService = cryptoGraphQLService;
 
-	public ObservableCollection<IGetAssestsQuery_Assets_Nodes> AssetCollection { get; } = new();
+        _subscribeOnPriceChangeSession = client.SubscribeOnPriceChange.Watch().Subscribe(result =>
+        {
+            result.EnsureNoErrors();
 
-	[RelayCommand]
-	async Task RefreshCollectionView(CancellationToken token)
-	{
-		AssetCollection.Clear();
+            if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange priceChange
+                && AssetCollection.FirstOrDefault(x => x.Id == priceChange.Id) is StockTickerModel node)
+            {
+                node.Price = new StockTickerPriceModel
+                {
+                    LastPrice = priceChange.LastPrice,
+                    Change24Hour = priceChange.Change24Hour
+                };
+            }
+        });
+    }
 
-		await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
-		{
-			AssetCollection.Add(node);
-		}
-	}
+    ~DashboardViewModel() => Dispose();
+
+    public ObservableCollection<StockTickerModel> AssetCollection { get; } = new();
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _subscribeOnPriceChangeSession.Dispose();
+    }
+
+    [RelayCommand]
+    async Task RefreshCollectionView(CancellationToken token)
+    {
+        AssetCollection.Clear();
+
+        await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
+        {
+            var stockTickerModel = new StockTickerModel(node);
+            AssetCollection.Add(stockTickerModel);
+        }
+    }
 }

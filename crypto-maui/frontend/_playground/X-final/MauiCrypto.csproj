@@ -58,5 +58,4 @@
 	  <GraphQL Remove="schema.extensions.graphql" />
 	  <GraphQLConfig Remove=".graphqlrc.json" />
 	</ItemGroup>
-
 </Project>
