@@ -49,19 +49,19 @@ class StockTickerView : CollectionView
 				new Label()
 					.Row(Row.Symbol).Column(Column.Content)
 					.Font(size: 12)
-					.Bind<Label, string, string?>(Label.TextProperty, nameof(StockTickerModel.Symbol), convert: static symbol => symbol?.ToUpper())
-					.Bind(Label.TextColorProperty, nameof(StockTickerModel.SymbolColor)),
+					.Bind<Label, string, string?>(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), convert: static symbol => symbol?.ToUpper())
+					.Bind<Label, string, Color?>(Label.TextColorProperty, nameof(IGetAssestsQuery_Assets_Nodes.Color), convert: static colorHex => Color.FromArgb(colorHex)),
 
 				new Label()
 					.Row(Row.Price).Column(Column.Content)
 					.Font(size: 16)
-					.Bind<Label, decimal, string>(Label.TextProperty, nameof(StockTickerModel.Price), convert: static price => price.ToString()),
+					.Bind<Label, double, string>(Label.TextProperty, $"{nameof(IGetAssestsQuery_Assets_Nodes.Price)}.{nameof(IGetAssestsQuery_Assets_Nodes.Price.LastPrice)}", convert: static price => price.ToString()),
 
 				new Label()
 					.Row(Row.PercentChange).Column(Column.Content)
 					.Font(size: 12)
-					.Bind<Label, double, string>(Label.TextProperty, nameof(StockTickerModel.PercentChange), convert: static percentChange => $"{(double.IsNegative(percentChange) ? '-' : '+')}{Math.Abs(percentChange):P}")
-					.Bind<Label, double, Color?>(Label.TextColorProperty, nameof(StockTickerModel.PercentChange), convert: static percentChange => double.IsNegative(percentChange) ? (Color?)Application.Current?.Resources[nameof(BaseTheme.NegativeStockColor)] : (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)] ),
+					.Bind<Label, double, string>(Label.TextProperty, $"{nameof(IGetAssestsQuery_Assets_Nodes.Price)}.{nameof(IGetAssestsQuery_Assets_Nodes.Price.Change24Hour)}", convert: static percentChange => $"{(double.IsNegative(percentChange) ? '-' : '+')}{Math.Abs(percentChange):P}")
+					.Bind<Label, double, Color?>(Label.TextColorProperty, $"{nameof(IGetAssestsQuery_Assets_Nodes.Price)}.{nameof(IGetAssestsQuery_Assets_Nodes.Price.Change24Hour)}", convert: static percentChange => double.IsNegative(percentChange) ? (Color?)Application.Current?.Resources[nameof(BaseTheme.NegativeStockColor)] : (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)] ),
 			}
 		};
 

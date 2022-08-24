@@ -5,6 +5,8 @@ namespace MauiCrypto;
 
 class DashboardPage : BasePage<DashboardViewModel>
 {
+	readonly StockTickerView _stockTickerView;
+
 	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel)
 	{
 		Content = new ScrollView
@@ -24,12 +26,23 @@ class DashboardPage : BasePage<DashboardViewModel>
 				{
 					new StockTickerView()
 						.Row(Row.Ticker)
-						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.StockTickerModelList))
+						.Assign(out _stockTickerView)
+						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetCollection))
 				}
 			}
 		};
 	}
 
-	enum Row {  Ticker, TickerSeparator, Charts, ChartsSeparator, TopGainers, TopGainersSeparator, TopLosers }
-	enum Column {  Icon, Name, PercentChange, FavoriteButton, ToggleButton }
+	enum Row { Ticker, TickerSeparator, Charts, ChartsSeparator, TopGainers, TopGainersSeparator, TopLosers }
+	enum Column { Icon, Name, PercentChange, FavoriteButton, ToggleButton }
+
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+
+		if (_stockTickerView.ItemsSource.IsNullOrEmpty())
+		{
+			await BindingContext.RefreshCollectionViewCommand.ExecuteAsync(null);
+		}
+	}
 }

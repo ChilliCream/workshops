@@ -1,18 +1,30 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using StrawberryShake;
 
 namespace MauiCrypto;
 
 partial class DashboardViewModel : BaseViewModel
 {
-	[ObservableProperty]
-	IReadOnlyList<StockTickerModel> stockTickerModelList = new List<StockTickerModel>
+	readonly CryptoGraphQLService _cryptoGraphQLService;
+
+	public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService)
 	{
-		new("ABC", 12.34m, 0.01, Colors.Orange),
-		new("UAR", 100.34m, -0.05, Colors.Blue),
-		new("OIH", 32.5m, -0.32, Colors.Khaki),
-		new("LJS", 2.264m, 0.92, Colors.DarkBlue),
-		new("SDP", 22.73m, 0.04, Colors.Crimson),
-		new("NEQ", 41.32m, 0.07, Colors.PaleGoldenrod),
-	};
+		_cryptoGraphQLService = cryptoGraphQLService;
+	}
+
+	public ObservableCollection<IGetAssestsQuery_Assets_Nodes> AssetCollection { get; } = new();
+
+	[RelayCommand]
+	async Task RefreshCollectionView(CancellationToken token)
+	{
+		AssetCollection.Clear();
+
+		await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
+		{
+			AssetCollection.Add(node);
+		}
+	}
 }
 

@@ -1,6 +1,6 @@
-﻿query GetAssestsQuery
+﻿query GetAssestsQuery($after: String)
 {
-  assets {
+  assets(after: $after) {
     nodes
     {
       id,
@@ -15,13 +15,13 @@
       website,
       whitePaper,
       price {
-        change(span: DAY) {
-          percentageChange
-        }
+        lastPrice
+        change24Hour
       }
     }
     pageInfo {
-      endCursor
+        hasNextPage
+        endCursor
     }
   }
 }

@@ -1,10 +1,14 @@
-﻿using CommunityToolkit.Maui;
+﻿using System;
+using System.Net;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 
 namespace MauiCrypto;
 
 public static class MauiProgram
 {
+	const string _apiUrl = "https://api-crypto-workshop.chillicream.com/GraphQL";
+
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder()
@@ -26,8 +30,11 @@ public static class MauiProgram
 		builder.Services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
 
 		// Add Services
+		builder.Services.AddSingleton<CryptoGraphQLService>();
+
 		builder.Services.AddMauiCryptoClient()
-						.ConfigureHttpClient(client => client.BaseAddress = new Uri("https://api-crypto-workshop.chillicream.com/GraphQL"));
+						.ConfigureHttpClient(client => client.BaseAddress = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttps }.Uri)
+						.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
 
 		return builder.Build();
 	}
