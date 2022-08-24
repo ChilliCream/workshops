@@ -42,7 +42,8 @@ class DashboardPage : BasePage<DashboardViewModel>
 
 		if (_stockTickerView.ItemsSource.IsNullOrEmpty())
 		{
-			await BindingContext.RefreshCollectionViewCommand.ExecuteAsync(null);
+			var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+			await BindingContext.RefreshCollectionViewCommand.ExecuteAsync(cancellationTokenSource.Token);
 		}
 	}
 }

@@ -15,8 +15,8 @@ class CryptoGraphQLService
 
 	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
 	{
-		IGetAssestsQueryResult? queryResult = null;
 		string? endCursor = null;
+		IGetAssestsQueryResult? queryResult = null;
 
 		do
 		{
