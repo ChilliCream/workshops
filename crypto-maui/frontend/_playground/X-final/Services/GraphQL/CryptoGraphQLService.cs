@@ -26,11 +26,12 @@ class CryptoGraphQLService
 			queryResult = result.Data;
 
 			foreach (var node in queryResult?.Assets?.Nodes ?? Array.Empty<IGetAssestsQuery_Assets_Nodes>())
+			{
 				yield return node;
+			}
 
 			endCursor = queryResult?.Assets?.PageInfo?.EndCursor;
 
 		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true);
 	}
 }
-

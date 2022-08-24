@@ -27,4 +27,3 @@ partial class DashboardViewModel : BaseViewModel
 		}
 	}
 }
-

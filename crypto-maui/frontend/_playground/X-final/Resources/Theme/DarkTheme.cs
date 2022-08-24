@@ -12,4 +12,3 @@ class DarkTheme : BaseTheme
 
 	public override Color SeparatorColor { get; } = Color.FromRgba(255, 255, 255, 0.12);
 }
-

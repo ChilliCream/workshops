@@ -7,4 +7,3 @@ public class WatchlistPage : BasePage<WatchlistViewModel>
 	{
 	}
 }
-

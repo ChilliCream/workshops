@@ -8,4 +8,3 @@ public class SettingsPage : BasePage<SettingsViewModel>
 	{
 	}
 }
-

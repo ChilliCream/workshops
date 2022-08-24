@@ -7,4 +7,3 @@ public class ScreenerViewModel : BaseViewModel
 	{
 	}
 }
-

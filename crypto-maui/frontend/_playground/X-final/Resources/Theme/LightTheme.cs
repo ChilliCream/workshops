@@ -13,4 +13,3 @@ class LightTheme : BaseTheme
 
 	public override Color SeparatorColor { get; } = Color.FromRgba(0, 0, 0, 0.12);
 }
-

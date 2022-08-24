@@ -69,4 +69,3 @@ class StockTickerView : CollectionView
 		enum Column { Separator, Content }
 	}
 }
-

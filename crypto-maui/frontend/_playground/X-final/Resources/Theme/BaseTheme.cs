@@ -42,4 +42,3 @@ abstract class BaseTheme : ResourceDictionary
 	public Color NegativeStockColor { get; } = Color.FromRgb(207, 32, 47);
 
 }
-
