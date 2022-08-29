@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MauiCrypto;
 
@@ -9,7 +10,6 @@ class StockTickerModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
         Id = node.Id;
         ImageUrl = node.ImageUrl;
         IsInWatchlist = node.IsInWatchlist;
-        HasAlerts = node.HasAlerts;
         Symbol = node.Symbol;
         Name = node.Name;
         Slug = node.Slug;
@@ -19,7 +19,8 @@ class StockTickerModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
         Price = node.Price;
     }
 
-    public StockTickerModel()
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public StockTickerModel()
     {
 
     }
@@ -29,8 +30,6 @@ class StockTickerModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
     public string? ImageUrl { get; set; }
 
     public bool? IsInWatchlist { get; set; }
-
-    public bool HasAlerts { get; set; }
 
     public string Symbol { get; set; } = string.Empty;
 

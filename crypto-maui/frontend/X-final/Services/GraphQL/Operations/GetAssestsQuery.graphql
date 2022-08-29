@@ -1,12 +1,11 @@
 ﻿query GetAssestsQuery($after: String)
 {
-  assets(after: $after) {
+  assets(first:50 after: $after) {
     nodes
     {
       id,
       imageUrl,
       isInWatchlist,
-      hasAlerts,
       symbol,
       name,
       slug,

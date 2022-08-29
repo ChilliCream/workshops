@@ -5,7 +5,7 @@
     "strawberryShake": {
       "name": "MauiCryptoClient",
       "namespace": "MauiCrypto",
-      "url": "https://api-crypto-workshop.chillicream.com/GraphQL",
+      "url": "https://localhost:51582/GraphQL",
       "dependencyInjection": true,
       "strictSchemaValidation": true,
       "hashAlgorithm": "md5",
