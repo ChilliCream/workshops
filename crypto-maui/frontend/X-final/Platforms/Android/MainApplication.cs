@@ -1,9 +1,12 @@
 ﻿using Android.App;
 using Android.Runtime;
-
 namespace MauiCrypto;
 
+#if DEBUG
+[Application(NetworkSecurityConfig = "@xml/network_security_config")]
+#else
 [Application]
+#endif
 public class MainApplication : MauiApplication
 {
 	public MainApplication(IntPtr handle, JniHandleOwnership ownership)

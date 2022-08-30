@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
+using Polly;
 
 namespace MauiCrypto;
 
-public static class MauiProgram
+public static partial class MauiProgram
 {
-	const string _apiUrl = "https://api-crypto-workshop.chillicream.com/GraphQL";
+	readonly static string _apiUrl;
 
 	public static MauiApp CreateMauiApp()
 	{
@@ -33,15 +35,33 @@ public static class MauiProgram
 		builder.Services.AddSingleton<CryptoGraphQLService>();
 
 		builder.Services.AddMauiCryptoClient()
-						.ConfigureHttpClient(client => client.BaseAddress = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttps }.Uri)
-						.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
+						.ConfigureHttpClient(
+							client => client.BaseAddress = GetGraphQLUri(),
+							clientBuilder => clientBuilder
+												.ConfigurePrimaryHttpMessageHandler(GetHttpMessageHandler)
+												.AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider))
+						);
+						//.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
 
 		return builder.Build();
+
+		static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
 	}
 
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BasePage<TViewModel>
 																												where TViewModel : BaseViewModel
 	{
 		return services.AddTransientWithShellRoute<TPage, TViewModel>(AppShell.GetRoute<TPage, TViewModel>());
+	}
+
+	static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
+
+	static Uri GetGraphQLUri()
+	{
+#if DEBUG
+		return new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttp }.Uri;
+#else
+		return new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttps }.Uri;
+#endif
 	}
 }

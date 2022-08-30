@@ -1,6 +1,6 @@
 ﻿query GetAssestsQuery($after: String)
 {
-  assets(first:50 after: $after) {
+  assets(first:2 after: $after) {
     nodes
     {
       id,
