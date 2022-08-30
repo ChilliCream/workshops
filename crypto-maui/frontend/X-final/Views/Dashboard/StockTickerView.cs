@@ -8,6 +8,8 @@ namespace MauiCrypto;
 
 class StockTickerView : CollectionView
 {
+	public const int OptimalHeight = 60;
+
 	public StockTickerView()
 	{
 		ItemsLayout = LinearItemsLayout.Horizontal;
@@ -26,13 +28,13 @@ class StockTickerView : CollectionView
 		{
 			RowSpacing = 4,
 			ColumnSpacing = 12,
-			HeightRequest = 48,
+			HeightRequest = OptimalHeight,
 			WidthRequest = 100,
 
 			RowDefinitions = Rows.Define(
-				(Row.Symbol, 12),
-				(Row.Price, 16),
-				(Row.PercentChange, 12)),
+				(Row.Symbol, 16),
+				(Row.Price, 20),
+				(Row.PercentChange, 16)),
 
 			ColumnDefinitions = Columns.Define(
 				(Column.Separator, 4),

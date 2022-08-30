@@ -14,7 +14,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 			Content = new Grid
 			{
 				RowDefinitions = Rows.Define(
-					(Row.Ticker, 48),
+					(Row.Ticker, StockTickerView.OptimalHeight),
 					(Row.TickerSeparator, 1),
 					(Row.Charts, 240),
 					(Row.ChartsSeparator, 1),

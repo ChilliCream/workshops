@@ -39,9 +39,8 @@ public static partial class MauiProgram
 							client => client.BaseAddress = GetGraphQLUri(),
 							clientBuilder => clientBuilder
 												.ConfigurePrimaryHttpMessageHandler(GetHttpMessageHandler)
-												.AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider))
-						);
-						//.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
+												.AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider)))
+						.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
 
 		return builder.Build();
 
@@ -58,10 +57,13 @@ public static partial class MauiProgram
 
 	static Uri GetGraphQLUri()
 	{
+		return new UriBuilder(_apiUrl)
+		{
 #if DEBUG
-		return new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttp }.Uri;
+			Scheme = Uri.UriSchemeHttp
 #else
-		return new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeHttps }.Uri;
+			Scheme = Uri.UriSchemeHttps
 #endif
+		}.Uri;
 	}
 }
