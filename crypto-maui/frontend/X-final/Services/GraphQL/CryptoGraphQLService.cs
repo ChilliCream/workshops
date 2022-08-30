@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using StrawberryShake;
+using StrawberryShake.Extensions;
 
 namespace MauiCrypto;
 
@@ -12,6 +13,8 @@ class CryptoGraphQLService
 	{
 		_cryptoClient = client;
 	}
+
+	public IDisposable SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onSubscribe) => _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onSubscribe);
 
 	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
 	{

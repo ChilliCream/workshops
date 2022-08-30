@@ -12,6 +12,7 @@ class StockTickerView : CollectionView
 
 	public StockTickerView()
 	{
+		this.CenterVertical();
 		ItemsLayout = LinearItemsLayout.Horizontal;
 		ItemTemplate = new StockTickerDataTemplate();
 		HorizontalScrollBarVisibility = ScrollBarVisibility.Never;

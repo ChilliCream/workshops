@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StrawberryShake;
-using StrawberryShake.Transport.WebSockets;
 
 namespace MauiCrypto;
 
@@ -11,25 +9,10 @@ sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 	readonly IDisposable _subscribeOnPriceChangeSession;
 	readonly CryptoGraphQLService _cryptoGraphQLService;
 
-	public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService, MauiCryptoClient client)
+	public DashboardViewModel(CryptoGraphQLService cryptoGraphQLService)
 	{
 		_cryptoGraphQLService = cryptoGraphQLService;
-
-		_subscribeOnPriceChangeSession = client.SubscribeOnPriceChange.Watch().Subscribe(result =>
-		{
-			result.EnsureNoErrors();
-
-			if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
-				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is StockTickerModel node
-				&& assetPrice.LastPrice	!= node.Price?.LastPrice)
-			{
-				node.Price = new StockTickerPriceModel
-				{
-					LastPrice = assetPrice.LastPrice,
-					Change24Hour = assetPrice.Change24Hour
-				};
-			}
-		});
+		_subscribeOnPriceChangeSession = cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
 	}
 
 	~DashboardViewModel() => Dispose();
@@ -40,6 +23,22 @@ sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 	{
 		GC.SuppressFinalize(this);
 		_subscribeOnPriceChangeSession.Dispose();
+	}
+
+	void OnPriceChange(IOperationResult<ISubscribeOnPriceChangeResult> result)
+	{
+		result.EnsureNoErrors();
+
+		if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
+			&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is StockTickerModel node
+			&& assetPrice.LastPrice != node.Price?.LastPrice)
+		{
+			node.Price = new StockTickerPriceModel
+			{
+				LastPrice = assetPrice.LastPrice,
+				Change24Hour = assetPrice.Change24Hour
+			};
+		}
 	}
 
 	[RelayCommand]
