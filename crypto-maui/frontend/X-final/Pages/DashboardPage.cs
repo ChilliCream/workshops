@@ -5,7 +5,7 @@ namespace MauiCrypto;
 
 class DashboardPage : BasePage<DashboardViewModel>
 {
-	readonly StockTickerView _stockTickerView;
+	readonly CryptoTickerView _stockTickerView;
 
 	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel)
 	{
@@ -14,7 +14,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 			Content = new Grid
 			{
 				RowDefinitions = Rows.Define(
-					(Row.Ticker, StockTickerView.OptimalHeight),
+					(Row.Ticker, CryptoTickerView.OptimalHeight),
 					(Row.TickerSeparator, 1),
 					(Row.Charts, 240),
 					(Row.ChartsSeparator, 1),
@@ -24,7 +24,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 
 				Children =
 				{
-					new StockTickerView()
+					new CryptoTickerView()
 						.Row(Row.Ticker)
 						.Assign(out _stockTickerView)
 						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetCollection))

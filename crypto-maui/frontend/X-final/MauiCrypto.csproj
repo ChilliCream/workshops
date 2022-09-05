@@ -61,10 +61,8 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.8" />
-		<PackageReference Include="StrawberryShake.CodeGeneration.CSharp.Analyzers" Version="13.0.0-preview.24" />
-		<PackageReference Include="StrawberryShake.Transport.Http" Version="13.0.0-preview.24" />
-		<PackageReference Include="StrawberryShake.Transport.WebSockets" Version="13.0.0-preview.24" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
+		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.47" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -73,7 +71,4 @@
 		<GraphQLConfig Remove=".graphqlrc.json" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <AndroidResource Update="Platforms\Android\Resources\xml\network_security_config.xml" />
-	</ItemGroup>
 </Project>

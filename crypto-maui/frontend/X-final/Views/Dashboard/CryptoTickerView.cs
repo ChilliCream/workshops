@@ -6,11 +6,11 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
 
-class StockTickerView : CollectionView
+class CryptoTickerView : CollectionView
 {
 	public const int OptimalHeight = 60;
 
-	public StockTickerView()
+	public CryptoTickerView()
 	{
 		this.CenterVertical();
 		ItemsLayout = LinearItemsLayout.Horizontal;
