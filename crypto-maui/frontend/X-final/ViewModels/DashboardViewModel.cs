@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.Input;
 using StrawberryShake;
 
@@ -13,11 +14,23 @@ sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 	{
 		_cryptoGraphQLService = cryptoGraphQLService;
 		_subscribeOnPriceChangeSession = cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
+
+		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 	}
 
 	~DashboardViewModel() => Dispose();
 
-	public ObservableCollection<StockTickerModel> AssetCollection { get; } = new();
+	public IReadOnlyList<ObservableCryptoModel> TopLosersList => AssetCollection
+																	.OrderBy(x => x.Price?.Change24Hour)
+																	.Take(TopPerformersView.NumberOfPerformers)
+																	.ToList();
+
+	public IReadOnlyList<ObservableCryptoModel> TopGainersList => AssetCollection
+																	.OrderByDescending(x => x.Price?.Change24Hour)
+																	.Take(TopPerformersView.NumberOfPerformers)
+																	.ToList();
+
+	public ObservableCollection<ObservableCryptoModel> AssetCollection { get; } = new();
 
 	public void Dispose()
 	{
@@ -30,10 +43,10 @@ sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 		result.EnsureNoErrors();
 
 		if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
-			&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is StockTickerModel node
+			&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node
 			&& assetPrice.LastPrice != node.Price?.LastPrice)
 		{
-			node.Price = new StockTickerPriceModel
+			node.Price = new ObservableCryptoPriceModel
 			{
 				LastPrice = assetPrice.LastPrice,
 				Change24Hour = assetPrice.Change24Hour
@@ -48,8 +61,14 @@ sealed partial class DashboardViewModel : BaseViewModel, IDisposable
 
 		await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
 		{
-			var stockTickerModel = new StockTickerModel(node);
+			var stockTickerModel = new ObservableCryptoModel(node);
 			AssetCollection.Add(stockTickerModel);
 		}
+	}
+
+	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	{
+		OnPropertyChanged(nameof(TopLosersList));
+		OnPropertyChanged(nameof(TopGainersList));
 	}
 }

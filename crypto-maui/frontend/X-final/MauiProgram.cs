@@ -66,4 +66,6 @@ public static partial class MauiProgram
 #endif
 		}.Uri;
 	}
+
+	private static partial HttpMessageHandler GetHttpMessageHandler();
 }

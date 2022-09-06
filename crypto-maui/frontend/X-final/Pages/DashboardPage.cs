@@ -7,7 +7,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 {
 	readonly CryptoTickerView _stockTickerView;
 
-	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel)
+	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel, "Dashboard")
 	{
 		Content = new ScrollView
 		{
@@ -18,9 +18,9 @@ class DashboardPage : BasePage<DashboardViewModel>
 					(Row.TickerSeparator, SeparatorView.RecommendedSeparatorViewSize),
 					(Row.ChartCarousel, 240),
 					(Row.ChartCarouselSeparator, SeparatorView.RecommendedSeparatorViewSize),
-					(Row.TopGainers, 332),
+					(Row.TopGainers, TopPerformersView.OptimalHeight),
 					(Row.TopGainersSeparator, SeparatorView.RecommendedSeparatorViewSize),
-					(Row.TopLosers, 332)),
+					(Row.TopLosers, TopPerformersView.OptimalHeight)),
 
 				Children =
 				{
@@ -37,12 +37,11 @@ class DashboardPage : BasePage<DashboardViewModel>
 						.FillHorizontal()
 						.Row(Row.ChartCarouselSeparator),
 
-					new TopGainersView()
+					new TopPerformersView("top_gainers_icon", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
 						.Row(Row.TopGainers),
 
-					new SeparatorView()
-						.FillHorizontal()
-						.Row(Row.TopGainersSeparator),
+					new TopPerformersView("top_losers_icon", "Top Losers", nameof(DashboardViewModel.TopLosersList))
+						.Row(Row.TopLosers),
 				}
 			}
 		};
