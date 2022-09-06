@@ -13,6 +13,7 @@ class CryptoTickerView : CollectionView
 	public CryptoTickerView()
 	{
 		this.CenterVertical();
+		HeightRequest = OptimalHeight;
 		ItemsLayout = LinearItemsLayout.Horizontal;
 		ItemTemplate = new StockTickerDataTemplate();
 		HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
@@ -29,7 +30,6 @@ class CryptoTickerView : CollectionView
 		{
 			RowSpacing = 4,
 			ColumnSpacing = 12,
-			HeightRequest = OptimalHeight,
 			WidthRequest = 100,
 
 			RowDefinitions = Rows.Define(
