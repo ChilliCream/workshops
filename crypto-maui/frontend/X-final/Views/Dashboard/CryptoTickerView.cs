@@ -8,7 +8,7 @@ namespace MauiCrypto;
 
 class CryptoTickerView : CollectionView
 {
-	public const int OptimalHeight = 60;
+	public const int OptimalHeight = 64;
 
 	public CryptoTickerView()
 	{
@@ -35,19 +35,18 @@ class CryptoTickerView : CollectionView
 			RowDefinitions = Rows.Define(
 				(Row.Symbol, 16),
 				(Row.Price, 20),
-				(Row.PercentChange, 16)),
+				(Row.PercentChange, 16),
+				(Row.BottomPadding, 4)),
 
 			ColumnDefinitions = Columns.Define(
-				(Column.Separator, 4),
+				(Column.Separator, SeparatorView.RecommendedSeparatorViewSize),
 				(Column.Content, Star)),
 
 			Children =
 			{
-				new BoxView()
-					.Width(2)
-					.Start()
-					.RowSpan(All<Row>()).Column(Column.Separator)
-					.DynamicResource(BoxView.BackgroundColorProperty, nameof(BaseTheme.SeparatorColor)),
+				new SeparatorView()
+					.RowSpan(3).Column(Column.Separator)
+					.Width(SeparatorView.RecommendedSeparatorViewSize),
 
 				new Label()
 					.Row(Row.Symbol).Column(Column.Content)
@@ -68,7 +67,7 @@ class CryptoTickerView : CollectionView
 			}
 		};
 
-		enum Row { Symbol, Price, PercentChange }
+		enum Row { Symbol, Price, PercentChange, BottomPadding }
 		enum Column { Separator, Content }
 	}
 }

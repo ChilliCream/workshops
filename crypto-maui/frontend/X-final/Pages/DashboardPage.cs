@@ -15,11 +15,11 @@ class DashboardPage : BasePage<DashboardViewModel>
 			{
 				RowDefinitions = Rows.Define(
 					(Row.Ticker, CryptoTickerView.OptimalHeight),
-					(Row.TickerSeparator, 1),
-					(Row.Charts, 240),
-					(Row.ChartsSeparator, 1),
+					(Row.TickerSeparator, SeparatorView.RecommendedSeparatorViewSize),
+					(Row.ChartCarousel, 240),
+					(Row.ChartCarouselSeparator, SeparatorView.RecommendedSeparatorViewSize),
 					(Row.TopGainers, 332),
-					(Row.TopGainersSeparator, 1),
+					(Row.TopGainersSeparator, SeparatorView.RecommendedSeparatorViewSize),
 					(Row.TopLosers, 332)),
 
 				Children =
@@ -27,14 +27,28 @@ class DashboardPage : BasePage<DashboardViewModel>
 					new CryptoTickerView()
 						.Row(Row.Ticker)
 						.Assign(out _stockTickerView)
-						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetCollection))
+						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetCollection)),
+
+					new SeparatorView()
+						.FillHorizontal()
+						.Row(Row.TickerSeparator),
+
+					new SeparatorView()
+						.FillHorizontal()
+						.Row(Row.ChartCarouselSeparator),
+
+					new TopGainersView()
+						.Row(Row.TopGainers),
+
+					new SeparatorView()
+						.FillHorizontal()
+						.Row(Row.TopGainersSeparator),
 				}
 			}
 		};
 	}
 
-	enum Row { Ticker, TickerSeparator, Charts, ChartsSeparator, TopGainers, TopGainersSeparator, TopLosers }
-	enum Column { Icon, Name, PercentChange, FavoriteButton, ToggleButton }
+	enum Row { Ticker, TickerSeparator, ChartCarousel, ChartCarouselSeparator, TopGainers, TopGainersSeparator, TopLosers }
 
 	protected override async void OnAppearing()
 	{
