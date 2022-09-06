@@ -27,7 +27,7 @@ class AppShell : Shell
 
 	class MauiCryptoFlyoutItem<TPage> : FlyoutItem where TPage : BasePage
 	{
-		public MauiCryptoFlyoutItem(string title, string icon)
+		public MauiCryptoFlyoutItem(in string title, in string icon)
 		{
 			Icon = icon;
 			Title = title;

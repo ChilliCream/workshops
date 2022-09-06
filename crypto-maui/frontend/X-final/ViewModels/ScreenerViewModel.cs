@@ -1,9 +1,19 @@
-﻿using System;
+﻿using System.Collections.Specialized;
+
 namespace MauiCrypto;
 
-public class ScreenerViewModel : BaseViewModel
+class ScreenerViewModel : BaseViewModel
 {
-	public ScreenerViewModel()
+	public ScreenerViewModel(CryptoGraphQLService cryptoGraphQLService)
 	{
+		SubscribeOnPriceChangeSession ??= cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
+		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
+	}
+
+	public IReadOnlyList<ObservableCryptoModel> AssetList => AssetCollection;
+
+	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	{
+		OnPropertyChanged(nameof(AssetList));
 	}
 }

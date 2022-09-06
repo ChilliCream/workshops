@@ -1,7 +1,6 @@
-﻿using System;
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
-public class SettingsViewModel : BaseViewModel
+class SettingsViewModel : BaseViewModel
 {
 	public SettingsViewModel()
 	{

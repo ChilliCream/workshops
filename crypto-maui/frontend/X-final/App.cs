@@ -2,27 +2,17 @@
 
 class App : Application
 {
-	public App(AppShell shell)
+	readonly ThemeService themeService;
+
+	public App(AppShell shell, ThemeService themeService)
 	{
-		SetAppTheme(RequestedTheme);
-
-		RequestedThemeChanged += HandleRequestedThemeChanged;
-
+		this.themeService = themeService;
 		MainPage = shell;
 	}
 
-	protected override void OnResume()
+	protected override async void OnStart()
 	{
-		base.OnResume();
-		SetAppTheme(RequestedTheme);
+		base.OnStart();
+		await themeService.Initialize();
 	}
-
-	void HandleRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e) =>
-		SetAppTheme(e.RequestedTheme);
-
-	void SetAppTheme(in AppTheme appTheme) => Resources = appTheme switch
-	{
-		AppTheme.Dark => new DarkTheme(),
-		_ => new LightTheme()
-	};
 }

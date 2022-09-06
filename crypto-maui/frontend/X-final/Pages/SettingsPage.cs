@@ -2,7 +2,7 @@
 
 namespace MauiCrypto;
 
-public class SettingsPage : BasePage<SettingsViewModel>
+class SettingsPage : BasePage<SettingsViewModel>
 {
 	public SettingsPage(SettingsViewModel settingsViewModel) : base(settingsViewModel)
 	{

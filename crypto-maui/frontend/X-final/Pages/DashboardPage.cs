@@ -9,6 +9,8 @@ class DashboardPage : BasePage<DashboardViewModel>
 
 	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel, "Dashboard")
 	{
+		Padding = new Thickness(Padding.Left, 0, Padding.Right, 0);
+
 		Content = new ScrollView
 		{
 			Content = new Grid
@@ -27,7 +29,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 					new CryptoTickerView()
 						.Row(Row.Ticker)
 						.Assign(out _stockTickerView)
-						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetCollection)),
+						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetList)),
 
 					new SeparatorView()
 						.FillHorizontal()

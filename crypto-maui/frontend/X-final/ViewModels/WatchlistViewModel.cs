@@ -1,7 +1,6 @@
-﻿using System;
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
-public class WatchlistViewModel : BaseViewModel
+class WatchlistViewModel : BaseViewModel
 {
 	public WatchlistViewModel()
 	{

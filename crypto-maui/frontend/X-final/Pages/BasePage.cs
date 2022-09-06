@@ -2,7 +2,7 @@
 
 namespace MauiCrypto;
 
-public abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
+abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
 {
 	protected BasePage(in TViewModel viewModel, in string? title = null) : base(viewModel, title)
 	{
@@ -11,7 +11,7 @@ public abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseVie
 	public new TViewModel BindingContext => (TViewModel)base.BindingContext;
 }
 
-public abstract class BasePage : ContentPage
+abstract class BasePage : ContentPage
 {
 	protected BasePage(in object? viewModel = null, in string? title = null)
 	{
@@ -19,7 +19,7 @@ public abstract class BasePage : ContentPage
 		Title = title;
 		Padding = 12;
 
-		SetDynamicResource(BackgroundColorProperty, "AppBackgroundColor");
+		SetDynamicResource(BackgroundColorProperty, nameof(BaseTheme.PageBackgroundColor));
 
 		if (string.IsNullOrWhiteSpace(Title))
 		{
