@@ -8,7 +8,7 @@ public static partial class MauiProgram
 	static MauiProgram()
 	{
 #if DEBUG
-		_apiUrl = "https://10.0.2.2:51582/graphql/";
+		_apiUrl = "https://10.0.2.2:5100/graphql/";
 #else
 #error GraphQL API Not Defined
 		_apiUrl = "";
