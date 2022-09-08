@@ -13,15 +13,16 @@ public static partial class MauiProgram
 
 	public static MauiApp CreateMauiApp()
 	{
-		var builder = MauiApp.CreateBuilder()
-						.UseMauiApp<App>()
-						.UseMauiCommunityToolkit()
-						.UseMauiCommunityToolkitMarkup()
-						.ConfigureFonts(fonts =>
-						{
-							fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-							fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-						});
+		var builder = MauiApp.CreateBuilder();
+		builder.UseMauiApp<App>()
+				.UseMauiCommunityToolkit()
+				.UseMauiCommunityToolkitMarkup()
+				.ConfigureFonts(fonts =>
+				{
+					fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+					fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				});
+
 		// Add Shell
 		builder.Services.AddSingleton<AppShell>();
 
@@ -32,8 +33,9 @@ public static partial class MauiProgram
 		builder.Services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
 
 		// Add Services
+		builder.Services.AddSingleton<ThemeService>();
+		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
 		builder.Services.AddSingleton<CryptoGraphQLService>();
-
 		builder.Services.AddMauiCryptoClient()
 						.ConfigureHttpClient(
 							client => client.BaseAddress = GetGraphQLUri(),

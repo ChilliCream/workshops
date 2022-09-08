@@ -39,8 +39,6 @@ public class ThemeService
 		if (App.Current is not null)
 			App.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
 
-		App.Resumed += HandleResumed;
-
 		return SetAppTheme(PreferredTheme);
 	}
 
