@@ -62,7 +62,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.8" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
-		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.47" />
+		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.48" />
 		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.5" />
 	</ItemGroup>
 
