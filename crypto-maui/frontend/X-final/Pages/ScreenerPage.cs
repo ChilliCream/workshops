@@ -8,8 +8,21 @@ class ScreenerPage : BasePage<ScreenerViewModel>
 	{
 		Padding = new Thickness(Padding.Left, 0, Padding.Right, 0);
 
-		Content = new CollectionView()
-						.Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.AssetList))
-						.ItemTemplate(new TopPerformersDataTemplate());
+		Content = new VerticalStackLayout
+		{
+			Spacing = 0,
+
+			Children =
+			{
+				new SearchBar()
+					.Placeholder("Filter")
+					.Bind(SearchBar.TextProperty, nameof(ScreenerViewModel.FilterText))
+					.DynamicResource(SearchBar.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)),
+
+				new CollectionView()
+					.ItemTemplate(new TopPerformersDataTemplate())
+					.Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.FilteredAssetList))
+			}
+		};
 	}
 }
