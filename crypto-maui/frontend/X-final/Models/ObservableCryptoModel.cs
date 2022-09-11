@@ -44,7 +44,7 @@ partial class ObservableCryptoModel : ObservableObject, IGetAssestsQuery_Assets_
 	}
 
 	public string? PercentChangeText => Price?.Change24Hour is not null
-										? $"{(double.IsNegative(Price?.Change24Hour ?? 0) ? '-' : '+')}{Math.Abs(Price?.Change24Hour ?? 0):P}"
+										? $"{(double.IsNegative(Price?.Change24Hour ?? 0) ? '-' : '+')}{Math.Abs(Price?.Change24Hour ?? 0):P2}"
 										: null;
 
 	public Color? PercentChangeTextColor => double.IsNegative(Price?.Change24Hour ?? 0)
