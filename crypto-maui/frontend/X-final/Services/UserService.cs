@@ -1,5 +1,4 @@
-﻿using System;
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
 public class UserService
 {
@@ -23,7 +22,7 @@ public class UserService
 		set => preferences.Set(nameof(Username), value);
 	}
 
-	public Task<string> GetPassword() => secureStorage.GetAsync(passwordKeyString);
+	public async Task<string> GetPassword() => await secureStorage.GetAsync(passwordKeyString).ConfigureAwait(false) ?? string.Empty;
 	public Task SetPassword(in string value) => secureStorage.SetAsync(passwordKeyString, value);
 }
 

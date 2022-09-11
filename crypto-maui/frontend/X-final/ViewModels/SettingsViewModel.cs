@@ -18,7 +18,7 @@ partial class SettingsViewModel : BaseViewModel
 		usernameText = userService.Username;
 		graphQLEndpointText = userService.GraphQLEndpoint.ToString();
 
-		async Task InitializePassword() => PasswordText = await userService.GetPassword().ConfigureAwait(false);
+		async Task InitializePassword() => PasswordText = await userService.GetPassword();
 	}
 
 	partial void OnGraphQLEndpointTextChanged(string value)
@@ -28,5 +28,10 @@ partial class SettingsViewModel : BaseViewModel
 	}
 
 	partial void OnUsernameTextChanged(string value) => userService.Username = value;
-	async partial void OnPasswordTextChanged(string value) => await userService.SetPassword(value).ConfigureAwait(false);
+
+	async partial void OnPasswordTextChanged(string value)
+	{
+		if (!string.IsNullOrEmpty(value))
+			await userService.SetPassword(value).ConfigureAwait(false);
+	}
 }
