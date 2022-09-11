@@ -1,17 +1,24 @@
-﻿using System;
-using Xamarin.Android.Net;
-
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
 public static partial class MauiProgram
 {
-	static MauiProgram()
+	const string androidDebugHost = "10.0.2.2";
+
+	private static partial Uri GetGraphQLUri(in Uri uri)
 	{
 #if DEBUG
-		_apiUrl = "http://10.0.2.2:5100/graphql/";
+		return new UriBuilder(Uri.UriSchemeHttp, androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
 #else
-#error GraphQL API Not Defined
-		_apiUrl = "";
+		return new UriBuilder(Uri.UriSchemeHttps, url.Host, uri.Port, uri.PathAndQuery).Uri;
+#endif
+	}
+
+	private static partial Uri GetGraphQLStreamingUri(in Uri uri)
+	{
+#if DEBUG
+		return new UriBuilder(Uri.UriSchemeWs, androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
+#else
+		return new UriBuilder(Uri.UriSchemeWs, url.Host, uri.Port, uri.PathAndQuery).Uri;
 #endif
 	}
 
@@ -20,7 +27,7 @@ public static partial class MauiProgram
 #if DEBUG
 		return new HttpClientHandler { AutomaticDecompression = GetDecompressionMethods() };
 #else
-		return new AndroidMessageHandler { AutomaticDecompression = GetDecompressionMethods() };
+		return new Xamarin.Android.Net.AndroidMessageHandler { AutomaticDecompression = GetDecompressionMethods() };
 #endif
 	}
 }

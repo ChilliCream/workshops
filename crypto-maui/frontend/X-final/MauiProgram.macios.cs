@@ -4,15 +4,16 @@ namespace MauiCrypto;
 
 public static partial class MauiProgram
 {
-	static MauiProgram()
+	private static partial Uri GetGraphQLUri(in Uri uri)
 	{
 #if DEBUG
-		_apiUrl = "http://localhost:5100/graphql/";
+		return new UriBuilder(Uri.UriSchemeHttp, uri.Host, uri.Port, uri.PathAndQuery).Uri;
 #else
-#error GraphQL API Not Defined
-		_apiUrl = "";
+		return new UriBuilder(Uri.UriSchemeHttps, uri.Host, uri.Port, uri.PathAndQuery).Uri;
 #endif
 	}
+
+	private static partial Uri GetGraphQLStreamingUri(in Uri uri) => new UriBuilder(Uri.UriSchemeWs, uri.Host, uri.Port, uri.PathAndQuery).Uri;
 
 	private static partial HttpMessageHandler GetHttpMessageHandler()
 	{

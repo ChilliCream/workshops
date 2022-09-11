@@ -9,9 +9,7 @@ namespace MauiCrypto;
 
 public static partial class MauiProgram
 {
-	readonly static string _apiUrl;
-
-	public static MauiApp CreateMauiApp()
+	public static MauiApp CreateMauiApp(UserService userService)
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder.UseMauiApp<App>()
@@ -35,14 +33,17 @@ public static partial class MauiProgram
 		// Add Services
 		builder.Services.AddSingleton<ThemeService>();
 		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
+		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 		builder.Services.AddSingleton<CryptoGraphQLService>();
+		builder.Services.AddSingleton<UserService>();
+
 		builder.Services.AddMauiCryptoClient()
 						.ConfigureHttpClient(
-							client => client.BaseAddress = GetGraphQLUri(),
+							client => client.BaseAddress = GetGraphQLUri(userService.GraphQLEndpoint),
 							clientBuilder => clientBuilder
 												.ConfigurePrimaryHttpMessageHandler(GetHttpMessageHandler)
 												.AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider)))
-						.ConfigureWebSocketClient(client => client.Uri = new UriBuilder(_apiUrl) { Scheme = Uri.UriSchemeWs }.Uri);
+						.ConfigureWebSocketClient(client => client.Uri = GetGraphQLStreamingUri(userService.GraphQLEndpoint));
 
 		return builder.Build();
 
@@ -57,17 +58,7 @@ public static partial class MauiProgram
 
 	static DecompressionMethods GetDecompressionMethods() => DecompressionMethods.Deflate | DecompressionMethods.GZip;
 
-	static Uri GetGraphQLUri()
-	{
-		return new UriBuilder(_apiUrl)
-		{
-#if DEBUG
-			Scheme = Uri.UriSchemeHttp
-#else
-			Scheme = Uri.UriSchemeHttps
-#endif
-		}.Uri;
-	}
-
+	private static partial Uri GetGraphQLUri(in Uri uri);
+	private static partial Uri GetGraphQLStreamingUri(in Uri uri);
 	private static partial HttpMessageHandler GetHttpMessageHandler();
 }

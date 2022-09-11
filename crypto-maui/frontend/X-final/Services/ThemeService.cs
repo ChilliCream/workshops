@@ -23,12 +23,12 @@ public class ThemeService
 
 	public AppTheme PreferredTheme
 	{
-		get => preferences.Get(nameof(PreferredTheme), Application.Current?.RequestedTheme ?? AppTheme.Unspecified);
+		get => (AppTheme)preferences.Get<int>(nameof(PreferredTheme), (int)(Application.Current?.RequestedTheme ?? AppTheme.Unspecified));
 		set
 		{
 			if (PreferredTheme != value)
 			{
-				preferences.Set(nameof(PreferredTheme), value);
+				preferences.Set<int>(nameof(PreferredTheme), (int)value);
 				SetAppTheme(value).SafeFireAndForget();
 			}
 		}

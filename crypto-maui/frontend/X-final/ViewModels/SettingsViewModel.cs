@@ -1,24 +1,32 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AsyncAwaitBestPractices;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MauiCrypto;
 
 partial class SettingsViewModel : BaseViewModel
 {
-	readonly IPreferences preferences;
+	readonly UserService userService;
 
 	[ObservableProperty]
-	string graphQLEndpointText, usernameText, passwordText;
+	string graphQLEndpointText, usernameText, passwordText = string.Empty;
 
-	public SettingsViewModel(IPreferences preferences)
+	public SettingsViewModel(UserService userService)
 	{
-		this.preferences = preferences;
+		this.userService = userService;
 
-		graphQLEndpointText = preferences.Get(nameof(GraphQLEndpointText), "http://10.0.2.2:5100/graphql");
-		usernameText = preferences.Get(nameof(UsernameText), string.Empty);
-		passwordText = preferences.Get(nameof(PasswordText), string.Empty);
+		InitializePassword().SafeFireAndForget();
+		usernameText = userService.Username;
+		graphQLEndpointText = userService.GraphQLEndpoint.ToString();
+
+		async Task InitializePassword() => PasswordText = await userService.GetPassword().ConfigureAwait(false);
 	}
 
-	partial void OnGraphQLEndpointTextChanged(string value) => preferences.Set(nameof(GraphQLEndpointText), value);
-	partial void OnUsernameTextChanged(string value) => preferences.Set(nameof(UsernameText), value);
-	partial void OnPasswordTextChanged(string value) => preferences.Set(nameof(PasswordText), value);
+	partial void OnGraphQLEndpointTextChanged(string value)
+	{
+		if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+			userService.GraphQLEndpoint = uri;
+	}
+
+	partial void OnUsernameTextChanged(string value) => userService.Username = value;
+	async partial void OnPasswordTextChanged(string value) => await userService.SetPassword(value).ConfigureAwait(false);
 }
