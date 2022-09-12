@@ -8,7 +8,7 @@
     tradingActivity,
     change24Hour,
     modifiedAt,
-    change(span: ALL) {
+    change(span: HOUR) {
       percentageChange,
     },
     symbol,

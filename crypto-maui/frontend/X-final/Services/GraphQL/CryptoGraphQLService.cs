@@ -37,4 +37,27 @@ class CryptoGraphQLService
 
 		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true);
 	}
+
+	public async IAsyncEnumerable<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes> GetPriceHistory(string symbol, [EnumeratorCancellation] CancellationToken token, ChangeSpan span = ChangeSpan.Day)
+	{
+		string? endCursor = null;
+		IGetAssetPriceHistoryQueryResult? queryResult = null;
+
+		do
+		{
+			var result = await _cryptoClient.GetAssetPriceHistoryQuery.ExecuteAsync(symbol, endCursor, span, token).ConfigureAwait(false);
+			result.EnsureNoErrors();
+
+			queryResult = result.Data;
+
+			foreach (var node in queryResult?.AssetBySymbol?.Price.Change?.History?.Nodes ?? Array.Empty<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes>())
+			{
+				if (node is not null)
+					yield return node;
+			}
+
+			endCursor = queryResult?.AssetBySymbol?.Price?.Change?.History?.PageInfo?.EndCursor;
+		}
+		while (queryResult?.AssetBySymbol?.Price?.Change?.History?.PageInfo?.HasNextPage is true);
+	}
 }
