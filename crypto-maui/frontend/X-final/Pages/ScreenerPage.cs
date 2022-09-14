@@ -6,7 +6,7 @@ class ScreenerPage : BasePage<ScreenerViewModel>
 {
 	public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener")
 	{
-		Padding = new Thickness(Padding.Left, 0, Padding.Right, 0);
+		Padding = 0;
 
 		Content = new VerticalStackLayout
 		{

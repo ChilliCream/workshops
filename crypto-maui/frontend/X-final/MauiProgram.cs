@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
@@ -25,10 +26,11 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<AppShell>();
 
 		// Add Pages + ViewModels
+		builder.Services.AddTransientWithShellRoute<AssetChartPage, AssetChartViewModel>();
 		builder.Services.AddTransientWithShellRoute<DashboardPage, DashboardViewModel>();
 		builder.Services.AddTransientWithShellRoute<ScreenerPage, ScreenerViewModel>();
-		builder.Services.AddTransientWithShellRoute<WatchlistPage, WatchlistViewModel>();
 		builder.Services.AddTransientWithShellRoute<SettingsPage, SettingsViewModel>();
+		builder.Services.AddTransientWithShellRoute<WatchlistPage, WatchlistViewModel>();
 
 		// Add Services
 		builder.Services.AddSingleton<ThemeService>();
@@ -37,9 +39,13 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<CryptoGraphQLService>();
 		builder.Services.AddSingleton<UserService>();
 
-		builder.Services.AddMauiCryptoClient()
+		builder.Services.AddMauiCryptoClient() // Add basic auth - Authorization Header, Concatenate Username:Password -> Base64Encoded
 						.ConfigureHttpClient(
-							client => client.BaseAddress = GetGraphQLUri(userService.GraphQLEndpoint),
+							client =>
+							{
+								client.BaseAddress = GetGraphQLUri(userService.GraphQLEndpoint);
+								//client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String($"{userService.Username}:{userService.GetPassword().Result}"));
+							},
 							clientBuilder => clientBuilder
 												.ConfigurePrimaryHttpMessageHandler(GetHttpMessageHandler)
 												.AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(3, sleepDurationProvider)))

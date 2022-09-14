@@ -9,7 +9,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 
 	public DashboardPage(DashboardViewModel dashboardViewModel) : base(dashboardViewModel, "Dashboard")
 	{
-		Padding = new Thickness(Padding.Left, 0, Padding.Right, 0);
+		Padding = 0;
 
 		Content = new ScrollView
 		{

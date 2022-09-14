@@ -21,6 +21,7 @@ class AppShell : Shell
 			nameof(ScreenerPage) => $"//{nameof(ScreenerPage)}",
 			nameof(SettingsPage) => $"//{nameof(SettingsPage)}",
 			nameof(WatchlistPage) => $"//{nameof(WatchlistPage)}",
+			nameof(AssetChartPage) => $"//{nameof(AssetChartPage)}",
 			_ => throw new NotSupportedException($"No Route Added for {typeof(TPage).Name}")
 		};
 	}

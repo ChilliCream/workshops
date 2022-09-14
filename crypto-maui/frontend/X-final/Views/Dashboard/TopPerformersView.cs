@@ -44,10 +44,33 @@ class TopPerformersView : Grid
 						.Row(Row.Title).Column(Column.Toggle)
 						.Source("toggle_icon"));
 
-		Children.Add(new CollectionView()
+		Children.Add(new CollectionView { SelectionMode = SelectionMode.Single }
 						.Row(Row.Collection).ColumnSpan(All<Column>())
 						.ItemTemplate(new TopPerformersDataTemplate())
+						.Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
 						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath));
+	}
+
+	async void HandleCollectionViewSelectionChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		ArgumentNullException.ThrowIfNull(sender);
+
+		var collectionView = (CollectionView)sender;
+		collectionView.SelectedItem = null;
+
+		if (e.CurrentSelection.FirstOrDefault() is ObservableCryptoModel observableCryptoModel)
+		{
+			var route = AppShell.GetRoute<AssetChartPage, AssetChartViewModel>();
+			
+			var parameters = new Dictionary<string, object?>
+			{
+				{ nameof(AssetChartViewModel.AssetName), observableCryptoModel.Name },
+				{ nameof(AssetChartViewModel.AssetSymbol), observableCryptoModel.Symbol},
+				{ nameof(AssetChartViewModel.AssetImageUrl), observableCryptoModel.ImageUrl },
+			};
+
+			await Shell.Current.GoToAsync(route, parameters);
+		}
 	}
 
 	enum Row { Title, Collection }
