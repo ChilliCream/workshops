@@ -87,9 +87,11 @@ abstract partial class BaseViewModel : IDisposable
 			{ nameof(AssetChartViewModel.AssetImageUrl), asset.ImageUrl },
 		};
 
-		_dispatcher.DispatchAsync(() => collectionView.SelectedItem = null).SafeFireAndForget();
-
-		return Shell.Current.GoToAsync(route, parameters);
+		return _dispatcher.DispatchAsync(() =>
+		{
+			collectionView.SelectedItem = null;
+			return Shell.Current.GoToAsync(route, parameters);
+		});
 	}
 }
 
