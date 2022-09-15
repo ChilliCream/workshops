@@ -3,25 +3,26 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MauiCrypto;
 
-partial class ObservableCryptoModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
+[INotifyPropertyChanged]
+partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
 {
 	[ObservableProperty]
-	string id = string.Empty,
-			name = string.Empty,
-			slug = string.Empty,
-			symbol = string.Empty,
-			color = string.Empty;
+	string _id = string.Empty,
+			_name = string.Empty,
+			_slug = string.Empty,
+			_symbol = string.Empty,
+			_color = string.Empty;
 
 	[ObservableProperty]
-	string? imageUrl, description, website, whitePaper;
+	string? _imageUrl, _description, _website, _whitePaper;
 
 	[ObservableProperty]
-	bool? isInWatchlist;
+	bool? _isInWatchlist;
 
 	[ObservableProperty]
 	[NotifyPropertyChangedFor(nameof(PercentChangeText))]
 	[NotifyPropertyChangedFor(nameof(PercentChangeTextColor))]
-	IGetAssestsQuery_Assets_Nodes_Price? price;
+	IGetAssestsQuery_Assets_Nodes_Price? _price;
 
 	public ObservableCryptoModel(IGetAssestsQuery_Assets_Nodes node) : this()
 	{
@@ -55,5 +56,5 @@ partial class ObservableCryptoModel : ObservableObject, IGetAssestsQuery_Assets_
 partial class ObservableCryptoPriceModel : ObservableObject, IGetAssestsQuery_Assets_Nodes_Price
 {
 	[ObservableProperty]
-	double lastPrice, change24Hour;
+	double _lastPrice, _change24Hour;
 }

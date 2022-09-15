@@ -32,7 +32,6 @@ class AppShell : Shell
 		{
 			Icon = icon;
 			Title = title;
-			Route = typeof(TPage).Name;
 
 			Items.Add(new ShellContent { ContentTemplate = new DataTemplate(typeof(TPage)) });
 		}

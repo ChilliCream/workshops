@@ -4,31 +4,31 @@ namespace MauiCrypto;
 
 public class ThemeService
 {
-	public readonly static AsyncAwaitBestPractices.WeakEventManager<AppTheme> themeChangedEventManager = new();
+	readonly static AsyncAwaitBestPractices.WeakEventManager<AppTheme> _themeChangedEventManager = new();
 
-	readonly IDispatcher dispatcher;
-	readonly IPreferences preferences;
+	readonly IDispatcher _dispatcher;
+	readonly IPreferences _preferences;
 
 	public static event EventHandler<AppTheme> PreferredThemeChanged
 	{
-		add => themeChangedEventManager.AddEventHandler(value);
-		remove => themeChangedEventManager.RemoveEventHandler(value);
+		add => _themeChangedEventManager.AddEventHandler(value);
+		remove => _themeChangedEventManager.RemoveEventHandler(value);
 	}
 
 	public ThemeService(IDispatcher dispatcher, IPreferences preferences)
 	{
-		this.dispatcher = dispatcher;
-		this.preferences = preferences;
+		_dispatcher = dispatcher;
+		_preferences = preferences;
 	}
 
 	public AppTheme PreferredTheme
 	{
-		get => (AppTheme)preferences.Get<int>(nameof(PreferredTheme), (int)(Application.Current?.RequestedTheme ?? AppTheme.Unspecified));
+		get => (AppTheme)_preferences.Get<int>(nameof(PreferredTheme), (int)(Application.Current?.RequestedTheme ?? AppTheme.Unspecified));
 		set
 		{
 			if (PreferredTheme != value)
 			{
-				preferences.Set<int>(nameof(PreferredTheme), (int)value);
+				_preferences.Set<int>(nameof(PreferredTheme), (int)value);
 				SetAppTheme(value).SafeFireAndForget();
 			}
 		}
@@ -47,7 +47,7 @@ public class ThemeService
 		if (App.Current is null)
 			return Task.CompletedTask;
 
-		return dispatcher.DispatchAsync(() =>
+		return _dispatcher.DispatchAsync(() =>
 		{
 			App.Current.Resources = appTheme switch
 			{
@@ -73,6 +73,6 @@ public class ThemeService
 			SetAppTheme(e.RequestedTheme);
 	}
 
-	void OnPreferredThemeChanged(in AppTheme theme) => themeChangedEventManager.RaiseEvent(this, theme, nameof(PreferredThemeChanged));
+	void OnPreferredThemeChanged(in AppTheme theme) => _themeChangedEventManager.RaiseEvent(this, theme, nameof(PreferredThemeChanged));
 }
 

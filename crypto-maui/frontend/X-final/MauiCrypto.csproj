@@ -23,6 +23,9 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-ios|AnyCPU'">
+	  <EnableCodeSigning>false</EnableCodeSigning>
+	</PropertyGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfig.svg" Color="#ffffff" TintColor="#ff8c00" />
@@ -60,9 +63,9 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.9" />
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
-		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.51" />
+		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.52" />
 		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.5" />
 	</ItemGroup>
 

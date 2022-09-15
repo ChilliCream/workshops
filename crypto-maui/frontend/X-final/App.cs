@@ -2,17 +2,17 @@
 
 class App : Application
 {
-	readonly ThemeService themeService;
+	readonly ThemeService _themeService;
 
 	public App(AppShell shell, ThemeService themeService)
 	{
-		this.themeService = themeService;
+		_themeService = themeService;
 		MainPage = shell;
 	}
 
 	protected override async void OnStart()
 	{
 		base.OnStart();
-		await themeService.Initialize();
+		await _themeService.Initialize();
 	}
 }

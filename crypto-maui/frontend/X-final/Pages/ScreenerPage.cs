@@ -4,7 +4,7 @@ namespace MauiCrypto;
 
 class ScreenerPage : BasePage<ScreenerViewModel>
 {
-	public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener")
+	public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener")
 	{
 		Padding = 0;
 
@@ -19,9 +19,11 @@ class ScreenerPage : BasePage<ScreenerViewModel>
 					.Bind(SearchBar.TextProperty, nameof(ScreenerViewModel.FilterText))
 					.DynamicResource(SearchBar.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)),
 
-				new CollectionView()
+				new CollectionView { SelectionMode = SelectionMode.Single }
 					.ItemTemplate(new TopPerformersDataTemplate())
 					.Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.FilteredAssetList))
+					.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
+					.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self))
 			}
 		};
 	}

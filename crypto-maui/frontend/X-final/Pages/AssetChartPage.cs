@@ -5,7 +5,7 @@ namespace MauiCrypto;
 
 class AssetChartPage : BasePage<AssetChartViewModel>
 {
-	public AssetChartPage(AssetChartViewModel assetChartViewModel)	: base(assetChartViewModel, "Asset")
+	public AssetChartPage(AssetChartViewModel assetChartViewModel, IDispatcher dispatcher) : base(assetChartViewModel, dispatcher, "Asset")
 	{
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 

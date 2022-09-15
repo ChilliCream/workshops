@@ -5,38 +5,39 @@ namespace MauiCrypto;
 
 partial class ScreenerViewModel : BaseViewModel
 {
-	readonly IDispatcherTimer dispatchertimer;
+	readonly IDispatcherTimer _dispatchertimer;
 
 	[ObservableProperty]
-	string filterText = string.Empty;
+	string _filterText = string.Empty;
 
-	public ScreenerViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService)
+	public ScreenerViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
 		SubscribeOnPriceChangeSession ??= cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
 		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 
-		dispatchertimer = dispatcher.CreateTimer();
-		dispatchertimer.IsRepeating = false;
-		dispatchertimer.Interval = TimeSpan.FromMilliseconds(800);
-		dispatchertimer.Tick += HandleTimerTick;
+		_dispatchertimer = dispatcher.CreateTimer();
+		_dispatchertimer.IsRepeating = false;
+		_dispatchertimer.Interval = TimeSpan.FromMilliseconds(800);
+		_dispatchertimer.Tick += HandleTimerTick;
 	}
 
 	public IReadOnlyList<ObservableCryptoModel> FilteredAssetList => string.IsNullOrWhiteSpace(FilterText)
 																		? AssetCollection
-																		: AssetCollection.Where(x => x.Name.Contains(FilterText)
-																									|| x.Symbol.Contains(FilterText)).ToList();
+																		: AssetCollection.Where(x => x.Name.Contains(FilterText, StringComparison.OrdinalIgnoreCase)
+																									|| x.Symbol.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
 
-	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(FilteredAssetList));
+	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+		OnPropertyChanged(nameof(FilteredAssetList));
 
 	partial void OnFilterTextChanged(string value)
 	{
-		if (!dispatchertimer.IsRunning)
-			dispatchertimer.Start();
+		if (!_dispatchertimer.IsRunning)
+			_dispatchertimer.Start();
 	}
 
 	void HandleTimerTick(object? sender, EventArgs e)
 	{
-		dispatchertimer.Stop();
+		_dispatchertimer.Stop();
 		OnPropertyChanged(nameof(FilteredAssetList));
 	}
 }

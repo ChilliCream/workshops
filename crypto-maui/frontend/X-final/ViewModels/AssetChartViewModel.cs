@@ -5,9 +5,14 @@ namespace MauiCrypto;
 partial class AssetChartViewModel : BaseViewModel, IQueryAttributable
 {
 	[ObservableProperty]
-	string assetImageUrl = string.Empty,
-			assetName = string.Empty,
-			assetSymbol = string.Empty;
+	string _assetImageUrl = string.Empty,
+			_assetName = string.Empty,
+			_assetSymbol = string.Empty;
+
+	public AssetChartViewModel(IDispatcher dispatcher) : base(dispatcher)
+	{
+
+	}
 
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{

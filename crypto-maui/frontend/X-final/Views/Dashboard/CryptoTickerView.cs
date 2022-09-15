@@ -14,9 +14,13 @@ class CryptoTickerView : CollectionView
 	{
 		this.CenterVertical();
 		HeightRequest = OptimalHeight;
+		SelectionMode = SelectionMode.Single;
 		ItemsLayout = LinearItemsLayout.Horizontal;
 		ItemTemplate = new StockTickerDataTemplate();
 		HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
+
+		this.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
+			.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self));
 	}
 
 	class StockTickerDataTemplate : DataTemplate

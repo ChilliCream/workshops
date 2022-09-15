@@ -6,11 +6,11 @@ namespace MauiCrypto;
 
 class TopPerformersView : Grid
 {
-	public const int OptimalHeight = titleRowHeight + collectionRowHeight;
+	public const int OptimalHeight = _titleRowHeight + _collectionRowHeight;
 	public const int NumberOfPerformers = 5;
 
-	const int collectionRowHeight = TopPerformersDataTemplate.OptimalHeight * NumberOfPerformers;
-	const int titleRowHeight = 48;
+	const int _collectionRowHeight = TopPerformersDataTemplate.OptimalHeight * NumberOfPerformers;
+	const int _titleRowHeight = 48;
 
 	public TopPerformersView(in string icon, in string title, in string collectionViewItemSourceBindingPath)
 	{
@@ -19,8 +19,8 @@ class TopPerformersView : Grid
 		ColumnSpacing = 8;
 
 		RowDefinitions = Rows.Define(
-			(Row.Title, titleRowHeight),
-			(Row.Collection, collectionRowHeight));
+			(Row.Title, _titleRowHeight),
+			(Row.Collection, _collectionRowHeight));
 
 		ColumnDefinitions = Columns.Define(
 			(Column.Icon, 24),
@@ -47,30 +47,9 @@ class TopPerformersView : Grid
 		Children.Add(new CollectionView { SelectionMode = SelectionMode.Single }
 						.Row(Row.Collection).ColumnSpan(All<Column>())
 						.ItemTemplate(new TopPerformersDataTemplate())
-						.Invoke(collectionView => collectionView.SelectionChanged += HandleCollectionViewSelectionChanged)
-						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath));
-	}
-
-	async void HandleCollectionViewSelectionChanged(object? sender, SelectionChangedEventArgs e)
-	{
-		ArgumentNullException.ThrowIfNull(sender);
-
-		var collectionView = (CollectionView)sender;
-		collectionView.SelectedItem = null;
-
-		if (e.CurrentSelection.FirstOrDefault() is ObservableCryptoModel observableCryptoModel)
-		{
-			var route = AppShell.GetRoute<AssetChartPage, AssetChartViewModel>();
-			
-			var parameters = new Dictionary<string, object?>
-			{
-				{ nameof(AssetChartViewModel.AssetName), observableCryptoModel.Name },
-				{ nameof(AssetChartViewModel.AssetSymbol), observableCryptoModel.Symbol},
-				{ nameof(AssetChartViewModel.AssetImageUrl), observableCryptoModel.ImageUrl },
-			};
-
-			await Shell.Current.GoToAsync(route, parameters);
-		}
+						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath)
+						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
+						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
 	}
 
 	enum Row { Title, Collection }

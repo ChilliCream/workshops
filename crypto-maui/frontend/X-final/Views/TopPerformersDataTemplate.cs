@@ -6,13 +6,13 @@ namespace MauiCrypto;
 
 class TopPerformersDataTemplate : DataTemplate
 {
-	public const int OptimalHeight = verticalPadding + nameRowHeight + symbolRowHeight + verticalPadding + SeparatorView.RecommendedSeparatorViewSize;
+	public const int OptimalHeight = _verticalPadding + _nameRowHeight + _symbolRowHeight + _verticalPadding + SeparatorView.RecommendedSeparatorViewSize;
 
-	const int iconRadius = 32;
-	const int nameRowHeight = 20;
-	const int verticalPadding = 8;
-	const int symbolRowHeight = 20;
-	const int iconHorizontalPadding = 4;
+	const int _iconRadius = 32;
+	const int _nameRowHeight = 20;
+	const int _verticalPadding = 8;
+	const int _symbolRowHeight = 20;
+	const int _iconHorizontalPadding = 4;
 
 	public TopPerformersDataTemplate() : base(CreateDataTemplate)
 	{
@@ -24,14 +24,14 @@ class TopPerformersDataTemplate : DataTemplate
 		Padding = new Thickness(8, 0),
 
 		RowDefinitions = Rows.Define(
-			(Row.TopPadding, verticalPadding),
-			(Row.Name, nameRowHeight),
-			(Row.Symbol, symbolRowHeight),
-			(Row.BottomPadding, verticalPadding),
+			(Row.TopPadding, _verticalPadding),
+			(Row.Name, _nameRowHeight),
+			(Row.Symbol, _symbolRowHeight),
+			(Row.BottomPadding, _verticalPadding),
 			(Row.Separator, SeparatorView.RecommendedSeparatorViewSize)),
 
 		ColumnDefinitions = Columns.Define(
-			(Column.Icon, iconRadius + iconHorizontalPadding * 2),
+			(Column.Icon, _iconRadius + _iconHorizontalPadding * 2),
 			(Column.TextPadding, 8),
 			(Column.Text, Star),
 			(Column.PercentChange, 100),

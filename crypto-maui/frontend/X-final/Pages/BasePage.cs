@@ -1,17 +1,25 @@
 ﻿using System.Diagnostics;
+using CommunityToolkit.Mvvm.Input;
 
 namespace MauiCrypto;
 
 abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
 {
-	protected BasePage(in TViewModel viewModel, in string? title = null) : base(viewModel, title)
+	readonly IDispatcher _dispatcher;
+
+	protected BasePage(in TViewModel viewModel, IDispatcher dispatcher, in string? title = null) : base(viewModel, title)
 	{
+		_dispatcher = dispatcher;
+		BaseViewModel.HttpClientError += HandleHttpClientError;
 	}
 
 	public new TViewModel BindingContext => (TViewModel)base.BindingContext;
+
+	async void HandleHttpClientError(object? sender, string e) =>
+		await _dispatcher.DispatchAsync(() => DisplayAlert("GraphQL Connection Failed", e, "OK"));
 }
 
-abstract class BasePage : ContentPage
+abstract partial class BasePage : ContentPage
 {
 	protected BasePage(in object? viewModel = null, in string? title = null)
 	{

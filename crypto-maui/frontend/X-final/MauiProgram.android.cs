@@ -2,12 +2,12 @@
 
 public static partial class MauiProgram
 {
-	const string androidDebugHost = "10.0.2.2";
+	const string _androidDebugHost = "10.0.2.2";
 
 	private static partial Uri GetGraphQLUri(in Uri uri)
 	{
 #if DEBUG
-		return new UriBuilder(Uri.UriSchemeHttp, androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
+		return new UriBuilder(Uri.UriSchemeHttp, _androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
 #else
 		return new UriBuilder(Uri.UriSchemeHttps, url.Host, uri.Port, uri.PathAndQuery).Uri;
 #endif
@@ -16,7 +16,7 @@ public static partial class MauiProgram
 	private static partial Uri GetGraphQLStreamingUri(in Uri uri)
 	{
 #if DEBUG
-		return new UriBuilder(Uri.UriSchemeWs, androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
+		return new UriBuilder(Uri.UriSchemeWs, _androidDebugHost, uri.Port, uri.PathAndQuery).Uri;
 #else
 		return new UriBuilder(Uri.UriSchemeWs, url.Host, uri.Port, uri.PathAndQuery).Uri;
 #endif

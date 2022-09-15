@@ -2,7 +2,7 @@
 
 class WatchlistViewModel : BaseViewModel
 {
-	public WatchlistViewModel()
+	public WatchlistViewModel(IDispatcher dispatcher)  : base(dispatcher)
 	{
 	}
 }
