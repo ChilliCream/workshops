@@ -67,6 +67,7 @@
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
 		<PackageReference Include="StrawberryShake.Maui" Version="13.0.0-preview.52" />
 		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.5" />
+		<PackageReference Include="Syncfusion.Maui.Charts" Version="20.2.49" />
 	</ItemGroup>
 
 	<ItemGroup>

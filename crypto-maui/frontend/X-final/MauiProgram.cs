@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using Polly;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace MauiCrypto;
 
@@ -14,6 +15,7 @@ public static partial class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder.UseMauiApp<App>()
+				.ConfigureSyncfusionCore()
 				.UseMauiCommunityToolkit()
 				.UseMauiCommunityToolkitMarkup()
 				.ConfigureFonts(fonts =>

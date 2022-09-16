@@ -33,7 +33,10 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 			Children =
 			{
 				new TitleRow()
-					.Row(Row.Title).ColumnSpan(All<Column>())
+					.Row(Row.Title).ColumnSpan(All<Column>()),
+
+				new PriceHistoryChartView()
+					.Row(Row.Chart).ColumnSpan(All<Column>())
 			}
 		};
 	}
