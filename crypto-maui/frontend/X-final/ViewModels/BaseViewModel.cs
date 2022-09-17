@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using System.Net;
 using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,11 +12,10 @@ namespace MauiCrypto;
 abstract partial class BaseViewModel : IDisposable
 {
 	static readonly AsyncAwaitBestPractices.WeakEventManager<string> _httpClientErrorEventManager = new();
-	readonly IDispatcher _dispatcher;
 
 	bool _disposedValue;
 
-	public BaseViewModel(IDispatcher dispatcher) => _dispatcher = dispatcher;
+	public BaseViewModel(IDispatcher dispatcher) => Dispatcher = dispatcher;
 
 	~BaseViewModel() => Dispose(disposing: false);
 
@@ -28,13 +28,28 @@ abstract partial class BaseViewModel : IDisposable
 		GC.SuppressFinalize(this);
 	}
 
+	protected IDispatcher Dispatcher { get; }
+
 	public static event EventHandler<string> HttpClientError
 	{
 		add => _httpClientErrorEventManager.AddEventHandler(value);
 		remove => _httpClientErrorEventManager.RemoveEventHandler(value);
 	}
 
-	protected static void OnPriceChange(IOperationResult<ISubscribeOnPriceChangeResult> result)
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!_disposedValue)
+		{
+			if (disposing)
+			{
+				SubscribeOnPriceChangeSession?.Dispose();
+			}
+
+			_disposedValue = true;
+		}
+	}
+
+	protected void OnPriceChange(IOperationResult<ISubscribeOnPriceChangeResult> result)
 	{
 		try
 		{
@@ -55,22 +70,14 @@ abstract partial class BaseViewModel : IDisposable
 		{
 			OnHttpClientError(e.Message);
 		}
-	}
-
-	protected virtual void Dispose(bool disposing)
-	{
-		if (!_disposedValue)
+		catch (WebException e)
 		{
-			if (disposing)
-			{
-				SubscribeOnPriceChangeSession?.Dispose();
-			}
-
-			_disposedValue = true;
+			OnHttpClientError(e.Message);
 		}
 	}
 
-	protected static void OnHttpClientError(in string message) => _httpClientErrorEventManager.RaiseEvent(null, message, nameof(HttpClientError));
+	protected async void OnHttpClientError(string message) =>
+		await Dispatcher.DispatchAsync(() => _httpClientErrorEventManager.RaiseEvent(null, message, nameof(HttpClientError)));
 
 	[RelayCommand]
 	Task CollectionViewSelectionChanged(CollectionView? collectionView)
@@ -87,7 +94,7 @@ abstract partial class BaseViewModel : IDisposable
 			{ nameof(AssetChartViewModel.AssetImageUrl), asset.ImageUrl },
 		};
 
-		return _dispatcher.DispatchAsync(() =>
+		return Dispatcher.DispatchAsync(() =>
 		{
 			collectionView.SelectedItem = null;
 			return Shell.Current.GoToAsync(route, parameters);

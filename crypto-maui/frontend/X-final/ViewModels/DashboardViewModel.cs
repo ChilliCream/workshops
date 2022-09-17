@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Net;
 using CommunityToolkit.Mvvm.Input;
 
 namespace MauiCrypto;
@@ -43,6 +44,10 @@ partial class DashboardViewModel : BaseViewModel
 			}
 		}
 		catch(HttpRequestException e)
+		{
+			OnHttpClientError(e.Message);
+		}
+		catch (WebException e)
 		{
 			OnHttpClientError(e.Message);
 		}
