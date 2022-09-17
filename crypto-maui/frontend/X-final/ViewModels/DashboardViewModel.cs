@@ -6,12 +6,10 @@ namespace MauiCrypto;
 
 partial class DashboardViewModel : BaseViewModel
 {
-	readonly IDispatcher _dispatcher;
 	readonly CryptoGraphQLService _cryptoGraphQLService;
 
 	public DashboardViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
-		_dispatcher = dispatcher;
 		_cryptoGraphQLService = cryptoGraphQLService;
 		SubscribeOnPriceChangeSession ??= cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
 
@@ -40,10 +38,10 @@ partial class DashboardViewModel : BaseViewModel
 			await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
 			{
 				var stockTickerModel = new ObservableCryptoModel(node);
-				await _dispatcher.DispatchAsync(()=> AssetCollection.Add(stockTickerModel)).ConfigureAwait(false);
+				Dispatcher.Dispatch(() => AssetCollection.Add(stockTickerModel));
 			}
 		}
-		catch(HttpRequestException e)
+		catch (HttpRequestException e)
 		{
 			OnHttpClientError(e.Message);
 		}

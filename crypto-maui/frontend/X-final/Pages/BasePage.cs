@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace MauiCrypto;
 
@@ -7,10 +9,13 @@ abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
 {
 	readonly IDispatcher _dispatcher;
 
-	protected BasePage(in TViewModel viewModel, IDispatcher dispatcher, in string? title = null) : base(viewModel, title)
+	protected BasePage(in TViewModel viewModel, IDispatcher dispatcher, in string? title = null, in bool shouldUseSafeArea = true) : base(viewModel, title)
 	{
 		_dispatcher = dispatcher;
 		BaseViewModel.HttpClientError += HandleHttpClientError;
+
+		On<iOS>().SetUseSafeArea(shouldUseSafeArea);
+		On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.FormSheet);
 	}
 
 	public new TViewModel BindingContext => (TViewModel)base.BindingContext;

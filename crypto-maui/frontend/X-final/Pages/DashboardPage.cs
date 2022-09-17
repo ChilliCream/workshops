@@ -7,7 +7,8 @@ class DashboardPage : BasePage<DashboardViewModel>
 {
 	readonly CryptoTickerView _stockTickerView;
 
-	public DashboardPage(DashboardViewModel dashboardViewModel, IDispatcher dispatcher) : base(dashboardViewModel, dispatcher, "Dashboard")
+	public DashboardPage(DashboardViewModel dashboardViewModel, IDispatcher dispatcher)
+		: base(dashboardViewModel, dispatcher, "Dashboard", false)
 	{
 		Padding = 0;
 

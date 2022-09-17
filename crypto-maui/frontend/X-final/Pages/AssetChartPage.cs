@@ -12,7 +12,7 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 		Content = new Grid
 		{
 			RowDefinitions = Rows.Define(
-				(Row.Title, 48),
+				(Row.Title, TitleRow.OptimalHeight),
 				(Row.Price, 48),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 236),
@@ -44,43 +44,12 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 	enum Row { Title, Price, TimeSpan, Chart, MarketStatsTitle, MarketCap, MaxSupply, OverviewTitle, OverviewText, ResourcesTitle, Whitepaper, Website }
 	enum Column { Stats1, Stats2, Stats3 }
 
-	class TitleRow : Grid
+	protected override async void OnAppearing()
 	{
-		public TitleRow()
-		{
-			ColumnDefinitions = Columns.Define(
-				(Column.Icon, 44),
-				(Column.Title, Auto),
-				(Column.Symbol, Star),
-				(Column.Notifications, 44),
-				(Column.Favorite, 44));
+		base.OnAppearing();
 
-			Children.Add(new Image()
-							.Column(Column.Icon)
-							.Center()
-							.Bind(Image.SourceProperty, nameof(AssetChartViewModel.AssetImageUrl)));
-
-			Children.Add(new Label()
-							.Column(Column.Title)
-							.TextCenter()
-							.Bind(Label.TextProperty, nameof(AssetChartViewModel.AssetName))
-							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)));
-
-			Children.Add(new Label { BackgroundColor = Color.FromRgba(0, 0, 0, 0.87) }
-							.Column(Column.Symbol)
-							.Bind(Label.TextProperty, nameof(AssetChartViewModel.AssetSymbol))
-							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)));
-
-			Children.Add(new Image()
-							.Column(Column.Notifications)
-							.Source("notification_icon"));
-
-			Children.Add(new Image()
-							.Column(Column.Favorite)
-							.Source("not_favorite"));
-		}
-
-		enum Column { Icon, Title, Symbol, Notifications, Favorite }
+		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+		await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(cancellationTokenSource.Token);
 	}
 }
 

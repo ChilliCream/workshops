@@ -90,7 +90,8 @@ abstract partial class BaseViewModel : IDisposable
 		var parameters = new Dictionary<string, object?>
 		{
 			{ nameof(AssetChartViewModel.AssetName), asset.Name },
-			{ nameof(AssetChartViewModel.AssetSymbol), asset.Symbol},
+			{ nameof(AssetChartViewModel.AssetColor), asset.Color },
+			{ nameof(AssetChartViewModel.AssetSymbol), asset.Symbol },
 			{ nameof(AssetChartViewModel.AssetImageUrl), asset.ImageUrl },
 		};
 
