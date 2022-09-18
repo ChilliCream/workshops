@@ -11,6 +11,8 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 {
 	readonly CryptoGraphQLService _cryptoGraphQLService;
 
+	CancellationTokenSource _changeSpanUpdatedTCS = new();
+
 	[ObservableProperty]
 	string _assetName = string.Empty, _assetImageUrl = string.Empty;
 
@@ -45,9 +47,8 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 
 	public string XAxisLabelStringFormat => ChangeSpan switch
 	{
-		ChangeSpan.All => "MM YYYY",
-		ChangeSpan.Year or ChangeSpan.Month => "MMM DD",
-		ChangeSpan.Week => "DD",
+		ChangeSpan.All => "MM yyyy",
+		ChangeSpan.Year or ChangeSpan.Month or ChangeSpan.Week => "MMM dd",
 		ChangeSpan.Day or ChangeSpan.Hour => "h:mm tt",
 		_ => throw new NotSupportedException($"{nameof(ChangeSpan)} {ChangeSpan} not supported")
 	};
@@ -57,33 +58,37 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	IReadOnlyList<CryptoPriceHistoryModel> ICryptoChartViewModel.PriceHistory => PriceHistory.ToList();
 
 	[RelayCommand]
+	void UpdateChangeSpan(ChangeSpan span) => ChangeSpan = span;
+
+	[RelayCommand]
 	async Task UpdatePriceHistory(CancellationToken token)
 	{
-		PriceHistory.Clear();
+		var combinedTCS = CancellationTokenSource.CreateLinkedTokenSource(token, _changeSpanUpdatedTCS.Token);
+
+		await Dispatcher.DispatchAsync(() => PriceHistory.Clear()).ConfigureAwait(false);
 
 		try
 		{
-			await foreach (var node in _cryptoGraphQLService.GetPriceHistory(AssetSymbol, token, ChangeSpan).ConfigureAwait(false))
+			await foreach (var node in _cryptoGraphQLService.GetPriceHistory(AssetSymbol, combinedTCS.Token, ChangeSpan).ConfigureAwait(false))
 			{
 				Dispatcher.Dispatch(() => PriceHistory.Add(new CryptoPriceHistoryModel(node)));
 			}
 		}
+		catch (TaskCanceledException)
+		{
+
+		}
 		catch (Exception e) when (e is HttpRequestException or WebException or GraphQLClientException)
 		{
-#if DEBUG
-			OnHttpClientError(e.Message + "\nDisplaying Genrated Data");
-
-			Dispatcher.Dispatch(() =>
-			{
-				for (int i = 0; i < 12 * 24; i++)
-				{
-					PriceHistory.Add(new CryptoPriceHistoryModel(DateTimeOffset.Now.Subtract(TimeSpan.FromHours(i)), Random.Shared.Next(8, 15)));
-				}
-			});
-#else
-			OnHttpClientError(e.Message);
-#endif
+			if (!combinedTCS.Token.IsCancellationRequested)
+				OnHttpClientError(e.Message);
 		}
+#if ANDROID
+		catch (ArgumentNullException)
+		{
+
+		}
+#endif
 	}
 
 	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
@@ -94,8 +99,10 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 
 	async partial void OnChangeSpanChanged(ChangeSpan value)
 	{
-		var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-		await UpdatePriceHistory(cts.Token);
+		_changeSpanUpdatedTCS?.Cancel();
+
+		_changeSpanUpdatedTCS = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+		await UpdatePriceHistory(_changeSpanUpdatedTCS.Token);
 	}
 
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)

@@ -40,6 +40,9 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 				new AssetChartPriceRowView()
 					.Row(Row.Price).ColumnSpan(All<Column>()),
 
+				new AssetChartTimeSpanRowView()
+					.Row(Row.TimeSpan).ColumnSpan(All<Column>()),
+
 				new PriceHistoryChartView()
 					.Row(Row.Chart).ColumnSpan(All<Column>())
 			}
