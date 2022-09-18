@@ -1,4 +1,5 @@
-﻿using Syncfusion.Maui.Charts;
+﻿using CommunityToolkit.Maui.Markup;
+using Syncfusion.Maui.Charts;
 
 namespace MauiCrypto;
 
@@ -8,8 +9,6 @@ public class PriceHistoryChartView : SfCartesianChart
 	{
 		Margin = 0;
 
-		BackgroundColor = Colors.Green;
-
 		TooltipBehavior = new ChartTooltipBehavior();
 		ZoomPanBehavior = new ChartZoomPanBehavior()
 		{
@@ -18,19 +17,28 @@ public class PriceHistoryChartView : SfCartesianChart
 			EnablePinchZooming = true,
 		};
 
-		XAxes.Add(new DateTimeAxis());
+		XAxes.Add(new DateTimeAxis
+		{
+			LabelStyle = new ChartAxisLabelStyle()
+							.Bind(ChartAxisLabelStyle.LabelFormatProperty, nameof(ICryptoChartViewModel.XAxisLabelStringFormat)),
+			ShowMajorGridLines = false,
+			ShowMinorGridLines = false
+		});
 
-		YAxes.Add(new NumericalAxis());
+		YAxes.Add(new NumericalAxis
+		{
+			LabelStyle = new ChartAxisLabelStyle { LabelFormat = "C2" },
+			ShowMajorGridLines = false,
+			ShowMinorGridLines = false
+		});
 
-		var lineSeries = new LineSeries
+		Series.Add(new LineSeries
 		{
 			EnableTooltip = true,
 			XBindingPath = nameof(CryptoPriceHistoryModel.LocalDateTime),
-			YBindingPath = nameof(CryptoPriceHistoryModel.Price)
-		};
-		lineSeries.SetBinding(LineSeries.ItemsSourceProperty, nameof(ICryptoChartViewModel.PriceHistory));
-
-		Series.Add(lineSeries);
+			YBindingPath = nameof(CryptoPriceHistoryModel.Price),
+		}.Bind(LineSeries.ItemsSourceProperty, nameof(ICryptoChartViewModel.PriceHistory))
+		 .Bind(LineSeries.FillProperty, nameof(ICryptoChartViewModel.ChartLineColor), convert: static (string? colorHex) => new SolidColorBrush(Color.FromArgb(colorHex))));
 	}
 
 	protected override void OnBindingContextChanged()

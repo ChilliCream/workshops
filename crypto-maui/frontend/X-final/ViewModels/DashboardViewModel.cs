@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Net;
 using CommunityToolkit.Mvvm.Input;
+using StrawberryShake;
 
 namespace MauiCrypto;
 
@@ -41,11 +42,7 @@ partial class DashboardViewModel : BaseViewModel
 				Dispatcher.Dispatch(() => AssetCollection.Add(stockTickerModel));
 			}
 		}
-		catch (HttpRequestException e)
-		{
-			OnHttpClientError(e.Message);
-		}
-		catch (WebException e)
+		catch (Exception e) when (e is HttpRequestException or WebException or GraphQLClientException)
 		{
 			OnHttpClientError(e.Message);
 		}

@@ -7,6 +7,8 @@ interface ICryptoChartViewModel
 	DateTimeOffset MaxDateTime { get; }
 	double XAxisInterval { get; }
 	double YAxisInterval { get; }
-	IReadOnlyList<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes> PriceHistory { get; }
+	string ChartLineColor { get; }
+	string XAxisLabelStringFormat { get; }
+	IReadOnlyList<CryptoPriceHistoryModel> PriceHistory { get; }
 }
 

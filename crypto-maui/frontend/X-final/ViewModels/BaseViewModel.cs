@@ -66,11 +66,7 @@ abstract partial class BaseViewModel : IDisposable
 				};
 			}
 		}
-		catch (HttpRequestException e)
-		{
-			OnHttpClientError(e.Message);
-		}
-		catch (WebException e)
+		catch (Exception e) when (e is HttpRequestException or WebException or GraphQLClientException)
 		{
 			OnHttpClientError(e.Message);
 		}

@@ -48,7 +48,7 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 	{
 		base.OnAppearing();
 
-		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 		await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(cancellationTokenSource.Token);
 	}
 }

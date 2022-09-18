@@ -19,7 +19,7 @@ class CryptoGraphQLService
 	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
 	{
 		string? endCursor = null;
-		IGetAssestsQueryResult? queryResult = null;
+		IGetAssestsQueryResult? queryResult;
 
 		do
 		{
@@ -41,7 +41,7 @@ class CryptoGraphQLService
 	public async IAsyncEnumerable<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes> GetPriceHistory(string symbol, [EnumeratorCancellation] CancellationToken token, ChangeSpan span = ChangeSpan.Day)
 	{
 		string? endCursor = null;
-		IGetAssetPriceHistoryQueryResult? queryResult = null;
+		IGetAssetPriceHistoryQueryResult? queryResult;
 
 		do
 		{
