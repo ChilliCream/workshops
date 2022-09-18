@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Text;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using Polly;
@@ -41,12 +42,12 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<CryptoGraphQLService>();
 		builder.Services.AddSingleton<UserService>();
 
-		builder.Services.AddMauiCryptoClient() // Add basic auth - Authorization Header, Concatenate Username:Password -> Base64Encoded
+		builder.Services.AddMauiCryptoClient()
 						.ConfigureHttpClient(
 							client =>
 							{
 								client.BaseAddress = GetGraphQLUri(userService.GraphQLEndpoint);
-								//client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String($"{userService.Username}:{userService.GetPassword().Result}"));
+								client.DefaultRequestHeaders.Authorization = getAuthenticationHeaderValue(userService.Username, userService.GetPassword().Result);
 							},
 							clientBuilder => clientBuilder
 												.ConfigurePrimaryHttpMessageHandler(GetHttpMessageHandler)
@@ -56,6 +57,7 @@ public static partial class MauiProgram
 		return builder.Build();
 
 		static TimeSpan sleepDurationProvider(int attemptNumber) => TimeSpan.FromSeconds(Math.Pow(2, attemptNumber));
+		static AuthenticationHeaderValue getAuthenticationHeaderValue(in string username, in string password) => new("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
 	}
 
 	static IServiceCollection AddTransientWithShellRoute<TPage, TViewModel>(this IServiceCollection services) where TPage : BasePage<TViewModel>
