@@ -7,8 +7,7 @@ public class PriceHistoryChartView : SfCartesianChart
 {
 	public PriceHistoryChartView()
 	{
-		Margin = new Thickness(16, 0, 0, 0);
-
+		SelectionBehavior = new ChartSelectionBehavior();
 		TooltipBehavior = new ChartTooltipBehavior();
 		ZoomPanBehavior = new ChartZoomPanBehavior()
 		{
@@ -27,7 +26,6 @@ public class PriceHistoryChartView : SfCartesianChart
 
 		YAxes.Add(new NumericalAxis
 		{
-			IsVisible = false,
 			LabelStyle = new ChartAxisLabelStyle { LabelFormat = "C2" },
 			ShowMajorGridLines = false,
 			ShowMinorGridLines = false,
