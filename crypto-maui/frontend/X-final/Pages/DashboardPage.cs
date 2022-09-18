@@ -17,6 +17,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 			Content = new Grid
 			{
 				RowDefinitions = Rows.Define(
+					(Row.TopPadding, 4),
 					(Row.Ticker, CryptoTickerView.OptimalHeight),
 					(Row.TickerSeparator, SeparatorView.RecommendedSeparatorViewSize),
 					(Row.ChartCarousel, 240),
@@ -33,24 +34,28 @@ class DashboardPage : BasePage<DashboardViewModel>
 						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetList)),
 
 					new SeparatorView()
+						.Margin(12, 0)
 						.FillHorizontal()
 						.Row(Row.TickerSeparator),
 
 					new SeparatorView()
+						.Margin(12, 0)
 						.FillHorizontal()
 						.Row(Row.ChartCarouselSeparator),
 
 					new TopPerformersView("top_gainers_icon", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
+						.Margin(12, 0)
 						.Row(Row.TopGainers),
 
 					new TopPerformersView("top_losers_icon", "Top Losers", nameof(DashboardViewModel.TopLosersList))
+						.Margin(12, 0)
 						.Row(Row.TopLosers),
 				}
 			}
 		};
 	}
 
-	enum Row { Ticker, TickerSeparator, ChartCarousel, ChartCarouselSeparator, TopGainers, TopGainersSeparator, TopLosers }
+	enum Row { TopPadding, Ticker, TickerSeparator, ChartCarousel, ChartCarouselSeparator, TopGainers, TopGainersSeparator, TopLosers }
 
 	protected override async void OnAppearing()
 	{

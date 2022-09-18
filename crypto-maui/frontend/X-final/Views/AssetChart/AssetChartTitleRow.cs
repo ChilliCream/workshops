@@ -6,13 +6,13 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
 
-class TitleRow : Grid
+class AssetChartTitleRowView : Grid
 {
 	public const int OptimalHeight = 48;
 
 	const int _buttonHeight = 24;
 
-	public TitleRow()
+	public AssetChartTitleRowView()
 	{
 		const int imageColumnWidth = 44;
 

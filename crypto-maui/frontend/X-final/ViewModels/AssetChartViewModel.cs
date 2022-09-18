@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,12 +12,13 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	readonly CryptoGraphQLService _cryptoGraphQLService;
 
 	[ObservableProperty]
-	string _assetImageUrl = string.Empty,
-			_assetName = string.Empty,
-			_assetSymbol = string.Empty;
+	string _assetName = string.Empty, _assetImageUrl = string.Empty;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(ChartLineColor))]
 	string _assetColor = string.Empty;
+
+	[ObservableProperty, NotifyPropertyChangedFor(nameof(LastestPriceChangeText)), NotifyPropertyChangedFor(nameof(LastestPriceChangeTextColor))]
+	string _assetSymbol = string.Empty;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(XAxisLabelStringFormat))]
 	ChangeSpan _changeSpan = ChangeSpan.Day;
@@ -30,7 +32,14 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	public AssetChartViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
 		_cryptoGraphQLService = cryptoGraphQLService;
+		PriceHistory.CollectionChanged += HandlePriceHistoryChanged;
+		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 	}
+
+	public double CurrentPrice => PriceHistory.MaxBy(x => x.LocalDateTime)?.Price ?? 0;
+
+	public string LastestPriceChangeText => AssetCollection.FirstOrDefault(x => x.Symbol == AssetSymbol)?.PercentChangeText ?? string.Empty;
+	public Color LastestPriceChangeTextColor => AssetCollection.FirstOrDefault(x => x.Symbol == AssetSymbol)?.PercentChangeTextColor ?? Colors.Transparent;
 
 	public string ChartLineColor => AssetColor;
 
@@ -77,6 +86,18 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 		}
 	}
 
+	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+		OnPropertyChanged(nameof(LastestPriceChangeText));
+
+	void HandlePriceHistoryChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
+		OnPropertyChanged(nameof(CurrentPrice));
+
+	async partial void OnChangeSpanChanged(ChangeSpan value)
+	{
+		var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+		await UpdatePriceHistory(cts.Token);
+	}
+
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
 		var assetName = (string)query[nameof(AssetName)];
@@ -88,12 +109,6 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 		AssetColor = assetColor;
 		AssetSymbol = assetSymbol;
 		AssetImageUrl = assetImageUrl;
-	}
-
-	async partial void OnChangeSpanChanged(ChangeSpan value)
-	{
-		var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-		await UpdatePriceHistory(cts.Token);
 	}
 }
 

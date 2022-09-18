@@ -3,8 +3,10 @@ using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
 
-class AssetChartPage : BasePage<AssetChartViewModel>
+sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 {
+	CancellationTokenSource? _updatePriceHistoryCommandTCS;
+
 	public AssetChartPage(AssetChartViewModel assetChartViewModel, IDispatcher dispatcher) : base(assetChartViewModel, dispatcher, "Asset")
 	{
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
@@ -12,7 +14,7 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 		Content = new Grid
 		{
 			RowDefinitions = Rows.Define(
-				(Row.Title, TitleRow.OptimalHeight),
+				(Row.Title, AssetChartTitleRowView.OptimalHeight),
 				(Row.Price, 48),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 236),
@@ -32,8 +34,11 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 
 			Children =
 			{
-				new TitleRow()
+				new AssetChartTitleRowView()
 					.Row(Row.Title).ColumnSpan(All<Column>()),
+
+				new AssetChartPriceRowView()
+					.Row(Row.Price).ColumnSpan(All<Column>()),
 
 				new PriceHistoryChartView()
 					.Row(Row.Chart).ColumnSpan(All<Column>())
@@ -44,12 +49,24 @@ class AssetChartPage : BasePage<AssetChartViewModel>
 	enum Row { Title, Price, TimeSpan, Chart, MarketStatsTitle, MarketCap, MaxSupply, OverviewTitle, OverviewText, ResourcesTitle, Whitepaper, Website }
 	enum Column { Stats1, Stats2, Stats3 }
 
+	public void Dispose()
+	{
+		_updatePriceHistoryCommandTCS?.Dispose();
+	}
+
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
 
-		var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-		await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(cancellationTokenSource.Token);
+		_updatePriceHistoryCommandTCS = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+		await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(_updatePriceHistoryCommandTCS.Token);
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+
+		_updatePriceHistoryCommandTCS?.Cancel();
 	}
 }
 
