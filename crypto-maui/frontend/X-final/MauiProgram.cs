@@ -40,7 +40,7 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
 		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 		builder.Services.AddSingleton<CryptoGraphQLService>();
-		builder.Services.AddSingleton<UserService>();
+		builder.Services.AddSingleton<UserService>(userService);
 
 		builder.Services.AddMauiCryptoClient()
 						.ConfigureHttpClient(
