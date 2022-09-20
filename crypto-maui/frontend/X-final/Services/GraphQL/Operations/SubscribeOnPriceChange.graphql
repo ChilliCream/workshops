@@ -1,0 +1,18 @@
+﻿subscription SubscribeOnPriceChange
+{
+  onPriceChange {
+    id,
+    high24Hour,
+    low24Hour,
+    open24Hour,
+    tradingActivity,
+    change24Hour,
+    modifiedAt,
+    change(span: HOUR) {
+      percentageChange,
+    },
+    symbol,
+    currency,
+    lastPrice,
+  }
+}
