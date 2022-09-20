@@ -37,7 +37,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 				new AssetChartTimeSpanRowView()
 					.Row(Row.TimeSpan),
 
-				new PriceHistoryChartView()
+				new PriceHistoryChartView(true)
 					.Row(Row.Chart)
 					.Top(),
 

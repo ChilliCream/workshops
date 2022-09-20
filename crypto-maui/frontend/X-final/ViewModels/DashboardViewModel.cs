@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Net;
 using CommunityToolkit.Mvvm.Input;
 using StrawberryShake;
@@ -29,12 +30,15 @@ partial class DashboardViewModel : BaseViewModel
 																	.Take(TopPerformersView.NumberOfPerformers)
 																	.ToList();
 
+	public ObservableCollection<ObservableAssetPriceHistoryModel> NamedCryptoPriceHistoryList { get; } = new();
+
 	[RelayCommand]
 	async Task RefreshCollectionView(CancellationToken token)
 	{
 		try
 		{
 			AssetCollection.Clear();
+			NamedCryptoPriceHistoryList.Clear();
 
 			await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
 			{
@@ -48,10 +52,45 @@ partial class DashboardViewModel : BaseViewModel
 		}
 	}
 
-	void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+	[RelayCommand(AllowConcurrentExecutions = true)]
+	async Task UpdateCarouselViewChart(ObservableAssetPriceHistoryModel assetPriceHistoryModel)
+	{
+		var observableHistoryModel = NamedCryptoPriceHistoryList.FirstOrDefault(x => x.Symbol == assetPriceHistoryModel.Symbol);
+
+		if (observableHistoryModel is null || observableHistoryModel.PriceHistory.Any())
+			return;
+
+		try
+		{
+			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+			await foreach (var priceHistory in _cryptoGraphQLService.GetPriceHistory(observableHistoryModel.Symbol, cts.Token, ChangeSpan.Day).ConfigureAwait(false))
+			{
+				Dispatcher.Dispatch(() => observableHistoryModel.PriceHistory.Add(new CryptoPriceHistoryModel(priceHistory)));
+			}
+		}
+		catch
+		{
+			observableHistoryModel.PriceHistory.Clear();
+		}
+	}
+
+	async void HandleAssetCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
 	{
 		OnPropertyChanged(nameof(AssetList));
 		OnPropertyChanged(nameof(TopLosersList));
 		OnPropertyChanged(nameof(TopGainersList));
+
+		await Task.Yield();
+
+		foreach (var cryptoModel in e.NewItems?.Cast<ObservableCryptoModel>() ?? Array.Empty<ObservableCryptoModel>())
+		{
+			Dispatcher.Dispatch(() =>
+			{
+				NamedCryptoPriceHistoryList.Add(new ObservableAssetPriceHistoryModel(cryptoModel.Symbol,
+													cryptoModel.Color,
+													cryptoModel.Price?.LastPrice ?? 0,
+													cryptoModel.Price?.Change24Hour ?? 0));
+			});
+		}
 	}
 }

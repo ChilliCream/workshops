@@ -5,7 +5,7 @@ namespace MauiCrypto;
 
 public class PriceHistoryChartView : SfCartesianChart
 {
-	public PriceHistoryChartView()
+	public PriceHistoryChartView(bool areAxisVisible)
 	{
 		SelectionBehavior = new ChartSelectionBehavior();
 		TooltipBehavior = new ChartTooltipBehavior();
@@ -18,14 +18,16 @@ public class PriceHistoryChartView : SfCartesianChart
 
 		XAxes.Add(new DateTimeAxis
 		{
+			IsVisible = areAxisVisible,
 			LabelStyle = new ChartAxisLabelStyle()
-							.Bind(ChartAxisLabelStyle.LabelFormatProperty, nameof(ICryptoChartViewModel.XAxisLabelStringFormat)),
+							.Bind(ChartAxisLabelStyle.LabelFormatProperty, nameof(ICryptoChartModel.XAxisLabelStringFormat)),
 			ShowMajorGridLines = false,
 			ShowMinorGridLines = false
 		});
 
 		YAxes.Add(new NumericalAxis
 		{
+			IsVisible = areAxisVisible,
 			LabelStyle = new ChartAxisLabelStyle { LabelFormat = "C2" },
 			ShowMajorGridLines = false,
 			ShowMinorGridLines = false,
@@ -36,16 +38,16 @@ public class PriceHistoryChartView : SfCartesianChart
 			EnableTooltip = true,
 			XBindingPath = nameof(CryptoPriceHistoryModel.LocalDateTime),
 			YBindingPath = nameof(CryptoPriceHistoryModel.Price),
-		}.Bind(LineSeries.ItemsSourceProperty, nameof(ICryptoChartViewModel.PriceHistory))
-		 .Bind(LineSeries.FillProperty, nameof(ICryptoChartViewModel.ChartLineColor), convert: static (string? colorHex) => new SolidColorBrush(Color.FromArgb(colorHex))));
+		}.Bind(LineSeries.ItemsSourceProperty, nameof(ICryptoChartModel.PriceHistory))
+		 .Bind(LineSeries.FillProperty, nameof(ICryptoChartModel.ChartLineColor), convert: static (string? colorHex) => new SolidColorBrush(Color.FromArgb(colorHex))));
 	}
 
 	protected override void OnBindingContextChanged()
 	{
 		base.OnBindingContextChanged();
 
-		if (BindingContext is not ICryptoChartViewModel)
-			throw new InvalidOperationException($"{nameof(BindingContext)} must implement {nameof(ICryptoChartViewModel)}");
+		if (BindingContext is not null and not ICryptoChartModel)
+			throw new InvalidOperationException($"{nameof(BindingContext)} must implement {nameof(ICryptoChartModel)}");
 	}
 }
 

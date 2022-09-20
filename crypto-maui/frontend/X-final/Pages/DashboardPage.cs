@@ -34,9 +34,17 @@ class DashboardPage : BasePage<DashboardViewModel>
 						.Bind(CollectionView.ItemsSourceProperty, nameof(DashboardViewModel.AssetList)),
 
 					new SeparatorView()
+						.Row(Row.TickerSeparator)
 						.Margin(12, 0)
-						.FillHorizontal()
-						.Row(Row.TickerSeparator),
+						.FillHorizontal(),
+
+					new AssetCarouselView()
+						.Row(Row.ChartCarousel)
+						.Center().Margin(0, 12)
+						.ItemTemplate(new AssetChartCarouselViewDataTemplate())
+						.Bind(CarouselView.ItemsSourceProperty, nameof(DashboardViewModel.NamedCryptoPriceHistoryList))
+						.Bind(CarouselView.CurrentItemChangedCommandParameterProperty, nameof(CarouselView.CurrentItem), source: RelativeBindingSource.Self)
+						.Bind(CarouselView.CurrentItemChangedCommandProperty, nameof(DashboardViewModel.UpdateCarouselViewChartCommand)),
 
 					new SeparatorView()
 						.Margin(12, 0)
@@ -65,6 +73,23 @@ class DashboardPage : BasePage<DashboardViewModel>
 		{
 			var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 			await BindingContext.RefreshCollectionViewCommand.ExecuteAsync(cancellationTokenSource.Token);
+		}
+	}
+
+	class AssetCarouselView : CarouselView
+	{
+		public AssetCarouselView()
+		{
+			Margin = 0;
+
+			PeekAreaInsets = 24;
+
+			ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)
+			{
+				ItemSpacing = 16,
+				SnapPointsType = SnapPointsType.MandatorySingle,
+				SnapPointsAlignment = SnapPointsAlignment.Center,
+			};
 		}
 	}
 }

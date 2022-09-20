@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
 class DarkTheme : BaseTheme
 {

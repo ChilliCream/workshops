@@ -1,9 +1,9 @@
 ﻿namespace MauiCrypto;
 
-interface ICryptoChartViewModel
+interface ICryptoChartModel
 {
 	string ChartLineColor { get; }
 	string XAxisLabelStringFormat { get; }
-	IReadOnlyList<CryptoPriceHistoryModel> PriceHistory { get; }
+	IEnumerable<CryptoPriceHistoryModel> PriceHistory { get; }
 }
 

@@ -7,7 +7,7 @@ using StrawberryShake;
 
 namespace MauiCrypto;
 
-partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoChartViewModel
+partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoChartModel
 {
 	readonly IBrowser _browser;
 	readonly CryptoGraphQLService _cryptoGraphQLService;
@@ -66,7 +66,7 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 
 	public ObservableCollection<CryptoPriceHistoryModel> PriceHistory { get; } = new();
 
-	IReadOnlyList<CryptoPriceHistoryModel> ICryptoChartViewModel.PriceHistory => PriceHistory.ToList();
+	IEnumerable<CryptoPriceHistoryModel> ICryptoChartModel.PriceHistory => PriceHistory.ToList();
 
 	bool IsWebsiteLinkValid() => Website is not null;
 	bool IsWhitepaperLinkValid() => WhitePaper is not null;

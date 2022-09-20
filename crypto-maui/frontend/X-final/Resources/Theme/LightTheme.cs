@@ -1,7 +1,4 @@
-﻿using System;
-using CommunityToolkit.Maui.Markup;
-
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
 class LightTheme : BaseTheme
 {
