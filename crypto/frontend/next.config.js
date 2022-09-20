@@ -5,7 +5,7 @@ const relay = require('./relay.config');
 
 /** @type {NextConfig} */
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
@@ -16,4 +16,5 @@ module.exports = {
   compiler: {
     relay,
   },
+  swcMinify: true,
 };
