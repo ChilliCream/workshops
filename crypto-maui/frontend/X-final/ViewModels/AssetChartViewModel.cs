@@ -14,7 +14,11 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	CancellationTokenSource _changeSpanUpdatedTCS = new();
 
 	[ObservableProperty]
-	string _assetName = string.Empty, _assetImageUrl = string.Empty;
+	string _website = string.Empty,
+		_assetName = string.Empty,
+		_whitePaper = string.Empty,
+		_assetImageUrl = string.Empty,
+		_assetDescription = string.Empty;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(ChartLineColor))]
 	string _assetColor = string.Empty;
@@ -29,7 +33,8 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	DateTimeOffset _minDateTime, _maxDateTime;
 
 	[ObservableProperty]
-	double _xAxisInterval, _yAxisInterval;
+	double _xAxisInterval, _yAxisInterval, _lastPrice, _marketCap, _volume24Hour,
+		_circulatingSupply, _maxSupply, _tradingActivity, _change24Hour, _tradableMarketCapRank;
 
 	public AssetChartViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
@@ -39,7 +44,6 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	}
 
 	public double CurrentPrice => PriceHistory.MaxBy(x => x.LocalDateTime)?.Price ?? 0;
-
 	public string LastestPriceChangeText => AssetCollection.FirstOrDefault(x => x.Symbol == AssetSymbol)?.PercentChangeText ?? string.Empty;
 	public Color LastestPriceChangeTextColor => AssetCollection.FirstOrDefault(x => x.Symbol == AssetSymbol)?.PercentChangeTextColor ?? Colors.Transparent;
 
@@ -107,15 +111,38 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
+		var website = (string)query[nameof(Website)];
 		var assetName = (string)query[nameof(AssetName)];
 		var assetColor = (string)query[nameof(AssetColor)];
+		var whitePaper = (string)query[nameof(WhitePaper)];
 		var assetSymbol = (string)query[nameof(AssetSymbol)];
 		var assetImageUrl = (string)query[nameof(AssetImageUrl)];
+		var assetDescription = (string)query[nameof(AssetDescription)];
 
+		var lastPrice = (double)query[nameof(AssetChartViewModel.LastPrice)];
+		var marketCap = (double)query[nameof(AssetChartViewModel.MarketCap)];
+		var maxSupply = (double)query[nameof(AssetChartViewModel.MaxSupply)];
+		var change24Hour = (double)query[nameof(AssetChartViewModel.Change24Hour)];
+		var volume24Hour = (double)query[nameof(AssetChartViewModel.Volume24Hour)];
+		var tradingActivity = (double)query[nameof(AssetChartViewModel.TradingActivity)];
+		var circulatingSupply = (double)query[nameof(AssetChartViewModel.CirculatingSupply)];
+		var tradableMarketCapRank = (double)query[nameof(AssetChartViewModel.TradableMarketCapRank)];
+
+		Website = website;
 		AssetName = assetName;
+		LastPrice = lastPrice;
+		MarketCap = marketCap;
+		MaxSupply = maxSupply;
+		WhitePaper = whitePaper;
 		AssetColor = assetColor;
 		AssetSymbol = assetSymbol;
+		Change24Hour = change24Hour;
+		Volume24Hour = volume24Hour;
 		AssetImageUrl = assetImageUrl;
+		TradingActivity = tradingActivity;
+		AssetDescription = assetDescription;
+		CirculatingSupply = circulatingSupply;
+		TradableMarketCapRank = tradableMarketCapRank;
 	}
 }
 

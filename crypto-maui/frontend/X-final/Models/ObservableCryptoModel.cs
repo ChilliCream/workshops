@@ -56,5 +56,6 @@ partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
 partial class ObservableCryptoPriceModel : ObservableObject, IGetAssestsQuery_Assets_Nodes_Price
 {
 	[ObservableProperty]
-	double _lastPrice, _change24Hour;
+	double _lastPrice, _change24Hour, _marketCap, _volume24Hour,
+		_circulatingSupply, _maxSupply, _tradingActivity, _tradableMarketCapRank;
 }

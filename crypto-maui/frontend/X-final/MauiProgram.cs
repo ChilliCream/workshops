@@ -37,10 +37,11 @@ public static partial class MauiProgram
 
 		// Add Services
 		builder.Services.AddSingleton<ThemeService>();
-		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
-		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 		builder.Services.AddSingleton<CryptoGraphQLService>();
 		builder.Services.AddSingleton<UserService>(userService);
+		builder.Services.AddSingleton<IBrowser>(Browser.Default);
+		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
+		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 
 		builder.Services.AddMauiCryptoClient()
 						.ConfigureHttpClient(

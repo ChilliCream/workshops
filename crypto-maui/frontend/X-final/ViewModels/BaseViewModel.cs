@@ -86,9 +86,20 @@ abstract partial class BaseViewModel : IDisposable
 		var parameters = new Dictionary<string, object?>
 		{
 			{ nameof(AssetChartViewModel.AssetName), asset.Name },
+			{ nameof(AssetChartViewModel.Website), asset.Website },
 			{ nameof(AssetChartViewModel.AssetColor), asset.Color },
 			{ nameof(AssetChartViewModel.AssetSymbol), asset.Symbol },
+			{ nameof(AssetChartViewModel.WhitePaper), asset.WhitePaper },
 			{ nameof(AssetChartViewModel.AssetImageUrl), asset.ImageUrl },
+			{ nameof(AssetChartViewModel.AssetDescription), asset.Description },
+			{ nameof(AssetChartViewModel.LastPrice), asset.Price.LastPrice },
+			{ nameof(AssetChartViewModel.MarketCap), asset.Price.MarketCap },
+			{ nameof(AssetChartViewModel.MaxSupply), asset.Price.MaxSupply },
+			{ nameof(AssetChartViewModel.Change24Hour), asset.Price.Change24Hour },
+			{ nameof(AssetChartViewModel.Volume24Hour), asset.Price.Volume24Hour },
+			{ nameof(AssetChartViewModel.TradingActivity), asset.Price.TradingActivity },
+			{ nameof(AssetChartViewModel.CirculatingSupply), asset.Price.CirculatingSupply },
+			{ nameof(AssetChartViewModel.TradableMarketCapRank), asset.Price.TradableMarketCapRank}
 		};
 
 		return Dispatcher.DispatchAsync(() =>

@@ -14,8 +14,14 @@
       website,
       whitePaper,
       price {
-        lastPrice
-        change24Hour
+        lastPrice,
+        marketCap,
+        volume24Hour,
+        circulatingSupply,
+        maxSupply,
+        tradingActivity
+        change24Hour,
+        tradableMarketCapRank
       }
     }
     pageInfo {
