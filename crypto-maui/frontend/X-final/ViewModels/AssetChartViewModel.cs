@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Java.Net;
 using StrawberryShake;
 
 namespace MauiCrypto;
@@ -20,8 +19,11 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 		_assetImageUrl = string.Empty,
 		_assetDescription = string.Empty;
 
-	[ObservableProperty]
-	string? _website, _whitePaper;
+	[ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenWebsiteCommand))]
+	string? _website;
+
+	[ObservableProperty, NotifyCanExecuteChangedFor(nameof(OpenWhitePaperCommand))]
+	string? _whitePaper;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(ChartLineColor))]
 	string _assetColor = string.Empty;
