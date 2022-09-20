@@ -5,12 +5,15 @@ namespace MauiCrypto;
 
 class DashboardPage : BasePage<DashboardViewModel>
 {
+	const int _chartCarouselHeight = 240;
 	readonly CryptoTickerView _stockTickerView;
 
-	public DashboardPage(DashboardViewModel dashboardViewModel, IDispatcher dispatcher)
+	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel, IDispatcher dispatcher)
 		: base(dashboardViewModel, dispatcher, "Dashboard", false)
 	{
 		Padding = 0;
+
+		var screenWidth = deviceDisplay.MainDisplayInfo.Width / deviceDisplay.MainDisplayInfo.Density;
 
 		Content = new ScrollView
 		{
@@ -20,7 +23,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 					(Row.TopPadding, 4),
 					(Row.Ticker, CryptoTickerView.OptimalHeight),
 					(Row.TickerSeparator, SeparatorView.RecommendedSeparatorViewSize),
-					(Row.ChartCarousel, 240),
+					(Row.ChartCarousel, _chartCarouselHeight),
 					(Row.ChartCarouselSeparator, SeparatorView.RecommendedSeparatorViewSize),
 					(Row.TopGainers, TopPerformersView.OptimalHeight),
 					(Row.TopGainersSeparator, SeparatorView.RecommendedSeparatorViewSize),
@@ -40,6 +43,7 @@ class DashboardPage : BasePage<DashboardViewModel>
 
 					new AssetCarouselView()
 						.Row(Row.ChartCarousel)
+						.Size(screenWidth, _chartCarouselHeight - 24)
 						.Center().Margin(0, 12)
 						.ItemTemplate(new AssetChartCarouselViewDataTemplate())
 						.Bind(CarouselView.ItemsSourceProperty, nameof(DashboardViewModel.NamedCryptoPriceHistoryList))
@@ -80,8 +84,6 @@ class DashboardPage : BasePage<DashboardViewModel>
 	{
 		public AssetCarouselView()
 		{
-			Margin = 0;
-
 			PeekAreaInsets = 24;
 
 			ItemsLayout = new LinearItemsLayout(ItemsLayoutOrientation.Horizontal)

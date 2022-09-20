@@ -41,6 +41,7 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<UserService>(userService);
 		builder.Services.AddSingleton<IBrowser>(Browser.Default);
 		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
+		builder.Services.AddSingleton<IDeviceDisplay>(DeviceDisplay.Current);
 		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 
 		builder.Services.AddMauiCryptoClient()
