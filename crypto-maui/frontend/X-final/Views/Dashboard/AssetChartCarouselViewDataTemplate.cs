@@ -28,29 +28,29 @@ class AssetChartCarouselViewDataTemplate : DataTemplate
 			Content = new Grid
 			{
 				RowDefinitions = Rows.Define(
-					(CardRow.Text, 52),
-					(CardRow.Chart, 152)),
+					(Row.Text, 52),
+					(Row.Chart, 152)),
 
 				ColumnDefinitions = Columns.Define(
-					(CardColumn.Symbol, 56),
-					(CardColumn.Price, 75),
-					(CardColumn.PercentChange, Star)),
+					(Column.Symbol, 56),
+					(Column.Price, 75),
+					(Column.PercentChange, Star)),
 
 				Children =
 				{
 					new Label()
-						.Row(CardRow.Text).Column(CardColumn.Symbol)
+						.Row(Row.Text).Column(Column.Symbol)
 						.TextStart().TextCenterVertical().Font(bold: true, size: 16)
 						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.Symbol))
 						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.Color)),
 
 					new Label()
-						.Row(CardRow.Text).Column(CardColumn.Price)
+						.Row(Row.Text).Column(Column.Price)
 						.TextCenter().Font(size: 16)
 						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.LatestPrice), convert: static (double price) => $"{price:C2}"),
 
 					new Label()
-						.Row(CardRow.Text).Column(CardColumn.PercentChange)
+						.Row(Row.Text).Column(Column.PercentChange)
 						.TextStart().TextCenterVertical().Font(size: 16)
 						.Bind<Label, double, string>(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), convert: static (double change) => double.IsNegative(change)
 																																										? $"-{change:P2}"
@@ -60,13 +60,13 @@ class AssetChartCarouselViewDataTemplate : DataTemplate
 																																					: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)]),
 
 					new PriceHistoryChartView(false)
-						.Row(CardRow.Chart).ColumnSpan(All<CardColumn>())
+						.Row(Row.Chart).ColumnSpan(All<Column>())
 				}
 			};
 		}
 
-		enum CardRow { Text, Chart }
-		enum CardColumn { Symbol, Price, PercentChange }
+		enum Row { Text, Chart }
+		enum Column { Symbol, Price, PercentChange }
 	}
 }
 

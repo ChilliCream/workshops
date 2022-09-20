@@ -16,13 +16,14 @@ class ObservableAssetPriceHistoryModel : ICryptoChartModel
 		PercentChange = percentChange;
 	}
 
+	public string ChartLineColor => Color.ToArgbHex();
+
 	public Color Color { get; }
 	public string Symbol { get; }
 	public double LatestPrice { get; }
 	public double PercentChange { get; }
 	public ObservableCollection<CryptoPriceHistoryModel> PriceHistory { get; } = new();
 
-	string ICryptoChartModel.ChartLineColor => Color.ToArgbHex();
 	string ICryptoChartModel.XAxisLabelStringFormat => "h:mm tt";
 	IEnumerable<CryptoPriceHistoryModel> ICryptoChartModel.PriceHistory => PriceHistory;
 }
