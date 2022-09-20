@@ -186,83 +186,83 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 	}
 
 	enum Row { Title, Price, TimeSpan, Chart, MarketStatsTitle, MarketStatsRow1Title, MarketStatsRow1Data, MarketStatsRow1Separator, MarketStatsRow2Title, MarketStatsRow2Data, MarketStatsRow2Separator, OverviewTitle, OverviewText, ResourcesTitle, Whitepaper, Website }
-enum Column { Stats1, Stats2, Stats3 }
+	enum Column { Stats1, Stats2, Stats3 }
 
-public void Dispose()
-{
-	_updatePriceHistoryCommandTCS?.Dispose();
-}
-
-protected override async void OnAppearing()
-{
-	base.OnAppearing();
-
-	_updatePriceHistoryCommandTCS = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-	await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(_updatePriceHistoryCommandTCS.Token);
-}
-
-protected override void OnDisappearing()
-{
-	base.OnDisappearing();
-
-	_updatePriceHistoryCommandTCS?.Cancel();
-}
-
-class MarketStatsSeparator : SeparatorView
-{
-	public MarketStatsSeparator()
+	public void Dispose()
 	{
-		this.Height(1).Top().Margins(top: 4, left: 8, right: 8);
-	}
-}
-
-class MarketStatsTitleLabel : Label
-{
-	public MarketStatsTitleLabel()
-	{
-		this.Font(size: 16).Start().Top();
-	}
-}
-
-class MarketStatsDataLabel : Label
-{
-	public MarketStatsDataLabel()
-	{
-		this.Font(size: 18, bold: true).End().Bottom().Margins(right: 12);
-
-		LineBreakMode = LineBreakMode.TailTruncation;
-	}
-}
-
-class StatsCategoryTitleLabel : Label
-{
-	public StatsCategoryTitleLabel()
-	{
-		this.Font(size: 20).TextCenterVertical();
-	}
-}
-
-class ResourceRowLayout : HorizontalStackLayout
-{
-	public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ResourceRowLayout));
-	public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandProperty), typeof(object), typeof(ResourceRowLayout));
-
-	public ResourceRowLayout(IBrowser browser, in string imageSource, in string text, string url)
-	{
-
+		_updatePriceHistoryCommandTCS?.Dispose();
 	}
 
-	public ICommand? Command
+	protected override async void OnAppearing()
 	{
-		get => (ICommand)GetValue(CommandProperty);
-		set => SetValue(CommandProperty, value);
+		base.OnAppearing();
+
+		_updatePriceHistoryCommandTCS = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+		await BindingContext.UpdatePriceHistoryCommand.ExecuteAsync(_updatePriceHistoryCommandTCS.Token);
 	}
 
-	public object? CommandParameter
+	protected override void OnDisappearing()
 	{
-		get => (object?)GetValue(CommandParameterProperty);
-		set => SetValue(CommandParameterProperty, value);
+		base.OnDisappearing();
+
+		_updatePriceHistoryCommandTCS?.Cancel();
 	}
-}
+
+	class MarketStatsSeparator : SeparatorView
+	{
+		public MarketStatsSeparator()
+		{
+			this.Height(1).Top().Margins(top: 4, left: 8, right: 8);
+		}
+	}
+
+	class MarketStatsTitleLabel : Label
+	{
+		public MarketStatsTitleLabel()
+		{
+			this.Font(size: 16).Start().Top();
+		}
+	}
+
+	class MarketStatsDataLabel : Label
+	{
+		public MarketStatsDataLabel()
+		{
+			this.Font(size: 18, bold: true).End().Bottom().Margins(right: 12);
+
+			LineBreakMode = LineBreakMode.TailTruncation;
+		}
+	}
+
+	class StatsCategoryTitleLabel : Label
+	{
+		public StatsCategoryTitleLabel()
+		{
+			this.Font(size: 20).TextCenterVertical();
+		}
+	}
+
+	class ResourceRowLayout : HorizontalStackLayout
+	{
+		public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ResourceRowLayout));
+		public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandProperty), typeof(object), typeof(ResourceRowLayout));
+
+		public ResourceRowLayout(IBrowser browser, in string imageSource, in string text, string url)
+		{
+
+		}
+
+		public ICommand? Command
+		{
+			get => (ICommand)GetValue(CommandProperty);
+			set => SetValue(CommandProperty, value);
+		}
+
+		public object? CommandParameter
+		{
+			get => (object?)GetValue(CommandParameterProperty);
+			set => SetValue(CommandParameterProperty, value);
+		}
+	}
 }
 
