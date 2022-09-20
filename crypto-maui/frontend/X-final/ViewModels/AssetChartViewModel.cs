@@ -3,22 +3,25 @@ using System.Collections.Specialized;
 using System.Net;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Java.Net;
 using StrawberryShake;
 
 namespace MauiCrypto;
 
 partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoChartViewModel
 {
+	readonly IBrowser _browser;
 	readonly CryptoGraphQLService _cryptoGraphQLService;
 
 	CancellationTokenSource _changeSpanUpdatedTCS = new();
 
 	[ObservableProperty]
-	string _website = string.Empty,
-		_assetName = string.Empty,
-		_whitePaper = string.Empty,
+	string _assetName = string.Empty,
 		_assetImageUrl = string.Empty,
 		_assetDescription = string.Empty;
+
+	[ObservableProperty]
+	string? _website, _whitePaper;
 
 	[ObservableProperty, NotifyPropertyChangedFor(nameof(ChartLineColor))]
 	string _assetColor = string.Empty;
@@ -36,9 +39,11 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	double _xAxisInterval, _yAxisInterval, _lastPrice, _marketCap, _volume24Hour,
 		_circulatingSupply, _maxSupply, _tradingActivity, _change24Hour, _tradableMarketCapRank;
 
-	public AssetChartViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
+	public AssetChartViewModel(IBrowser browser, IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
+		_browser = browser;
 		_cryptoGraphQLService = cryptoGraphQLService;
+
 		PriceHistory.CollectionChanged += HandlePriceHistoryChanged;
 		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 	}
@@ -60,6 +65,15 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 	public ObservableCollection<CryptoPriceHistoryModel> PriceHistory { get; } = new();
 
 	IReadOnlyList<CryptoPriceHistoryModel> ICryptoChartViewModel.PriceHistory => PriceHistory.ToList();
+
+	bool IsWebsiteLinkValid() => Website is not null;
+	bool IsWhitepaperLinkValid() => WhitePaper is not null;
+
+	[RelayCommand(CanExecute = nameof(IsWebsiteLinkValid))]
+	Task OpenWebsite(string url) => Dispatcher.DispatchAsync(() => _browser.OpenAsync(url));
+
+	[RelayCommand(CanExecute = nameof(IsWhitepaperLinkValid))]
+	Task OpenWhitePaper(string url) => Dispatcher.DispatchAsync(() => _browser.OpenAsync(url));
 
 	[RelayCommand]
 	void UpdateChangeSpan(ChangeSpan span) => ChangeSpan = span;
@@ -111,10 +125,10 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 
 	void IQueryAttributable.ApplyQueryAttributes(IDictionary<string, object> query)
 	{
-		var website = (string)query[nameof(Website)];
+		var website = (string?)query[nameof(Website)];
 		var assetName = (string)query[nameof(AssetName)];
 		var assetColor = (string)query[nameof(AssetColor)];
-		var whitePaper = (string)query[nameof(WhitePaper)];
+		var whitePaper = (string?)query[nameof(WhitePaper)];
 		var assetSymbol = (string)query[nameof(AssetSymbol)];
 		var assetImageUrl = (string)query[nameof(AssetImageUrl)];
 		var assetDescription = (string)query[nameof(AssetDescription)];

@@ -24,169 +24,185 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 				(Row.Price, 48),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 252),
-				(Row.MarketStatsTitle, statsCategoryTitleRowHeight),
-				(Row.MarketStatsRow1Title, 26),
-				(Row.MarketStatsRow1Data, dataRowHeight),
-				(Row.MarketStatsRow1Separator, separatorRowHeight),
-				(Row.MarketStatsRow2Title, 26),
-				(Row.MarketStatsRow2Data, dataRowHeight),
-				(Row.MarketStatsRow2Separator, separatorRowHeight),
-				(Row.OverviewTitle, statsCategoryTitleRowHeight),
-				(Row.OverviewText, Auto),
-				(Row.ResourcesTitle, statsCategoryTitleRowHeight),
-				(Row.Whitepaper, 24),
-				(Row.Website, 24)),
-
-			ColumnDefinitions = Columns.Define(
-				(Column.Stats1, Star),
-				(Column.Stats2, Star),
-				(Column.Stats3, Star)),
+				(Row.ScrollingContent, Star)),
 
 			Children =
 			{
 				new AssetChartTitleRowView()
-					.Row(Row.Title).ColumnSpan(All<Column>()),
+					.Row(Row.Title),
 
 				new AssetChartPriceRowView()
-					.Row(Row.Price).ColumnSpan(All<Column>()),
+					.Row(Row.Price),
 
 				new AssetChartTimeSpanRowView()
-					.Row(Row.TimeSpan).ColumnSpan(All<Column>()),
+					.Row(Row.TimeSpan),
 
 				new PriceHistoryChartView()
-					.Row(Row.Chart).ColumnSpan(All<Column>())
+					.Row(Row.Chart)
 					.Top(),
 
-				new StatsCategoryTitleLabel()
-					.Row(Row.MarketStatsTitle).ColumnSpan(All<Column>())
-					.Text("Market Stats"),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow1Title).Column(Column.Stats1)
-					.Text("Market Cap").Margins(left: 8),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow1Title).Column(Column.Stats2)
-					.Text("Volume 24h"),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow1Title).Column(Column.Stats3)
-					.Text("Supply"),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow1Separator).Column(Column.Stats1),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow1Separator).Column(Column.Stats2),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow1Separator).Column(Column.Stats3),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow1Data).Column(Column.Stats1)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.MarketCap), convert: static (double marketCap) => $"${marketCap.ToAbbreviatedText()}"),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow1Data).Column(Column.Stats2)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.Volume24Hour), convert: static (double volume) => $"${volume.ToAbbreviatedText()}"),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow1Data).Column(Column.Stats3)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.CirculatingSupply), convert: static (double supply) => supply.ToAbbreviatedText()),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow2Separator).Column(Column.Stats1),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow2Separator).Column(Column.Stats2),
-
-				new MarketStatsSeparator()
-					.Row(Row.MarketStatsRow2Separator).Column(Column.Stats3),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow2Title).Column(Column.Stats1)
-					.Text("Max Supply").Margins(left: 8),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow2Title).Column(Column.Stats2)
-					.Text("Trading Activity"),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.MarketStatsRow2Title).Column(Column.Stats3)
-					.Text("Popularity"),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow2Data).Column(Column.Stats1)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.MaxSupply), convert: static (double supply) => supply.ToAbbreviatedText()),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow2Data).Column(Column.Stats2)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.TradingActivity), convert: static (double? activityPercentage) => double.IsNegative(activityPercentage ?? 0) ? $"-{activityPercentage:P0}" : $"+{activityPercentage:P0}")
-					.Bind(Label.TextColorProperty, nameof(AssetChartViewModel.TradingActivity), convert: static (double? activityPercentage) => double.IsNegative(activityPercentage ?? 0)
-																																				? (Color?)Application.Current?.Resources[nameof(BaseTheme.NegativeStockColor)]
-																																				: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)]),
-
-				new MarketStatsDataLabel()
-					.Row(Row.MarketStatsRow2Data).Column(Column.Stats3)
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.TradableMarketCapRank), convert: static (double? rank) => $"#{rank}"),
-
-				new StatsCategoryTitleLabel()
-					.Row(Row.OverviewTitle).ColumnSpan(All<Column>())
-					.Text("Overview"),
-
-				new MarketStatsTitleLabel()
-					.Row(Row.OverviewText).ColumnSpan(All<Column>())
-					.Bind(Label.TextProperty, nameof(AssetChartViewModel.AssetDescription)),
-
-				new StatsCategoryTitleLabel()
-					.Row(Row.ResourcesTitle).ColumnSpan(All<Column>())
-					.Text("Resources"),
-
-				new HorizontalStackLayout
+				new ScrollView
 				{
-					Spacing = 12,
-
-					Children =
+					Content = new Grid
 					{
-						new Image()
-							.Source("whitepaper_icon")
-							.CenterVertical()
-							.Size(24),
+						RowDefinitions = Rows.Define(
+							(ScrollingRow.MarketStatsTitle, statsCategoryTitleRowHeight),
+							(ScrollingRow.MarketStatsRow1Title, 26),
+							(ScrollingRow.MarketStatsRow1Data, dataRowHeight),
+							(ScrollingRow.MarketStatsRow1Separator, separatorRowHeight),
+							(ScrollingRow.MarketStatsRow2Title, 26),
+							(ScrollingRow.MarketStatsRow2Data, dataRowHeight),
+							(ScrollingRow.MarketStatsRow2Separator, separatorRowHeight),
+							(ScrollingRow.OverviewTitle, statsCategoryTitleRowHeight),
+							(ScrollingRow.OverviewText, Auto),
+							(ScrollingRow.ResourcesTitle, statsCategoryTitleRowHeight),
+							(ScrollingRow.Whitepaper, 28),
+							(ScrollingRow.Website, 28)),
 
-						new TappableLabel { Command = new AsyncRelayCommand<string>(url => browser.OpenAsync(url ?? throw new InvalidOperationException("URL cannot be null"))) }
-							.Text("Whitepaper").TextCenter().Font(size: 16)
-							.CenterVertical()
-							.Bind(TappableLabel.CommandParameterProperty, nameof(AssetChartViewModel.WhitePaper))
-							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor))
+						ColumnDefinitions = Columns.Define(
+							(ScrollingColumn.Stats1, Star),
+							(ScrollingColumn.Stats2, Star),
+							(ScrollingColumn.Stats3, Star)),
+
+						Children =
+						{
+							new StatsCategoryTitleLabel()
+								.Row(ScrollingRow.MarketStatsTitle).ColumnSpan(All<ScrollingColumn>())
+								.Text("Market Stats"),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow1Title).Column(ScrollingColumn.Stats1)
+								.Text("Market Cap").Margins(left: 8),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow1Title).Column(ScrollingColumn.Stats2)
+								.Text("Volume 24h"),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow1Title).Column(ScrollingColumn.Stats3)
+								.Text("Supply"),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow1Separator).Column(ScrollingColumn.Stats1),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow1Separator).Column(ScrollingColumn.Stats2),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow1Separator).Column(ScrollingColumn.Stats3),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow1Data).Column(ScrollingColumn.Stats1)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.MarketCap), convert: static (double marketCap) => $"${marketCap.ToAbbreviatedText()}"),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow1Data).Column(ScrollingColumn.Stats2)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.Volume24Hour), convert: static (double volume) => $"${volume.ToAbbreviatedText()}"),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow1Data).Column(ScrollingColumn.Stats3)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.CirculatingSupply), convert: static (double supply) => supply.ToAbbreviatedText()),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow2Separator).Column(ScrollingColumn.Stats1),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow2Separator).Column(ScrollingColumn.Stats2),
+
+							new MarketStatsSeparator()
+								.Row(ScrollingRow.MarketStatsRow2Separator).Column(ScrollingColumn.Stats3),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow2Title).Column(ScrollingColumn.Stats1)
+								.Text("Max Supply").Margins(left: 8),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow2Title).Column(ScrollingColumn.Stats2)
+								.Text("Trading Activity"),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.MarketStatsRow2Title).Column(ScrollingColumn.Stats3)
+								.Text("Popularity"),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow2Data).Column(ScrollingColumn.Stats1)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.MaxSupply), convert: static (double supply) => supply.ToAbbreviatedText()),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow2Data).Column(ScrollingColumn.Stats2)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.TradingActivity), convert: static (double? activityPercentage) => double.IsNegative(activityPercentage ?? 0) ? $"-{activityPercentage:P0}" : $"+{activityPercentage:P0}")
+								.Bind(Label.TextColorProperty, nameof(AssetChartViewModel.TradingActivity), convert: static (double? activityPercentage) => double.IsNegative(activityPercentage ?? 0)
+																																							? (Color?)Application.Current?.Resources[nameof(BaseTheme.NegativeStockColor)]
+																																							: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)]),
+
+							new MarketStatsDataLabel()
+								.Row(ScrollingRow.MarketStatsRow2Data).Column(ScrollingColumn.Stats3)
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.TradableMarketCapRank), convert: static (double? rank) => $"#{rank}"),
+
+							new StatsCategoryTitleLabel()
+								.Row(ScrollingRow.OverviewTitle).ColumnSpan(All<ScrollingColumn>())
+								.Text("Overview"),
+
+							new MarketStatsTitleLabel()
+								.Row(ScrollingRow.OverviewText).ColumnSpan(All<ScrollingColumn>())
+								.Bind(Label.TextProperty, nameof(AssetChartViewModel.AssetDescription)),
+
+							new StatsCategoryTitleLabel()
+								.Row(ScrollingRow.ResourcesTitle).ColumnSpan(All<ScrollingColumn>())
+								.Text("Resources"),
+
+							new HorizontalStackLayout
+							{
+								Spacing = 12,
+
+								Children =
+								{
+									new Image()
+										.Source("whitepaper_icon")
+										.CenterVertical()
+										.Size(24),
+
+									new TappableLabel()
+										.Text("Whitepaper").TextCenter().Font(size: 16)
+										.CenterVertical()
+										.Bind(TappableLabel.CommandProperty, nameof(AssetChartViewModel.OpenWhitePaperCommand))
+										.Bind(TappableLabel.CommandParameterProperty, nameof(AssetChartViewModel.WhitePaper))
+										.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor))
+								}
+							}.Row(ScrollingRow.Whitepaper).ColumnSpan(All<ScrollingColumn>())
+							 .CenterVertical(),
+
+							new HorizontalStackLayout
+							{
+								Spacing = 12,
+
+								Children =
+								{
+									new Image()
+										.Source("website_icon")
+										.CenterVertical()
+										.Size(24),
+
+									new TappableLabel()
+										.Text("Website").TextCenter().Font(size: 16)
+										.CenterVertical()
+										.Bind(TappableLabel.CommandProperty, nameof(AssetChartViewModel.OpenWebsiteCommand))
+										.Bind(TappableLabel.CommandParameterProperty, nameof(AssetChartViewModel.Website))
+										.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor))
+								}
+							}.Row(ScrollingRow.Website).ColumnSpan(All<ScrollingColumn>())
+							 .CenterVertical(),
+						}
 					}
-				}.Row(Row.Whitepaper).ColumnSpan(All<Column>())
-				 .CenterVertical(),
-
-				new HorizontalStackLayout
-				{
-					Spacing = 12,
-
-					Children =
-					{
-						new Image()
-							.Source("website_icon")
-							.CenterVertical()
-							.Size(24),
-
-						new TappableLabel { Command = new AsyncRelayCommand<string>(url => browser.OpenAsync(url ?? throw new InvalidOperationException("URL cannot be null"))) }
-							.Text("Website").TextCenter().Font(size: 16)
-							.CenterVertical()
-							.Bind(TappableLabel.CommandParameterProperty, nameof(AssetChartViewModel.Website))
-							.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor))
-					}
-				}.Row(Row.Website).ColumnSpan(All<Column>())
-				 .CenterVertical(),
+				}.Row(Row.ScrollingContent)
 			}
 		};
 	}
 
-	enum Row { Title, Price, TimeSpan, Chart, MarketStatsTitle, MarketStatsRow1Title, MarketStatsRow1Data, MarketStatsRow1Separator, MarketStatsRow2Title, MarketStatsRow2Data, MarketStatsRow2Separator, OverviewTitle, OverviewText, ResourcesTitle, Whitepaper, Website }
-	enum Column { Stats1, Stats2, Stats3 }
+	enum Row { Title, Price, TimeSpan, Chart, ScrollingContent }
+
+	enum ScrollingRow { MarketStatsTitle, MarketStatsRow1Title, MarketStatsRow1Data, MarketStatsRow1Separator, MarketStatsRow2Title, MarketStatsRow2Data, MarketStatsRow2Separator, OverviewTitle, OverviewText, ResourcesTitle, Whitepaper, Website }
+	enum ScrollingColumn { Stats1, Stats2, Stats3 }
 
 	public void Dispose()
 	{
@@ -239,29 +255,6 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 		public StatsCategoryTitleLabel()
 		{
 			this.Font(size: 20).TextCenterVertical();
-		}
-	}
-
-	class ResourceRowLayout : HorizontalStackLayout
-	{
-		public static readonly BindableProperty CommandProperty = BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(ResourceRowLayout));
-		public static readonly BindableProperty CommandParameterProperty = BindableProperty.Create(nameof(CommandProperty), typeof(object), typeof(ResourceRowLayout));
-
-		public ResourceRowLayout(IBrowser browser, in string imageSource, in string text, string url)
-		{
-
-		}
-
-		public ICommand? Command
-		{
-			get => (ICommand)GetValue(CommandProperty);
-			set => SetValue(CommandProperty, value);
-		}
-
-		public object? CommandParameter
-		{
-			get => (object?)GetValue(CommandParameterProperty);
-			set => SetValue(CommandParameterProperty, value);
 		}
 	}
 }
