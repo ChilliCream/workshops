@@ -38,7 +38,7 @@ class NetworkError extends Error {
   }
 }
 
-const fetchFn = (operation, variables, cacheConfig, uploadables) => {
+const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
   const httpEndpoint = Config.HTTP_ENDPOINT;
   const authToken = Config.AUTH_TOKEN;
 
@@ -46,7 +46,10 @@ const fetchFn = (operation, variables, cacheConfig, uploadables) => {
     const init = {
       method: 'POST',
       headers: {
-        Accept: 'application/json',
+        Accept: [
+          'application/graphql-response+json;charset=utf-8',
+          'multipart/mixed;charset=utf-8',
+        ],
         Authorization: authToken ? `basic ${authToken}` : undefined,
       },
     };
@@ -116,7 +119,7 @@ const fetchFn = (operation, variables, cacheConfig, uploadables) => {
 
                 // If any exceptions occurred when processing the request,
                 // throw an error to indicate to the developer what went wrong.
-                if (Array.isArray(part.body.errors)) {
+                if ('errors' in part.body) {
                   sink.error(
                     new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
                       request,
@@ -129,20 +132,52 @@ const fetchFn = (operation, variables, cacheConfig, uploadables) => {
                 // DEMO: delay chunked responses
                 // await pause(2_000);
 
-                // HACK: if `label` is present, also `path` is required, remove once fixed in HC
-                // @see https://github.com/maraisr/meros/issues/15#issuecomment-1054268416
-                if (part.body.label && !part.body.path) {
-                  part.body.path = [];
+                if ('data' in part.body) {
+                  sink.next(part.body);
                 }
 
-                sink.next(part.body);
+                if ('incremental' in part.body) {
+                  for (const chunk of part.body.incremental) {
+                    if ('data' in chunk) {
+                      sink.next({
+                        ...chunk,
+                        hasNext: part.body.hasNext,
+                      });
+                    } else {
+                      if (chunk.items) {
+                        // All but the non-final path segments refers to the location
+                        // of the list field containing the `@stream` directive.
+                        // The final segment of the path list is an integer.
+                        //
+                        // Note: We must "copy" to avoid mutations.
+                        const location = chunk.path.slice(0, -1);
+                        let index = chunk.path.at(-1);
+
+                        for (const item of chunk.items) {
+                          sink.next({
+                            ...chunk,
+                            path: location.concat(index++),
+                            data: item,
+                            hasNext: part.body.hasNext,
+                          });
+                        }
+                      } else {
+                        sink.next({
+                          ...chunk,
+                          data: chunk.items,
+                          hasNext: part.body.hasNext,
+                        });
+                      }
+                    }
+                  }
+                }
               }
             } else {
               const json = await response.json();
 
               // If any exceptions occurred when processing the request,
               // throw an error to indicate to the developer what went wrong.
-              if (Array.isArray(json.errors)) {
+              if ('errors' in json) {
                 sink.error(
                   new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
                     request,
