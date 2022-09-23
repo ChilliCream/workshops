@@ -33,7 +33,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
     ![Windows Command Prompt](../images/windows_command_prompt.png)
 
-2. In the Windows  Terminal, verify the `dotnet --info` command confirms .NET v6.0.401 (or higher) is installed
+2. In the Windows  Terminal, verify the `dotnet --info` command confirms `Version v6.0.401` (or higher) is installed
 
     [Image]
 
@@ -64,7 +64,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
     ```bash
     dotnet --info
     ```
-3. In the macOS Terminal, verify the `dotnet --info` command confirms .NET v6.0.401 (or higher) is installed
+3. In the macOS Terminal, verify the `dotnet --info` command confirms `Version: v6.0.401` (or higher) is installed
 
     ![dotnet info](../images/macos_dotnet_info.png)
 
