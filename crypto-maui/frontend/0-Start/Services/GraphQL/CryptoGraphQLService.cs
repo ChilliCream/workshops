@@ -14,50 +14,18 @@ class CryptoGraphQLService
 		_cryptoClient = client;
 	}
 
-	public IDisposable SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onSubscribe) => _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onSubscribe);
-
-	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
+	public IDisposable? SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onSubscribe)
 	{
-		string? endCursor = null;
-		IGetAssestsQueryResult? queryResult;
-
-		do
-		{
-			var result = await _cryptoClient.GetAssestsQuery.ExecuteAsync(endCursor, token).ConfigureAwait(false);
-			result.EnsureNoErrors();
-
-			queryResult = result.Data;
-
-			foreach (var node in queryResult?.Assets?.Nodes ?? Array.Empty<IGetAssestsQuery_Assets_Nodes>())
-			{
-				yield return node;
-			}
-
-			endCursor = queryResult?.Assets?.PageInfo?.EndCursor;
-
-		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true);
+		return null;
 	}
 
-	public async IAsyncEnumerable<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes> GetPriceHistory(string symbol, [EnumeratorCancellation] CancellationToken token, ChangeSpan span = ChangeSpan.Day)
+	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes?> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
 	{
-		string? endCursor = null;
-		IGetAssetPriceHistoryQueryResult? queryResult;
+		yield return null;
+	}
 
-		do
-		{
-			var result = await _cryptoClient.GetAssetPriceHistoryQuery.ExecuteAsync(symbol, endCursor, span, token).ConfigureAwait(false);
-			result.EnsureNoErrors();
-
-			queryResult = result.Data;
-
-			foreach (var node in queryResult?.AssetBySymbol?.Price.Change?.History?.Nodes ?? Array.Empty<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes>())
-			{
-				if (node is not null)
-					yield return node;
-			}
-
-			endCursor = queryResult?.AssetBySymbol?.Price?.Change?.History?.PageInfo?.EndCursor;
-		}
-		while (queryResult?.AssetBySymbol?.Price?.Change?.History?.PageInfo?.HasNextPage is true);
+	public async IAsyncEnumerable<IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes?> GetPriceHistory(string symbol, [EnumeratorCancellation] CancellationToken token, ChangeSpan span = ChangeSpan.Day)
+	{
+		yield return null;
 	}
 }

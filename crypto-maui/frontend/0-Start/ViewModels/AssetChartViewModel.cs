@@ -91,7 +91,8 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 		{
 			await foreach (var node in _cryptoGraphQLService.GetPriceHistory(AssetSymbol, combinedTCS.Token, ChangeSpan).ConfigureAwait(false))
 			{
-				Dispatcher.Dispatch(() => PriceHistory.Add(new CryptoPriceHistoryModel(node)));
+				if (node is not null)
+					Dispatcher.Dispatch(() => PriceHistory.Add(new CryptoPriceHistoryModel(node)));
 			}
 		}
 		catch (TaskCanceledException)

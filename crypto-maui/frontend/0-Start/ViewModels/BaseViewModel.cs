@@ -11,7 +11,7 @@ namespace MauiCrypto;
 [INotifyPropertyChanged]
 abstract partial class BaseViewModel : IDisposable
 {
-	static readonly AsyncAwaitBestPractices.WeakEventManager<string> _httpClientErrorEventManager = new();
+	static readonly WeakEventManager<string> _httpClientErrorEventManager = new();
 
 	bool _disposedValue;
 
@@ -51,25 +51,7 @@ abstract partial class BaseViewModel : IDisposable
 
 	protected void OnPriceChange(IOperationResult<ISubscribeOnPriceChangeResult> result)
 	{
-		try
-		{
-			result.EnsureNoErrors();
 
-			if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
-				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node
-				&& assetPrice.LastPrice != node.Price?.LastPrice)
-			{
-				node.Price = new ObservableCryptoPriceModel
-				{
-					LastPrice = assetPrice.LastPrice,
-					Change24Hour = assetPrice.Change24Hour
-				};
-			}
-		}
-		catch (Exception e) when (e is HttpRequestException or WebException or GraphQLClientException)
-		{
-			OnHttpClientError(e.Message);
-		}
 	}
 
 	protected async void OnHttpClientError(string message) =>

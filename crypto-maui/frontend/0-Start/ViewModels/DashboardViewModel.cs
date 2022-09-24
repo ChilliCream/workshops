@@ -42,8 +42,11 @@ partial class DashboardViewModel : BaseViewModel
 
 			await foreach (var node in _cryptoGraphQLService.GetAssestsQuery(token).ConfigureAwait(false))
 			{
-				var stockTickerModel = new ObservableCryptoModel(node);
-				Dispatcher.Dispatch(() => AssetCollection.Add(stockTickerModel));
+				if (node is not null)
+				{
+					var stockTickerModel = new ObservableCryptoModel(node);
+					Dispatcher.Dispatch(() => AssetCollection.Add(stockTickerModel));
+				}
 			}
 		}
 		catch (Exception e) when (e is HttpRequestException or WebException or GraphQLClientException)
@@ -65,7 +68,8 @@ partial class DashboardViewModel : BaseViewModel
 			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 			await foreach (var priceHistory in _cryptoGraphQLService.GetPriceHistory(observableHistoryModel.Symbol, cts.Token, ChangeSpan.Day).ConfigureAwait(false))
 			{
-				Dispatcher.Dispatch(() => observableHistoryModel.PriceHistory.Add(new CryptoPriceHistoryModel(priceHistory)));
+				if (priceHistory is not null)
+					Dispatcher.Dispatch(() => observableHistoryModel.PriceHistory.Add(new CryptoPriceHistoryModel(priceHistory)));
 			}
 		}
 		catch

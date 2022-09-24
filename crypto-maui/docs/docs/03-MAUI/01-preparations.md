@@ -4,7 +4,7 @@
 
 Using [.NET MAUI](https://learn.microsoft.com/dotnet/maui/what-is-maui), we can develop apps that can run on Android, iOS, macOS, and Windows from a single shared code-base.
 
-## Install Tools
+## 1. Install Tools
 
 To build a .NET MAUI app, we first need to install our tools. Follow the instructions below to install tools for 
 
@@ -23,7 +23,7 @@ To build a .NET MAUI app, we first need to install our tools. Follow the instruc
   - **Required**: Visual Studio for Mac 2022 Preview v17.4+
     > **Note**: As of today (26 September 2022), only the **Preview** version of Visual Studio for Mac currently supports .NET MAUI
 
-## Verify Installation
+## 2. Verify Installation
 
 Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is installed and working.
 
@@ -58,3 +58,11 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
     ```bash
     sudo dotnet workload install maui
     ```
+
+## 3. Download / Clone Source Code
+
+1. In a browser, navigate to https://github.com/ChilliCream/workshops
+2. On the ChilliCream Workshops GitHub Repo, click **Code** -> **Download Zip**
+    > **Note**: Alternatively, you are welcome to clone the repository
+    ![Download Code](../images/download_code.png)
+3. Unzip the downloaded file
