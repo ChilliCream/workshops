@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Maui Workshop',
-  tagline: 'Reactive Mobile Apps with GraphQL and Maui',
+  tagline: 'Build Reactive Mobile Applications with GraphQL and Maui',
   url: 'https://crypto-workshop.chillicream.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -98,7 +98,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} ChilliCream Inc.`,
+        copyright: `Copyright © ${new Date().getFullYear()} ChilliCream Inc`,
       },
       prism: {
         theme: lightCodeTheme,
