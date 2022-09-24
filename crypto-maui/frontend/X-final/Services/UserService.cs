@@ -25,4 +25,3 @@ public class UserService
 	public async Task<string> GetPassword() => await _secureStorage.GetAsync(_passwordKeyString).ConfigureAwait(false) ?? string.Empty;
 	public Task SetPassword(in string value) => _secureStorage.SetAsync(_passwordKeyString, value);
 }
-

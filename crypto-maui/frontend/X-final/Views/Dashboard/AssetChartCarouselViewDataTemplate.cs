@@ -69,4 +69,3 @@ class AssetChartCarouselViewDataTemplate : DataTemplate
 		enum Column { Symbol, Price, PercentChange }
 	}
 }
-

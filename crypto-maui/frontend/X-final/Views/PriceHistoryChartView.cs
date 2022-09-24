@@ -50,4 +50,3 @@ public class PriceHistoryChartView : SfCartesianChart
 			throw new InvalidOperationException($"{nameof(BindingContext)} must implement {nameof(ICryptoChartModel)}");
 	}
 }
-

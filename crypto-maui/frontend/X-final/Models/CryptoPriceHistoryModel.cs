@@ -34,4 +34,3 @@ class CryptoPriceHistoryModel : IGetAssetPriceHistoryQuery_AssetBySymbol_Price_C
 
 	int IGetAssetPriceHistoryQuery_AssetBySymbol_Price_Change_History_Nodes.Epoch => (int)this.Epoch;
 }
-

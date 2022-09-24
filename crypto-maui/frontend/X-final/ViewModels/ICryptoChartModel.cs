@@ -6,4 +6,3 @@ interface ICryptoChartModel
 	string XAxisLabelStringFormat { get; }
 	IEnumerable<CryptoPriceHistoryModel> PriceHistory { get; }
 }
-

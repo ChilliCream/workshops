@@ -55,4 +55,3 @@ class TopPerformersView : Grid
 	enum Row { Title, Collection }
 	enum Column { Icon, TitleText, Toggle }
 }
-

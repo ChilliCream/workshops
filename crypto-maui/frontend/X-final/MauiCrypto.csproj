@@ -76,4 +76,10 @@
 		<GraphQLConfig Remove=".graphqlrc.json" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Include="Properties\launchSettings.json">
+	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

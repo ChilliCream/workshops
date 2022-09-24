@@ -258,4 +258,3 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 		}
 	}
 }
-

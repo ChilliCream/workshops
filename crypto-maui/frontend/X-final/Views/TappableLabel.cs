@@ -39,4 +39,3 @@ class TappableLabel : Label
 		await this.FadeTo(1);
 	}
 }
-

@@ -4,7 +4,7 @@ namespace MauiCrypto;
 
 public class ThemeService
 {
-	readonly static AsyncAwaitBestPractices.WeakEventManager<AppTheme> _themeChangedEventManager = new();
+	static readonly WeakEventManager<AppTheme> _themeChangedEventManager = new();
 
 	readonly IDispatcher _dispatcher;
 	readonly IPreferences _preferences;
@@ -75,4 +75,3 @@ public class ThemeService
 
 	void OnPreferredThemeChanged(in AppTheme theme) => _themeChangedEventManager.RaiseEvent(this, theme, nameof(PreferredThemeChanged));
 }
-

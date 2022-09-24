@@ -25,4 +25,3 @@ static class TextAbbreviationService
 		throw new NotSupportedException($"Values under {10e14} are not yet supported");
 	}
 }
-

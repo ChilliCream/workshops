@@ -11,4 +11,3 @@ class SeparatorView : BoxView
 		this.DynamicResource(BackgroundColorProperty, nameof(BaseTheme.SeparatorColor));
 	}
 }
-

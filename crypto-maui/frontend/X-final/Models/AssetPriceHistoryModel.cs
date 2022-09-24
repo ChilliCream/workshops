@@ -27,4 +27,3 @@ class ObservableAssetPriceHistoryModel : ICryptoChartModel
 	string ICryptoChartModel.XAxisLabelStringFormat => "h:mm tt";
 	IEnumerable<CryptoPriceHistoryModel> ICryptoChartModel.PriceHistory => PriceHistory;
 }
-

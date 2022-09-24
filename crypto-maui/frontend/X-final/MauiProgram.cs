@@ -8,6 +8,8 @@ using CommunityToolkit.Maui.Markup;
 using Polly;
 using Syncfusion.Maui.Core.Hosting;
 
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
+
 namespace MauiCrypto;
 
 public static partial class MauiProgram
