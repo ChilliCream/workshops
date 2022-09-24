@@ -37,23 +37,9 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
     [Image]
 
-3. In the Windows Terminal, enter the following command:
+3. In the Windows Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
-    dotnet workload list
-    ```
-
-4. In the Windows Terminal, verify the `dotnet workload list` command confirms the workloads are installed:
-    - wasm-tools
-    - maui-maccatalyst
-    - maui-ios
-    - maui-android
-    - maui
-
-    [Image]
-
-5. (Optional) If any the above workloads are missing, in the Windows Terminal, enter the following command to install/reinstall .NET MAUI:
-    ```bash
-    sudo dotnet workload install maui
+    dotnet workload install maui
     ```
 
 ### macOS
@@ -68,23 +54,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
     ![dotnet info](../images/macos_dotnet_info.png)
 
-4. In the macOS Terminal, enter the following command:
-    ```bash
-    dotnet workload list
-    ```
-
-5. In the macOS Terminal, verify the `dotnet workload list` command confirms the workloads are installed:
-    - wasm-tools
-    - maui-maccatalyst
-    - maui-ios
-    - maui-android
-    - maui
-
-    ![dotnet workload list](../images/macos_dotnet_workload_list.png)
-
-6. (Optional) If any the above workloads are missing, in the macOS Terminal, enter the following command to install/reinstall .NET MAUI:
+4. In the macOS Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
     sudo dotnet workload install maui
     ```
-    > **Note**: In the macOS Terminal, when prompted for a password, enter the password used to log into your Mac
-
