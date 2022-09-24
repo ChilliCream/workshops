@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HotChocolate.AspNetCore" Version="13.0.0-preview.18" />
-    <PackageReference Include="HotChocolate.Types.Analyzers" Version="13.0.0-preview.18">
+    <PackageReference Include="HotChocolate.AspNetCore" Version="13.0.0-preview.62" />
+    <PackageReference Include="HotChocolate.Types.Analyzers" Version="13.0.0-preview.62">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
