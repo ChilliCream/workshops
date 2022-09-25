@@ -16,12 +16,12 @@ To ensure that we use the correct version of .NET in our demo server, we will ge
 dotnet new globaljson
 ```
 
-Ensure that version 7.0.100 or above is being used. The `global.json` file should look something like the following:
+Ensure that version 6.0.100 or above is being used. The `global.json` file should look something like the following:
 
 ```json
 {
   "sdk": {
-    "version": "7.0.100-preview.7.22377.5",
+    "version": "6.0.100",
     "rollForward": "latestMinor"
   }
 }
