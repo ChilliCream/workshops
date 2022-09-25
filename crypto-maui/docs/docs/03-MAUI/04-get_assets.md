@@ -4,10 +4,10 @@ Now that we've created a UI that can display our Crypto assets, let's write the 
 
 ## 1. GetAssestsQuery.graphql
 
-Let's first see how **StrawberryShake** automatically writes C# code based on our `*.graphql` files
+Let's first see how **StrawberryShake** automatically generates C# code based on our `*.graphql` files
 
-1. In Visual Studio, open **Services/GraphQL/Operations/GetAssetPriceHistory.graphql**
-2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query becomes C# code:
+1. In Visual Studio, open **Services/GraphQL/Operations/GetAssestsQuery.graphql**
+2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query into C# code:
 
     | GetAssestsQuery.graphql | Strawberry Shake |
     | ----------------------  | ---------------- |
@@ -45,7 +45,7 @@ Let's first see how **StrawberryShake** automatically writes C# code based on ou
 
 			endCursor = queryResult?.Assets?.PageInfo?.EndCursor; // Upates the endCursor (used for pagination)
 
-		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true); // Continues executing until HasNextPage is false
+		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true); // Continues pagination until HasNextPage is false
 	}
     ```
 

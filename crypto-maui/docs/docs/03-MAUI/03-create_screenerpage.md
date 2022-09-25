@@ -29,6 +29,8 @@ In .NET MAUI, a `CollectionView` is used to display rows of homogenious data. In
     {
         public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
         {
+            Padding = 0;
+
             Content = new CollectionView()
                         .ItemTemplate(new TopPerformersDataTemplate())
                         .ItemsSource(new List<ObservableCryptoModel>
