@@ -20,9 +20,9 @@ abstract partial class BaseViewModel : IDisposable
 	~BaseViewModel() => Dispose(disposing: false);
 
 	protected static ObservableCollection<ObservableCryptoModel> AssetCollection { get; } = new();
-	protected static IDisposable? SubscribeOnPriceChangeSession { get; set; }
 
 	protected IDispatcher Dispatcher { get; }
+	protected IDisposable? SubscribeOnPriceChangeSession { get; set; }
 
 	public void Dispose()
 	{
