@@ -161,4 +161,3 @@ partial class AssetChartViewModel : BaseViewModel, IQueryAttributable, ICryptoCh
 		TradableMarketCapRank = tradableMarketCapRank;
 	}
 }
-

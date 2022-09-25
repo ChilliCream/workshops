@@ -14,7 +14,7 @@ class CryptoGraphQLService
 		_cryptoClient = client;
 	}
 
-	public IDisposable SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onSubscribe) => _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onSubscribe);
+	public IDisposable SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onNext) => _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onNext);
 
 	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
 	{
@@ -30,7 +30,8 @@ class CryptoGraphQLService
 
 			foreach (var node in queryResult?.Assets?.Nodes ?? Array.Empty<IGetAssestsQuery_Assets_Nodes>())
 			{
-				yield return node;
+				if (node is not null)
+					yield return node;
 			}
 
 			endCursor = queryResult?.Assets?.PageInfo?.EndCursor;
