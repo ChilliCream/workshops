@@ -56,8 +56,7 @@ abstract partial class BaseViewModel : IDisposable
 			result.EnsureNoErrors();
 
 			if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
-				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node
-				&& assetPrice.LastPrice != node.Price?.LastPrice)
+				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node)
 			{
 				node.Price = new ObservableCryptoPriceModel
 				{
