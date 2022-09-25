@@ -13,7 +13,7 @@ partial class DashboardViewModel : BaseViewModel
 	public DashboardViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
 		_cryptoGraphQLService = cryptoGraphQLService;
-		SubscribeOnPriceChangeSession ??= cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
+		SubscribeOnPriceChangeSession = cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
 
 		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 	}

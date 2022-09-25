@@ -12,7 +12,7 @@ partial class ScreenerViewModel : BaseViewModel
 
 	public ScreenerViewModel(IDispatcher dispatcher, CryptoGraphQLService cryptoGraphQLService) : base(dispatcher)
 	{
-		SubscribeOnPriceChangeSession ??= cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
+		SubscribeOnPriceChangeSession = cryptoGraphQLService.SubscribeOnPriceChange(OnPriceChange);
 		AssetCollection.CollectionChanged += HandleAssetCollectionChanged;
 
 		_dispatchertimer = dispatcher.CreateTimer();

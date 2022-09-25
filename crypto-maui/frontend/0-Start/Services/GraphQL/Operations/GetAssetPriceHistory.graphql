@@ -1,0 +1,19 @@
+﻿query GetAssetPriceHistoryQuery($symbol:String!, $after: String, $span: ChangeSpan!)
+{
+  assetBySymbol(symbol: $symbol) {
+    price {
+      change(span: $span) {
+        history(first: 5, after: $after) {
+          nodes {
+            epoch,
+            price
+          }
+          pageInfo {
+            hasNextPage,
+            endCursor
+          }
+        }
+      }
+    }
+  }
+}

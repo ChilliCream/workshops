@@ -20,15 +20,15 @@ abstract partial class BaseViewModel : IDisposable
 	~BaseViewModel() => Dispose(disposing: false);
 
 	protected static ObservableCollection<ObservableCryptoModel> AssetCollection { get; } = new();
-	protected static IDisposable? SubscribeOnPriceChangeSession { get; set; }
+
+	protected IDispatcher Dispatcher { get; }
+	protected IDisposable? SubscribeOnPriceChangeSession { get; set; }
 
 	public void Dispose()
 	{
 		Dispose(disposing: true);
 		GC.SuppressFinalize(this);
 	}
-
-	protected IDispatcher Dispatcher { get; }
 
 	public static event EventHandler<string> HttpClientError
 	{
@@ -56,8 +56,7 @@ abstract partial class BaseViewModel : IDisposable
 			result.EnsureNoErrors();
 
 			if (result?.Data?.OnPriceChange is ISubscribeOnPriceChange_OnPriceChange_AssetPrice assetPrice
-				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node
-				&& assetPrice.LastPrice != node.Price?.LastPrice)
+				&& AssetCollection.FirstOrDefault(x => x.Symbol == assetPrice.Symbol) is ObservableCryptoModel node)
 			{
 				node.Price = new ObservableCryptoPriceModel
 				{

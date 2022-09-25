@@ -1,0 +1,32 @@
+﻿query GetAssestsQuery($after: String)
+{
+  assets(first:2 after: $after) {
+    nodes
+    {
+      id,
+      imageUrl,
+      isInWatchlist,
+      symbol,
+      name,
+      slug,
+      description,
+      color,
+      website,
+      whitePaper,
+      price {
+        lastPrice,
+        marketCap,
+        volume24Hour,
+        circulatingSupply,
+        maxSupply,
+        tradingActivity
+        change24Hour,
+        tradableMarketCapRank
+      }
+    }
+    pageInfo {
+        hasNextPage
+        endCursor
+    }
+  }
+}
