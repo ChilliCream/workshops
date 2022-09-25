@@ -22,13 +22,13 @@ abstract partial class BaseViewModel : IDisposable
 	protected static ObservableCollection<ObservableCryptoModel> AssetCollection { get; } = new();
 	protected static IDisposable? SubscribeOnPriceChangeSession { get; set; }
 
+	protected IDispatcher Dispatcher { get; }
+
 	public void Dispose()
 	{
 		Dispose(disposing: true);
 		GC.SuppressFinalize(this);
 	}
-
-	protected IDispatcher Dispatcher { get; }
 
 	public static event EventHandler<string> HttpClientError
 	{

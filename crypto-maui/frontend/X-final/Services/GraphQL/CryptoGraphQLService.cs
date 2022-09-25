@@ -30,7 +30,8 @@ class CryptoGraphQLService
 
 			foreach (var node in queryResult?.Assets?.Nodes ?? Array.Empty<IGetAssestsQuery_Assets_Nodes>())
 			{
-				yield return node;
+				if (node is not null)
+					yield return node;
 			}
 
 			endCursor = queryResult?.Assets?.PageInfo?.EndCursor;

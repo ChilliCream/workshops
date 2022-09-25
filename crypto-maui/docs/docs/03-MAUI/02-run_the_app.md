@@ -13,13 +13,18 @@ To run the app, we first need to run the backend GarphQL Server via the command 
     ```bash
     dotnet run --urls "http://localhost:5100"
     ```
-4. In a browser, navigate to `http://localhost:5100/graphql`
-5. Confirm the GraphQL GUI appears
-    ![Banana Cake Pop](../images/banana_cake_pop.png)
 
 :::caution
 Keep the GraphQL Backend Server running in the background during the duration of the .NET MAUI workshop
 :::
+
+:::info
+If the .NET MAUI app fails to connect to the GraphQL API, double-check that the Backend GraphQL Server is still running in the Terminal and its `--urls` parameter is set to `http://localhost:5100`
+:::
+
+4. In a browser, navigate to `http://localhost:5100/graphql`
+5. Confirm the GraphQL GUI appears
+    ![Banana Cake Pop](../images/banana_cake_pop.png)
 
 ## 2. Launch the .NET MAUI App
 
