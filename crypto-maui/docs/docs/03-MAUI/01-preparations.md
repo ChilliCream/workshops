@@ -2,26 +2,35 @@
 
 [.NET Multi-platform App UI (.NET MAUI)](https://learn.microsoft.com/dotnet/maui/what-is-maui) is a cross-platform framework for creating native mobile and desktop apps with C# and XAML.
 
-Using [.NET MAUI](https://learn.microsoft.com/dotnet/maui/what-is-maui), we can develop apps that can run on Android, iOS, macOS, and Windows from a single shared code-base.
+Using [.NET MAUI](https://learn.microsoft.com/dotnet/maui/what-is-maui), we can develop apps that run on Android, iOS, macOS, and Windows from a single shared code-base, all in C#.
 
 ## 1. Install Tools
 
-To build a .NET MAUI app, we first need to install our tools. Follow the instructions below to install tools for 
+To build a .NET MAUI app, we first need to install our tools.
 
 ### Windows Installation
 
-- [Visual Studio + .NET MAUI](https://visualstudio.microsoft.com/vs/)
-  - **Required**: Visual Studio 2022 v17.3+
-    > **Note**: Older versions of Visual Studio (before v17.3) do not support .NE MAUI
-  - **Required**: .NET MAUI Workload
-    > **Note**: When using the Visual Studio Installer, be sure to check the box for .NET MAUI:
-    > ![.NET MAUI Workload](../images/vs_workloads.png)
+Install [Visual Studio + .NET MAUI](https://visualstudio.microsoft.com/vs/)
+:::caution
+Visual Studio 2022 v17.3 (or higher) is required.
+
+Older versions of Visual Studio (before v17.3) do not support .NET MAUI
+:::
+
+:::caution
+When using the Visual Studio Installer, be sure to check the box for .NET MAUI
+![.NET MAUI Workload](../images/vs_workloads.png)
+:::
 
 ### macOS Installation
 
-- [Visual Studio 2022 for Mac Preview](https://visualstudio.microsoft.com/vs/)
-  - **Required**: Visual Studio for Mac 2022 Preview v17.4+
-    > **Note**: As of today (26 September 2022), only the **Preview** version of Visual Studio for Mac currently supports .NET MAUI
+Install [Visual Studio 2022 for Mac Preview](https://visualstudio.microsoft.com/vs/)
+
+:::caution
+Visual Studio for Mac 2022 Preview v17.4 (or higher) is required
+
+As of today (26 September 2022), only the **Preview** version of Visual Studio for Mac currently supports .NET MAUI
+:::
 
 ## 2. Verify Installation
 
@@ -64,5 +73,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 1. In a browser, navigate to https://github.com/ChilliCream/workshops
 2. On the ChilliCream Workshops GitHub Repo, click **Code** -> **Download Zip**
     > **Note**: Alternatively, you are welcome to clone the repository
-    ![Download Code](../images/download_code.png)
+
+![Download Code](../images/download_code.png)
+
 3. Unzip the downloaded file

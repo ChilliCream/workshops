@@ -35,7 +35,7 @@ Let's create a public property in **ScreenerViewModel** that notifies the UI whe
 
     > **Note**: Later, in `ScreenerPage`, we will bind our `CollectionView.ItemSource` to this new property, `AssetList`
 
-3. In **ScreenerViewModel**, subscribe to the `AssetCollection.CollectionChanged` event, to notify the UI to redraw each time a new crypto asset is added to `AssetCollection`:
+3. In **ScreenerViewModel**, subscribe to the `AssetCollection.CollectionChanged` event, to notify the UI to update the `CollectionView` each time a new crypto asset is added to `AssetCollection`:
 
     ```cs
     using System.Collections.Specialized;

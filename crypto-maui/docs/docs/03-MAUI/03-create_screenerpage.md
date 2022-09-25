@@ -18,7 +18,7 @@ In .NET MAUI, a `CollectionView` is used to display rows of homogenious data. In
 
 1. In Visual Studio, open **Pages/ScreenerPage.cs**
 2. In ScreenerPage, set the `Content` to a `CollectionView` containing hard-coded data by adding the following code:
-    > **Note**: In .NET MAUI, in each `Page`, we set the `Content` property to the UI elements we want to display on screen
+    > **Note**: In .NET MAUI, in each `Page`, we set the `Content` property to display the UI elements on the screen
 
     ```cs
     using CommunityToolkit.Maui.Markup;

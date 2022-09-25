@@ -1,8 +1,8 @@
 # Subscribe to OnPriceChanged
 
-We're almost done! But what if the price of the Crypto changes while we're looking the app? Right now the app only retrieves the price once. 
+We're almost done! But what if the price of the crypto asset changes after we launch the app? Right now the app only retrieves the price once. 
 
-Let's subscribe to OnPriceChanged in the Backend GraphQL API to ensure we always see the latest data!
+Let's subscribe to `OnPriceChanged` in the Backend GraphQL API to ensure we always see the latest data!
 
 ## 1. SubscribeOnPriceChange.graphql
 
@@ -26,7 +26,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
     public IDisposable SubscribeOnPriceChange(Action<IOperationResult<ISubscribeOnPriceChangeResult>> onNext)
     {
         // Each time OnPriceChange changes, it wil execute `onNext`
-        return _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onSubscribe); // returns an IDisposable that will automatically be unsubscribed when disposed
+        return _cryptoClient.SubscribeOnPriceChange.Watch().Subscribe(onNext); // returns an IDisposable that will automatically be unsubscribed when disposed
     } 
     ```
 
