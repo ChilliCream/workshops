@@ -38,15 +38,21 @@ If the .NET MAUI app fails to connect to the GraphQL API, ensure the Backend Gra
     - (Winodws) In [File Explorer](https://support.microsoft.com/windows/windows-explorer-has-a-new-name-c95f0e92-b1aa-76da-b994-36a7c7c413d7), navigate to the downloaded code: `/crypto-maui/frontend/0-Start/`
 2. In the `/fontend/0-Start/` folder, open `MauiCrypto.sln` in Visual Studio
 3. In Visual Studio, set the build target to Android:
-    - (macOS) In the Visual Studio for Mac toolbar, ensure the build is pointing to your Android Emulator
-        > **Note**: If no Android Emulator is listed, you will need to [create an Android Emulator](https://learn.microsoft.com/xamarin/android/get-started/installation/android-emulator/device-manager?tabs=macos&pivots=macos#android-device-manager-on-macos)
+    ### macOS
+    In the Visual Studio for Mac toolbar, ensure the build is pointing to your Android Emulator
+    :::info
+    If no Android Emulator is listed, you will need to [create an Android Emulator](https://learn.microsoft.com/xamarin/android/get-started/installation/android-emulator/device-manager?tabs=macos&pivots=macos#android-device-manager-on-macos)
+    :::
 
-        ![macOS Android Emulator](../images/macos_android_emulator.png)
+    ![macOS Android Emulator](../images/macos_android_emulator.png)
 
-    - (Windows) In the Visual Studio toolbar, ensure the build is pointing to your Android Emulator
-        > **Note**: If no Android Emulator is listed, you will need to [create an Android Emulator](https://learn.microsoft.com/xamarin/android/get-started/installation/android-emulator/device-manager?tabs=macos&pivots=windows)
+    ### Windows
+    In the Visual Studio toolbar, ensure the build is pointing to your Android Emulator
+    :::info
+    If no Android Emulator is listed, you will need to [create an Android Emulator](https://learn.microsoft.com/xamarin/android/get-started/installation/android-emulator/device-manager?tabs=macos&pivots=windows)
+    :::
         
-        [Image]
+    ![Windows Android Emulator](../images/windows_android_emulator.png)
 
 4. In Visual Studio, click the **Play** button to build + deploy the Android app to the Android Emulator
 5. Ensure the `MauiCrypto` app launches in the Android Emulator
