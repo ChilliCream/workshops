@@ -57,7 +57,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 **17:00 FINISH**
 
-## Day 2: GraphQL in the front-end with Maui
+## Day 2: GraphQL in the front-end with MAUI
 
 **09:00**
 
