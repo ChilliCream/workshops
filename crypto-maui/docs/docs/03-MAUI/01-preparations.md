@@ -44,7 +44,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
 2. In the Windows  Terminal, verify the `dotnet --info` command confirms `Version v6.0.401` (or higher) is installed
 
-    [Image]
+    ![Windows Dotnet Info](../images/windows_dotnet_info.PNG)
 
 3. In the Windows Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
