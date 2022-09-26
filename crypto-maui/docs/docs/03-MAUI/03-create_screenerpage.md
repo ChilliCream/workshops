@@ -16,9 +16,11 @@ Let's first look at the current `Screener` page.
 
 In .NET MAUI, a `CollectionView` is used to display rows of homogenious data. In the Screener page, let's add a `CollectionView` containing hard-coded crypto data.
 
-1. In Visual Studio, open **Pages/ScreenerPage.cs**
-2. In ScreenerPage, set the `Content` to a `CollectionView` containing hard-coded data by adding the following code:
-    > **Note**: In .NET MAUI, in each `Page`, we set the `Content` property to display the UI elements on the screen
+1. In **Visual Studio**, open **Pages/ScreenerPage.cs**
+2. In **ScreenerPage**, set the `Content` to a `CollectionView` containing hard-coded data by adding the following code:
+    :::info
+    In .NET MAUI, for each `Page`, we set the `Content` property to display the UI elements on the screen
+    :::
 
     ```cs
     using CommunityToolkit.Maui.Markup;
@@ -64,7 +66,7 @@ In .NET MAUI, a `CollectionView` is used to display rows of homogenious data. In
 
 ## 3. View Updated Screener Page
 
-1. In Visual Studio, build + deploy the Android app to the Android Emulator
+1. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 2. In the Android Emulator, navigate to the **Screener** page
 3. On the **Screener** page, verify the hard-coded data is displayed
 

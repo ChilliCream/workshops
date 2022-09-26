@@ -12,7 +12,7 @@ You can learn more about MVVM and Data Bindings in .NET MAUI, here: https://lear
 
 Let's create a public property in **ScreenerViewModel** that notifies the UI when it has updates.
 
-1. In Visual Studio, open **ViewModels/ScreenerViewModel.cs**
+1. In **Visual Studio**, open **ViewModels/ScreenerViewModel.cs**
 2. In **ScreenerViewModel**, add a public `IReadOnlyList` property that points to the existing `AssetCollection`:
 
     ```cs
@@ -31,9 +31,13 @@ Let's create a public property in **ScreenerViewModel** that notifies the UI whe
     }
     ```
 
-    > **Note**: `BaseViewModel.AssetCollection` is an `ObservableCollection` that is initialized when the app launches; specifically, when the **Dashboard** pages appears, it populates `BaseViewModel.AssetCollection` with the data from the Backend GraphQL Server.
+    :::info
+    `BaseViewModel.AssetCollection` is an `ObservableCollection` that is initialized when the app launches. Specifically, when the **Dashboard** pages appears, it populates `BaseViewModel.AssetCollection` with the data from the Backend GraphQL Server.
+    :::
 
-    > **Note**: Later, in `ScreenerPage`, we will bind our `CollectionView.ItemSource` to this new property, `AssetList`
+    :::info 
+    Later, in `ScreenerPage`, we will bind our `CollectionView.ItemSource` to this new property, `AssetList`
+    :::
 
 3. In **ScreenerViewModel**, subscribe to the `AssetCollection.CollectionChanged` event, to notify the UI to update the `CollectionView` each time a new crypto asset is added to `AssetCollection`:
 
@@ -59,13 +63,15 @@ Let's create a public property in **ScreenerViewModel** that notifies the UI whe
     }
     ```
 
-    > **Note**: `OnPropertyChanged(nameof(AssetList))` notifys any UI element with a binding to `AssetList` that its value has changed. This then invokes the UI to update the screen using the new data.
+    :::info
+    `OnPropertyChanged(nameof(AssetList))` notifys any UI element with a binding to `AssetList` that its value has changed. This then invokes the UI to update the screen using the new data.
+    :::
 
 ## 2. Add Data Binding to ScreenerPage CollectionView
 
 Now that the **ScreenerViewModel** contains the list of Assets that we want to display on screen, let's update the CollectionView in **ScreenerPage** use it as its `ItemSource` binding.
 
-1. In Visual Studio, open **/Pages/ScreenerPage.cs**
+1. In **Visual Studio**, open **/Pages/ScreenerPage.cs**
 2. In **ScreenerPage**, replace the `CollectionView`'s hard-coded data with a binding to `ScreenerViewModel.AssetList`:
 
     ```cs
@@ -88,7 +94,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
 
 ## 3. View Updated Screener Page
 
-1. In Visual Studio, build + deploy the Android app to the Android Emulator
+1. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 2. In the Android Emulator, navigate to the **Screener** page
 3. On the **Screener** page, verify the real data is now displayed
 4. On the **Screener** page, confirm nothing happens when you tap any item in the list
@@ -97,7 +103,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
 
 ## 4. Enable Tapping on CollectionView
 
-1. In Visual Studio, open **Pages/ScreenerPage.cs**
+1. In **Visual Studio**, open **Pages/ScreenerPage.cs**
 2. In **ScreenerPage**, on the `CollectionView`, enable `SelectionMode.Single`:
 
     ```cs
@@ -141,13 +147,17 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
     }
     ```
 
-    > **Note**: `SelectionChangedCommandProperty` is an [`ICommand`](https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/commanding) that runs an action anytime the user makes a selection. The logic for the `ICommand` is found in `BaseViewModel.CollectionViewSelectionChangedCommand`.
+    :::info
+    `SelectionChangedCommandProperty` is an [`ICommand`](https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/commanding) that runs an action anytime the user makes a selection. The logic for the `ICommand` is found in `BaseViewModel.CollectionViewSelectionChangedCommand`.
+    :::
 
-    > **Note**: `SelectionChangedCommandParameterProperty` sets the object passed into the `ICommand`. In this instance, we set the `source` of the binding to `RelativeBindingSourceMode.Self` which tells .NET MAUI to pass the selected `ObservableCryptoModel` from `ScreenerViewModel.AssetList` into the `ICommand`. 
+    :::info
+    `SelectionChangedCommandParameterProperty` sets the object passed into the `ICommand`. In this instance, we set the `source` of the binding to `RelativeBindingSourceMode.Self` which tells .NET MAUI to pass the selected `ObservableCryptoModel` from `ScreenerViewModel.AssetList` into the `ICommand`. 
+    :::
 
 ## 5. Tap on the Updated Screener Page CollectionView
 
-1. In Visual Studio, build + deploy the Android app to the Android Emulator
+1. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 2. In the Android Emulator, navigate to the **Screener** page
 3. On the **Screener** page, verify the real data is now displayed
 4. On the **Screener** page, tap on the first item in the list

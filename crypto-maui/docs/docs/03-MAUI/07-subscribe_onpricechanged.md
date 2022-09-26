@@ -8,7 +8,7 @@ Let's subscribe to `OnPriceChanged` in the Backend GraphQL API to ensure we alwa
 
 Let's first see how **StrawberryShake** automatically generates C# code based on our `*.graphql` files
 
-1. In Visual Studio, open **Services/GraphQL/Operations/GetAssetPriceHistory.graphql**
+1. In **Visual Studio**, open **Services/GraphQL/Operations/GetAssetPriceHistory.graphql**
 2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query into C# code:
 
     | GetAssetPriceHistory.graphql | Strawberry Shake |
@@ -19,7 +19,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 2. Add SubscribeOnPriceChange Logic
 
-1. In Visual Studio, open **Services/GraphQL/GraphQLService**
+1. In **Visual Studio**, open **Services/GraphQL/GraphQLService**
 2. In **GraphQLService**, update the `SubscribeOnPriceChange` method with the following code:
 
     ```cs
@@ -32,7 +32,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 3. Subscribe ScreenerViewModel to CryptoGraphQLService.SubscribeOnPriceChange
 
-1. In Visual Studio, open **ViewModels/ScreenerViewModel**
+1. In **Visual Studio**, open **ViewModels/ScreenerViewModel**
 2. In **ScreenerViewModel** add the method `OnNext`:
 
     ```cs
@@ -129,18 +129,24 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
         }
     }
     ```
-    > **Note:** The logic to dispose `SubscribeOnPriceChangeSession` (and thus unsubscribe, closing the websocket) is handled in `BaseViewModel`
+    :::info
+    The logic to dispose `SubscribeOnPriceChangeSession` (and thus unsubscribe, closing the websocket) is handled in `BaseViewModel`
+    :::
 
 ## 3. Verify Subscription Logic
 
 Now that we've added logic to subscribe to `OnPriceChanged`, let's ensure it is working and the app is updating acccordingly
 
-1. In Visual Studio, open **ViewModels/ScreenerViewModel.cs**
+1. In **Visual Studio**, open **ViewModels/ScreenerViewModel.cs**
 2. In **ScreenerViewModel**, inside the `OnNext` method, set a breakpoint inside of on the line containing `result.EnsureNoErrors();`
-    > **Note**: If you are new to debugging with breakpoints, here is an introduction:
+    :::info 
+    If you are new to debugging with breakpoints, here is an introduction:
     > - (Windows) https://learn.microsoft.com/visualstudio/debugger/using-breakpoints?view=vs-2022
     > - (macOS) https://learn.microsoft.com/visualstudio/mac/debugging?view=vsmac-2022
-3. In Visual Studio, build + deploy the Android app to the Android Emulator
+    :::
+3. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 4. In the Android Emulator, navigate to the **Screener** page
 5. After opening the **Screener** page, wait for the Visual Studio breakpoint to trigger
-    > **Note**: If the price change is small, you may not see a visible change on the UI. I.e. if AAVE changed from `170.731` to `170.732`, the UI will continue to display a price of `170.73`.
+    :::info
+    If the price change is small, you may not see a visible change on the UI. I.e. if AAVE changed from `170.731` to `170.732`, the UI will continue to display a price of `170.73`.
+    :::
