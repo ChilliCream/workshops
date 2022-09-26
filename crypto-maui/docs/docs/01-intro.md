@@ -2,9 +2,9 @@
 
 _Reactive Mobile Apps with GraphQL and Maui_
 
-In this workshop, we will introduce you to GraphQL and the major concepts behind it. We will look at how to build a GraphQL server with ASP.NET core 6 and Hot Chocolate. You will learn how to query GraphQL and what tools are out there that can help you explore and manage large schemas. Further, we will dive into Maui and explore how to efficiently build fast and fluent mobile applications.
+In this workshop, we will introduce you to GraphQL and the major concepts behind it. We will look at how to build a GraphQL server with ASP.NET core and Hot Chocolate. You will learn how to query GraphQL and what tools are out there that can help you explore and manage large schemas. Further, we will dive into Maui and explore how to efficiently build fast and fluent mobile applications.
 
-**Technologies covered**: .NET 6, ASP.NET Core 6, TypeScript, React, GraphQL, Hot Chocolate, Relay
+**Technologies covered**: .NET 7, ASP.NET Core 7, TypeScript, React, GraphQL, Hot Chocolate, Relay
 
 ## Day 1: Building a GraphQL Backend with .NET
 
@@ -14,82 +14,64 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - What is GraphQL?
 - Hello, World!
 
-**10:30 BREAK (15 minutes)**
+**10:45 BREAK (15 minutes)**
 
-**10:45 Building a foundation**
+**11:00 Building a foundation**
 
 - Lists
 - Pagination
 - DataLoader
 - Object Identification
 
-**12:30 BREAK (60 minutes)**
-
-**13:30 Building with components**
-
-- Collocation & Aggregation
-- Data Masking
-- Fragments
-- Store Concepts
-- Loading States with Suspense
-- Error States with ErrorBoundaries
-
-**14:30 Rethinking Data Fetching**
+**12:00 Rethinking Data Fetching**
 
 - Field Middleware
-- Exposing sorting and filtering to the consumer
 - Defer and Stream
 
-**15:15 BREAK (15 minutes)**
+**13:00 BREAK (60 minutes)**
 
-**15:30 On-demand Data**
-
-- Filtering
-- Sorting
-- Pagination
-- Defer and Stream
-- Suspense and Transitions
-- Advanced Composition
-
-**17:00 FINISH**
-
-## Day 2: GraphQL in the front-end with Maui
-
-**09:00 Integrating existing infrastructure**
+**14:00 Integrating existing infrastructure**
 
 - Wrapping REST APIs with GraphQL
 - Migrating REST applications to GraphQL
 
-**10:00 Mutating Data**
-
-- GraphQL Mutations
-- Optimistic Updates
-
-**10:30 BREAK (15 minutes)**
-
-**10:45 Real-Time Data**
+**15:00 Real-Time Data**
 
 - Exploring data fetching approaches
 - GraphQL Subscriptions
 - Advanced Subscription Concepts
 
-**12:30 LUNCH**
+**15:30 BREAK (15 minutes)**
 
-**13:30 GraphQL in Production - Part 1**
+**15:45 GraphQL in Production**
 
 - Persisted Queries with Relay
 - Automatic Persisted Queries
 - Type Emission
 - Client Schema Extensions
 - Relay Developer Tools
-
-**15:15 BREAK (15 minutes)**
-
-**15:30 GraphQL in Production - Part 2**
-
 - GraphQL Observability
 - Security Concepts
 - Request Pipeline Exploration
+- GraphQL over HTTP Transport
+
+**17:00 FINISH**
+
+## Day 2: GraphQL in the front-end with Maui
+
+**09:00**
+
+**10:45 BREAK (15 minutes)**
+
+**11:00**
+
+**13:00 BREAK (60 minutes)**
+
+**14:00**
+
+**15:30 BREAK (15 minutes)**
+
+**15:45**
 
 **Looking ahead**
 
