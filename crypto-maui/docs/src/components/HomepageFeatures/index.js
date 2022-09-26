@@ -4,8 +4,8 @@ import styles from './styles.module.css';
 
 import NetLogo from '@site/static/img/net_core_logo.svg';
 import HCLogo from '@site/static/img/hotchocolate_logo.svg';
-import ReactLogo from '@site/static/img/react_logo.svg';
-import RelayLogo from '@site/static/img/relay_logo.svg';
+import MauiLogo from '@site/static/img/maui.svg';
+import SSLogo from '@site/static/img/strawberryshake-logo.svg';
 
 const FeatureList = [
   {
@@ -24,16 +24,15 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Powered by Maui',
     Image: () => (
       <div className={styles.featureImage}>
-        <ReactLogo role="img" />
-        <RelayLogo role="img" />
+        <MauiLogo role="img" />
       </div>
     ),
     description: (
       <>
-        React and Relay make it painless to create interactive UIs at any scale.
+        Microsoft's Maui and Strawberry Shake allow for building rich data-driven mobile applications that run everywhere.
       </>
     ),
   },
