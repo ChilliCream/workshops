@@ -37,7 +37,7 @@ If the .NET MAUI app fails to connect to the GraphQL API, ensure the Backend Gra
     - (macOS) In [Finder](https://support.apple.com/en-us/HT201732), navigate to the downloaded code: `/crypto-maui/frontend/0-Start/`
     - (Winodws) In [File Explorer](https://support.microsoft.com/windows/windows-explorer-has-a-new-name-c95f0e92-b1aa-76da-b994-36a7c7c413d7), navigate to the downloaded code: `/crypto-maui/frontend/0-Start/`
 2. In the `/fontend/0-Start/` folder, open `MauiCrypto.sln` in Visual Studio
-3. In Visual Studio, set the build target to Android:
+3. In **Visual Studio**, set the build target to Android:
     ### macOS
     In the Visual Studio for Mac toolbar, ensure the build is pointing to your Android Emulator
     :::info
@@ -54,7 +54,7 @@ If the .NET MAUI app fails to connect to the GraphQL API, ensure the Backend Gra
         
     ![Windows Android Emulator](../images/windows_android_emulator.png)
 
-4. In Visual Studio, click the **Play** button to build + deploy the Android app to the Android Emulator
+4. In **Visual Studio**, click the **Play** button to build + deploy the Android app to the Android Emulator
 5. Ensure the `MauiCrypto` app launches in the Android Emulator
 
     ![Blank Android App](../images/blank_android_app.png)
