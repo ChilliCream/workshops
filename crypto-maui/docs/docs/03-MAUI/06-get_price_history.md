@@ -6,7 +6,7 @@ Let's write the logic to retrieve the Price History from our GraphQL Backend
 
 Let's first see how **StrawberryShake** automatically generates C# code based on our `*.graphql` files
 
-1. In Visual Studio, open **Services/GraphQL/Operations/GetAssetPriceHistory.graphql**
+1. In **Visual Studio**, open **Services/GraphQL/Operations/GetAssetPriceHistory.graphql**
 2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query into C# code:
 
     | GetAssetPriceHistory.graphql | Strawberry Shake |
@@ -20,7 +20,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 2. Add GetPriceHistory Logic
 
-1. In Visual Studio, open **Services/GraphQL/CryptoGraphQLService.cs**
+1. In **Visual Studio**, open **Services/GraphQL/CryptoGraphQLService.cs**
 2. In **CryptoGraphQLService**, update the `GetPriceHistory` method with the following code:
 
     ```cs
@@ -52,7 +52,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 5. View Price History
 
-1. In Visual Studio, build + deploy the Android app to the Android Emulator
+1. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 2. In the Android Emulator, on the **Dashboard** page, verify the price history is now populated on the charts
 
 ![Dashboard Price History](../images/dashboard_price_history.png)

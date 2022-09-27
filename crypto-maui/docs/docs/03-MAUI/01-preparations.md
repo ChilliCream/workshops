@@ -44,7 +44,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
 2. In the Windows  Terminal, verify the `dotnet --info` command confirms `Version v6.0.401` (or higher) is installed
 
-    [Image]
+    ![Windows Dotnet Info](../images/windows_dotnet_info.PNG)
 
 3. In the Windows Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
@@ -72,7 +72,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
 1. In a browser, navigate to https://github.com/ChilliCream/workshops
 2. On the ChilliCream Workshops GitHub Repo, click **Code** -> **Download Zip**
-    > **Note**: Alternatively, you are welcome to clone the repository
+    > **Note**: Alternatively, you may clone the repository using [git](https://git-scm.com/)
 
 ![Download Code](../images/download_code.png)
 
