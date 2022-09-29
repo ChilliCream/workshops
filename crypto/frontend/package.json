@@ -35,7 +35,7 @@
     "react-relay": "main"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.6",
+    "@babel/core": "latest",
     "@graphql-codegen/cli": "latest",
     "@graphql-codegen/schema-ast": "latest",
     "@testing-library/jest-dom": "latest",
@@ -50,7 +50,8 @@
     "jest-environment-jsdom": "latest",
     "prettier": "latest",
     "relay-compiler": "main",
-    "relay-test-utils": "main"
+    "relay-test-utils": "main",
+    "typescript": "latest"
   },
   "scripts": {
     "build": "next build",

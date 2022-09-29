@@ -1,4 +1,4 @@
-schema: ${NEXT_PUBLIC_HTTP_ENDPOINT}
+schema: ${NEXT_PUBLIC_HTTP_ENDPOINT}?sdl
 generates:
   schema/server.graphql:
     plugins:
