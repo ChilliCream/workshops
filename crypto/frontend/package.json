@@ -29,8 +29,8 @@
     "lodash": "latest",
     "meros": "latest",
     "next": "canary",
-    "react": "next",
-    "react-dom": "next",
+    "react": "experimental",
+    "react-dom": "experimental",
     "react-dropzone": "latest",
     "react-relay": "main"
   },
