@@ -1,25 +1,24 @@
 import {Typography} from '@mui/material';
 import {memo} from 'react';
 
-import {formatCurrency, toPascalCase} from '@/utils';
+import {findClosestAccessibleColor, toPascalCase} from '@/utils';
 
-export const Price = memo(function Price({
-  value,
-  options,
-  locales,
-  size = 'medium',
-}) {
+export const Symbol = memo(function Symbol({value, color, size = 'medium'}) {
   return (
     <Typography
       variant="caption"
       sx={(theme) => ({
-        color: theme.palette.text.primary,
+        color: findClosestAccessibleColor(
+          color,
+          theme.palette.background.default,
+          3,
+        ),
         fontSize: theme.typography[`fontSize${toPascalCase(size)}`],
         fontWeight: theme.typography.fontWeightMedium,
         lineHeight: 1,
       })}
     >
-      {formatCurrency(value, options, locales)}
+      {value}
     </Typography>
   );
 });

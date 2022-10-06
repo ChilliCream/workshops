@@ -1,17 +1,8 @@
-import {
-  Checkbox,
-  Link,
-  Stack,
-  TableCell,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import NextLink from 'next/link';
+import {TableCell, TableRow} from '@mui/material';
 import {useCallback} from 'react';
 import {graphql, useFragment, useMutation} from 'react-relay';
 
-import {CryptoIcon, WatchIcon, WatchedIcon} from '@/icons';
-import {direction, formatCurrency, formatPercent} from '@/utils';
+import {Change, Currency, Price, WatchCheckbox} from '@/components';
 
 const useAddToWatchlist = () => {
   const [commit, isInFlight] = useMutation(graphql`
@@ -122,8 +113,6 @@ export default function DashboardSpotlightItem({fragmentRef, view}) {
   const [addToWatchlist] = useAddToWatchlist();
   const [removeFromWatchlist] = useRemoveFromWatchlist();
 
-  const labelId = `row:${asset.symbol}`;
-
   return (
     <TableRow
       key={asset.symbol}
@@ -133,57 +122,29 @@ export default function DashboardSpotlightItem({fragmentRef, view}) {
       hover
     >
       <TableCell component="th" scope="row" sx={{width: 'auto'}}>
-        <NextLink
-          href="/currencies/[symbol]"
-          as={`/currencies/${asset.symbol}`}
-          passHref
-        >
-          <Link underline="none">
-            <Stack direction="row" alignItems="center" gap={2}>
-              <CryptoIcon src={asset.imageUrl} alt={asset.name} size="medium" />
-              <Stack direction="column">
-                <Typography id={labelId} variant="caption">
-                  {asset.name}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {asset.symbol}
-                </Typography>
-              </Stack>
-            </Stack>
-          </Link>
-        </NextLink>
+        <Currency
+          symbol={asset.symbol}
+          name={asset.name}
+          imageUrl={asset.imageUrl}
+        />
       </TableCell>
-      {view === 'price' && (
-        <TableCell
-          align="right"
-          sx={{width: 100, paddingLeft: 0, fontWeight: 600}}
-        >
-          {price && formatCurrency(price.lastPrice, {currency: price.currency})}
-        </TableCell>
-      )}
-      {view === 'change' && (
-        <TableCell
-          align="right"
-          sx={(theme) => ({
-            width: 100,
-            paddingLeft: 0,
-            color: theme.palette.trend[direction(price?.change24Hour)],
-          })}
-        >
-          {price && formatPercent(price.change24Hour)}
-        </TableCell>
-      )}
+      <TableCell align="right" sx={{width: 100, paddingLeft: 0}}>
+        {price && view === 'price' && (
+          <Price
+            value={price.lastPrice}
+            options={{currency: price.currency}}
+            size="small"
+          />
+        )}
+        {price && view === 'change' && (
+          <Change value={price.change24Hour} size="small" />
+        )}
+      </TableCell>
       <TableCell align="right" sx={{width: 46, paddingLeft: 0}}>
-        <Checkbox
-          color="primary"
-          icon={<WatchIcon />}
-          checkedIcon={<WatchedIcon />}
+        <WatchCheckbox
           checked={!!asset.isInWatchlist}
           disabled={asset.isInWatchlist === null}
           size="small"
-          inputProps={{
-            'aria-labelledby': labelId,
-          }}
           onChange={(event) => {
             if (event.target.checked) {
               addToWatchlist(asset);
