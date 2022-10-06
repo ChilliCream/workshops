@@ -1,9 +1,9 @@
 import {Typography} from '@mui/material';
 import {memo} from 'react';
 
-import {formatCurrency, toPascalCase} from '@/utils';
+import {formatCurrencyUsingCompactNotation, toPascalCase} from '@/utils';
 
-export const Price = memo(function Price({
+export const MarketCap = memo(function MarketCap({
   value,
   options,
   locales,
@@ -19,7 +19,7 @@ export const Price = memo(function Price({
         lineHeight: 1,
       })}
     >
-      {formatCurrency(value, options, locales)}
+      {formatCurrencyUsingCompactNotation(value, options, locales)}
     </Typography>
   );
 });

@@ -56,7 +56,7 @@ export default memo(function WatchlistList({fragmentRef}) {
         `,
         variables: {symbols},
       }),
-      symbols,
+      [String(symbols)],
     ),
     symbols.length ? undefined : () => ({dispose() {}}),
   );
