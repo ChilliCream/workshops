@@ -35,9 +35,7 @@
     "react-relay": "main"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.6",
-    "@graphql-codegen/cli": "latest",
-    "@graphql-codegen/schema-ast": "latest",
+    "@babel/core": "latest",
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",
     "@types/react": "latest",
@@ -50,16 +48,17 @@
     "jest-environment-jsdom": "latest",
     "prettier": "latest",
     "relay-compiler": "main",
-    "relay-test-utils": "main"
+    "relay-test-utils": "main",
+    "typescript": "latest"
   },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "export": "next export",
+    "get-schema": "node scripts/get-graphql-schema.js",
     "goto": "node scripts/goto.js",
     "lint": "next lint",
     "prettify": "prettier . --write --ignore-unknown",
-    "codegen": "graphql-codegen --require dotenv/config",
     "relay": "relay-compiler",
     "start": "next start"
   }

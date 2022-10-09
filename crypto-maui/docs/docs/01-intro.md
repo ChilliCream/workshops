@@ -59,27 +59,39 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 
 ## Day 2: GraphQL in the front-end with MAUI
 
-**09:00**
+**09:00 - 10:45**
 
-**10:45 BREAK (15 minutes)**
+- Introduction to .NET MAUI
+- Preparations
+- Run the Blank App
 
-**11:00**
+**10:45 - 11:00 BREAK**
+- 15 Minute Break
 
-**13:00 BREAK (60 minutes)**
+**11:00 - 13:00**
 
-**14:00**
+- Run the (Blank) App, continued
+- Create the Screener Page
+- Get Crypto Assets from GraphQL Backend
+- Update ScreenerPage to Use Real Data
 
-**15:30 BREAK (15 minutes)**
+**13:00 - 14:00 LUNCH**
+- 1-Hour Lunch
 
-**15:45**
+**14:00 - 15:00**
+- Get Price History
+- Subscribe to OnPriceChanged
+- Strawberry Shake Setup
 
-**Looking ahead**
+**15:30 - 15:45 BREAK**
+- 15 Minute Break
 
+**15:45 - 17:00**
 - The future of GraphQL
 - Questions and Answers
 - Feedback
 
-**17:00 FINISH**
+**FINISH**
 
 ## Bootcamp
 

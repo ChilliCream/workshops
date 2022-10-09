@@ -6,7 +6,7 @@ Now that we've created a UI that can display our Crypto assets, let's write the 
 
 Let's first see how **StrawberryShake** automatically generates C# code based on our `*.graphql` files
 
-1. In Visual Studio, open **Services/GraphQL/Operations/GetAssestsQuery.graphql**
+1. In **Visual Studio**, open **Services/GraphQL/Operations/GetAssestsQuery.graphql**
 2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query into C# code:
 
     | GetAssestsQuery.graphql | Strawberry Shake |
@@ -19,7 +19,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 2. Add GetAssestsQuery Logic
 
-1. In Visual Studio, open **Services/GraphQL/CryptoGraphQLService.cs**
+1. In **Visual Studio**, open **Services/GraphQL/CryptoGraphQLService.cs**
 2. In **CryptoGraphQLService**, update the `GetAssestsQuery` method with the following code:
 
     ```cs
@@ -51,7 +51,7 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 
 ## 3. Run the App + Verify Data
 
-1. In Visual Studio, build + deploy the Android app to the Android Emulator
+1. In **Visual Studio**, build + deploy the Android app to the Android Emulator
 2. In the Android Emulator, on the **Dashbaord** page, verify data from the GraphQL Backend is now displayed
 
 ![Dashboard Data](../images/dashboard_after_getassetsquery.png)

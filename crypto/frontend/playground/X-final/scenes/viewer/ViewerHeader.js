@@ -1,15 +1,10 @@
-import {Checkbox, Chip, Stack, Typography} from '@mui/material';
+import {Chip, Stack, Typography} from '@mui/material';
 import {memo, useCallback} from 'react';
 import {graphql, useFragment, useMutation} from 'react-relay';
 
+import {AlertCheckbox, WatchCheckbox} from '@/components';
 import {useAlerts} from '@/hooks';
-import {
-  AlertActiveIcon,
-  AlertIcon,
-  CryptoIcon,
-  WatchIcon,
-  WatchedIcon,
-} from '@/icons';
+import {CryptoIcon} from '@/icons';
 
 const useAddToWatchlist = () => {
   const [commit, isInFlight] = useMutation(graphql`
@@ -135,26 +130,15 @@ export default memo(function ViewerHeader({fragmentRef}) {
         />
       </Stack>
       <Stack direction="row">
-        <Checkbox
-          color="primary"
-          icon={<AlertIcon />}
-          checkedIcon={asset.hasAlerts ? <AlertActiveIcon /> : <AlertIcon />}
-          checked={asset.hasAlerts || active}
+        <AlertCheckbox
+          checked={asset.hasAlerts}
+          indeterminate={!asset.hasAlerts && active}
           disabled={asset.isInWatchlist === null}
-          inputProps={{
-            'aria-label': 'alert',
-          }}
           onChange={show}
         />
-        <Checkbox
-          color="primary"
-          icon={<WatchIcon />}
-          checkedIcon={<WatchedIcon />}
+        <WatchCheckbox
           checked={!!asset.isInWatchlist}
           disabled={asset.isInWatchlist === null}
-          inputProps={{
-            'aria-label': 'watch',
-          }}
           onChange={(event) => {
             if (event.target.checked) {
               addToWatchlist(asset);
