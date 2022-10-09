@@ -497,7 +497,7 @@ This is the part where things become more tricky. To fetch the history data, we 
 
 For our problem at hand, we want to push the `keyAndSpan` we create in the `GetChangeAsync` resolver down to our `GetHistoryAsync` we still need to implement. **Hot Chocolate** provides for this a scoped execution state on which we can store data for our subtree.
 
-First, head over to the `AssetNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
+First, head over to the `AssetPriceNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
 
 ```csharp
 [GraphQLType(typeof(AssetPriceChangeType))]
