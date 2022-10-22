@@ -24,6 +24,7 @@ export default memo(function DashboardTicker({fragmentRef}) {
     fragmentRef,
   );
   const assets = data.ticker?.nodes;
+  const symbols = assets?.map(({symbol}) => symbol) ?? [];
 
   useSubscription(
     useMemo(
@@ -35,9 +36,9 @@ export default memo(function DashboardTicker({fragmentRef}) {
             }
           }
         `,
-        variables: {symbols: assets?.map(({symbol}) => symbol) ?? []},
+        variables: {symbols},
       }),
-      [assets],
+      [String(symbols)],
     ),
   );
 
