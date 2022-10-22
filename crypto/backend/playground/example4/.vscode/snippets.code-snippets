@@ -1,0 +1,63 @@
+{
+  "_mutation": {
+    "prefix": "_mutation",
+    "body": [
+      "using Demo.Types.Errors;",
+      "",
+      "namespace Demo.Types.Account;",
+      "",
+      "[ExtendObjectType(OperationTypeNames.Mutation)]",
+      "public sealed class WatchlistMutations",
+      "{",
+      "    ",
+      "}"
+    ],
+    "description": "_mutation"
+  },
+  "_addAssetToWatchlist": {
+    "prefix": "_addAssetToWatchlist",
+    "body": [
+      "public async Task<Watchlist> AddAssetToWatchlistAsync(",
+      "    string symbol,",
+      "    [GlobalState] string? username,",
+      "    AssetContext context,",
+      "    CancellationToken cancellationToken)",
+      "{",
+      "    Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);",
+      "",
+      "    if (watchlist is null)",
+      "    {",
+      "        watchlist = new Watchlist { User = username };",
+      "        context.Watchlists.Add(watchlist);",
+      "    }",
+      "",
+      "    watchlist.AddSymbols(symbol);",
+      "",
+      "    await context.SaveChangesAsync(cancellationToken);",
+      "",
+      "    return watchlist;",
+      "}"
+    ],
+    "description": "_addAssetToWatchlist"
+  },
+  "_noUser": {
+    "prefix": "_noUser",
+    "body": [
+      "if (username is null)",
+      "{",
+      "    throw new NotAuthenticatedException(Constants.Watchlists);",
+      "}"
+    ],
+    "description": "_noUser"
+  },
+  "_noAssets": {
+    "prefix": "_noAssets",
+    "body": [
+      "if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))",
+      "{",
+      "    throw new UnknownAssetException(symbol);",
+      "}"
+    ],
+    "description": "_noAssets"
+  }
+}
