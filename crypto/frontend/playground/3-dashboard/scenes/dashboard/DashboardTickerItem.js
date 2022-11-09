@@ -31,6 +31,7 @@ export default memo(function DashboardTickerItem({fragmentRef}) {
       href="/currencies/[symbol]"
       as={`/currencies/${asset.symbol}`}
       passHref
+      legacyBehavior
     >
       <Link underline="none">
         <Stack direction="column" spacing={1} minWidth={100}>

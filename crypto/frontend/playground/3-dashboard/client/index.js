@@ -1,6 +1,7 @@
 import extractFiles from 'extract-files/extractFiles.mjs';
 import isExtractableFile from 'extract-files/isExtractableFile.mjs';
-import {createClient} from 'graphql-ws';
+import {createClient as createClientSSE} from 'graphql-sse';
+import {createClient as createClientWS} from 'graphql-ws';
 import {meros} from 'meros/browser';
 import {useMemo} from 'react';
 import {
@@ -218,17 +219,60 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
   });
 };
 
+/**
+ * With `graphql-sse`.
+ * @see https://github.com/enisdenjo/graphql-sse
+ */
+const subscribeFnWithSSE = (operation, variables) => {
+  const httpEndpoint = Config.HTTP_ENDPOINT;
+  const authToken = Config.AUTH_TOKEN;
+
+  const client = createClientSSE({
+    url: httpEndpoint,
+
+    /** If you have an HTTP/2 server, it is recommended to use the client in "distinct connections mode" (singleConnection = false) which will create a new SSE connection for each subscribe. */
+    singleConnection: false,
+
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authToken ? `basic ${authToken}` : undefined,
+    },
+  });
+
+  return Observable.create((sink) =>
+    client.subscribe(
+      {
+        id: operation.id ?? undefined,
+        query: operation.text,
+        variables,
+      },
+      {
+        ...sink,
+        error: (err) => {
+          if (Array.isArray(err)) {
+            return sink.error(
+              new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
+            );
+          }
+
+          return sink.error(err, true);
+        },
+      },
+    ),
+  );
+};
+
 let wsClient;
 
 /**
  * With `graphql-ws`.
  * @see https://github.com/enisdenjo/graphql-ws
  */
-const subscribeFn = (operation, variables) => {
+const subscribeFnWithWS = (operation, variables) => {
   const wsEndpoint = Config.WS_ENDPOINT;
   const authToken = Config.AUTH_TOKEN;
 
-  const client = (wsClient ??= createClient({
+  const client = (wsClient ??= createClientWS({
     url: wsEndpoint,
     connectionParams: {
       Authorization: authToken ? `basic ${authToken}` : undefined,
@@ -263,6 +307,10 @@ const subscribeFn = (operation, variables) => {
     ),
   );
 };
+
+// DEMO: choose one of the implementations
+const subscribeFn = subscribeFnWithSSE;
+// const subscribeFn = subscribeFnWithWS;
 
 const createEnvironment = (initialRecords) => {
   const source = new RecordSource(initialRecords);

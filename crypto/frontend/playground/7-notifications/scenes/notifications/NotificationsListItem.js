@@ -114,6 +114,7 @@ export default memo(function NotificationsListItem({fragmentRef}) {
         href="/currencies/[symbol]"
         as={`/currencies/${asset.symbol}`}
         passHref
+        legacyBehavior
       >
         <ListItemButton component={Link} onClick={handleRead}>
           <ListItemAvatar>
