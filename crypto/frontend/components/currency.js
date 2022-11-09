@@ -6,7 +6,12 @@ import {CryptoIcon} from '@/icons';
 
 export const Currency = memo(function Currency({symbol, name, imageUrl}) {
   return (
-    <NextLink href="/currencies/[symbol]" as={`/currencies/${symbol}`} passHref>
+    <NextLink
+      href="/currencies/[symbol]"
+      as={`/currencies/${symbol}`}
+      passHref
+      legacyBehavior
+    >
       <Link underline="none">
         <Stack direction="row" alignItems="center" gap={2}>
           <CryptoIcon src={imageUrl} alt={name} size="medium" />

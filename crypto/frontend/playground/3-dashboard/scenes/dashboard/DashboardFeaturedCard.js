@@ -35,6 +35,7 @@ export default memo(function DashboardFeaturedCard({fragmentRef}) {
       href="/currencies/[symbol]"
       as={`/currencies/${asset.symbol}`}
       passHref
+      legacyBehavior
     >
       <Link underline="none">
         <Card variant="outlined">
