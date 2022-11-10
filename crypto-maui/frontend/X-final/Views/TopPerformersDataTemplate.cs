@@ -40,28 +40,28 @@ class TopPerformersDataTemplate : DataTemplate
 		{
 			new Image()
 				.Row(Row.Name).RowSpan(2).Column(Column.Icon)
-				.Bind(Image.SourceProperty, nameof(IGetAssestsQuery_Assets_Nodes.ImageUrl), BindingMode.OneWay),
+				.Bind(Image.SourceProperty, nameof(IGetAssestsQuery_Assets_Nodes.ImageUrl), BindingMode.OneTime),
 
 			new Label()
 				.Row(Row.Name).Column(Column.Text)
 				.TextStart().TextCenterVertical()
 				.Font(size: 13)
-				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Name), BindingMode.OneWay)
+				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Name), BindingMode.OneTime)
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor)),
 
 			new Label()
 				.Row(Row.Symbol).Column(Column.Text)
 				.TextStart().TextCenterVertical()
 				.Font(size: 14)
-				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), BindingMode.OneWay)
+				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), BindingMode.OneTime)
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)),
 
 			new Label()
 				.Row(Row.Name).RowSpan(2).Column(Column.PercentChange)
 				.TextEnd().TextCenterVertical()
 				.Font(size: 16)
-				.Bind(Label.TextProperty, nameof(ObservableCryptoModel.PercentChangeText), BindingMode.OneWay)
-				.Bind(Label.TextColorProperty, nameof(ObservableCryptoModel.PercentChangeTextColor), BindingMode.OneWay),
+				.Bind(Label.TextProperty, nameof(ObservableCryptoModel.PercentChangeText), BindingMode.OneTime)
+				.Bind(Label.TextColorProperty, nameof(ObservableCryptoModel.PercentChangeTextColor), BindingMode.OneTime),
 
 			new ImageButton()
 				.Row(Row.Name).RowSpan(2).Column(Column.Favorite)
