@@ -53,7 +53,8 @@ partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
 											: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)];
 }
 
-partial class ObservableCryptoPriceModel : ObservableObject, IGetAssestsQuery_Assets_Nodes_Price
+[INotifyPropertyChanged]
+partial class ObservableCryptoPriceModel : IGetAssestsQuery_Assets_Nodes_Price
 {
 	[ObservableProperty]
 	double _lastPrice, _change24Hour, _marketCap, _volume24Hour,
