@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a0b64e56c4ea90915edfd1f7e711395>>
+ * @generated SignedSource<<202924b4ce7ba05d6b44edd273cde2b2>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -66,54 +66,54 @@ export type StringOperationFilterInput = {|
 export type AssetPriceFilterInput = {|
   and?: ?$ReadOnlyArray<AssetPriceFilterInput>,
   asset?: ?AssetFilterInput,
-  assetId?: ?ComparableInt32OperationFilterInput,
-  change24Hour?: ?ComparableDoubleOperationFilterInput,
-  circulatingSupply?: ?ComparableDoubleOperationFilterInput,
+  assetId?: ?IntOperationFilterInput,
+  change24Hour?: ?FloatOperationFilterInput,
+  circulatingSupply?: ?FloatOperationFilterInput,
   currency?: ?StringOperationFilterInput,
-  high24Hour?: ?ComparableDoubleOperationFilterInput,
-  id?: ?ComparableInt32OperationFilterInput,
-  lastPrice?: ?ComparableDoubleOperationFilterInput,
-  low24Hour?: ?ComparableDoubleOperationFilterInput,
-  marketCap?: ?ComparableDoubleOperationFilterInput,
-  maxSupply?: ?ComparableDoubleOperationFilterInput,
-  modifiedAt?: ?ComparableNullableOfDateTimeOperationFilterInput,
-  open24Hour?: ?ComparableDoubleOperationFilterInput,
+  high24Hour?: ?FloatOperationFilterInput,
+  id?: ?IntOperationFilterInput,
+  lastPrice?: ?FloatOperationFilterInput,
+  low24Hour?: ?FloatOperationFilterInput,
+  marketCap?: ?FloatOperationFilterInput,
+  maxSupply?: ?FloatOperationFilterInput,
+  modifiedAt?: ?DateTimeOperationFilterInput,
+  open24Hour?: ?FloatOperationFilterInput,
   or?: ?$ReadOnlyArray<AssetPriceFilterInput>,
   symbol?: ?StringOperationFilterInput,
-  tradableMarketCapRank?: ?ComparableDoubleOperationFilterInput,
-  tradingActivity?: ?ComparableDoubleOperationFilterInput,
-  volume24Hour?: ?ComparableDoubleOperationFilterInput,
-  volumePercentChange24Hour?: ?ComparableDoubleOperationFilterInput,
+  tradableMarketCapRank?: ?FloatOperationFilterInput,
+  tradingActivity?: ?FloatOperationFilterInput,
+  volume24Hour?: ?FloatOperationFilterInput,
+  volumePercentChange24Hour?: ?FloatOperationFilterInput,
 |};
-export type ComparableInt32OperationFilterInput = {|
+export type IntOperationFilterInput = {|
   eq?: ?number,
   gt?: ?number,
   gte?: ?number,
-  in?: ?$ReadOnlyArray<number>,
+  in?: ?$ReadOnlyArray<?number>,
   lt?: ?number,
   lte?: ?number,
   neq?: ?number,
   ngt?: ?number,
   ngte?: ?number,
-  nin?: ?$ReadOnlyArray<number>,
+  nin?: ?$ReadOnlyArray<?number>,
   nlt?: ?number,
   nlte?: ?number,
 |};
-export type ComparableDoubleOperationFilterInput = {|
+export type FloatOperationFilterInput = {|
   eq?: ?number,
   gt?: ?number,
   gte?: ?number,
-  in?: ?$ReadOnlyArray<number>,
+  in?: ?$ReadOnlyArray<?number>,
   lt?: ?number,
   lte?: ?number,
   neq?: ?number,
   ngt?: ?number,
   ngte?: ?number,
-  nin?: ?$ReadOnlyArray<number>,
+  nin?: ?$ReadOnlyArray<?number>,
   nlt?: ?number,
   nlte?: ?number,
 |};
-export type ComparableNullableOfDateTimeOperationFilterInput = {|
+export type DateTimeOperationFilterInput = {|
   eq?: ?string,
   gt?: ?string,
   gte?: ?string,

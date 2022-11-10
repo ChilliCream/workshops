@@ -1,20 +1,10 @@
-#!/usr/bin/env node
-
 'use strict';
 
 const fs = require('fs/promises');
 const path = require('path');
 const yargs = require('yargs');
 
-const logger = {
-  error(...args) {
-    console.error('\x1b[31m%s\x1b[0m', ...args);
-  },
-  info(...args) {
-    console.info('\x1b[32m%s\x1b[0m', ...args);
-  },
-  log: console.log,
-};
+const {logger, checkCWD} = require('./utils');
 
 /**
  * Fulfills with an array of the entries in the directory excluding `.` and `..`.
@@ -47,14 +37,9 @@ const swaps = ['client', 'generated', 'pages', 'scenes', 'schema'];
 // do not link these resources
 const skiplist = ['.DS_Store', 'README.md'];
 
-const runner = async () => {
+const run = async () => {
   try {
-    const root = path.resolve(__dirname, '..');
-    const target = process.cwd();
-
-    if (root !== target) {
-      throw 'Invalid root directory.';
-    }
+    checkCWD();
 
     const sources = await getSources('playground');
     const argv = yargs
@@ -111,6 +96,7 @@ const runner = async () => {
       .hide('h').argv;
 
     const source = path.resolve(argv.source);
+    const target = process.cwd();
 
     for (const item of swaps) {
       const from = path.join(source, item);
@@ -139,4 +125,4 @@ const runner = async () => {
   }
 };
 
-runner();
+run();

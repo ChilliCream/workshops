@@ -1,0 +1,53 @@
+{
+    "_AssetPriceChange": {
+        "prefix": "_AssetPriceChange",
+        "body": [
+            "type AssetPriceChange {",
+            "    percentageChange: Float! @fromJson",
+            "}"
+        ],
+        "description": "_AssetPriceChange"
+    },
+    "_GetChange_2": {
+        "prefix": "_GetChange_2",
+        "body": [
+            "[GraphQLType(\"AssetPriceChange\")]",
+            "public async Task<JsonElement> GetChangeAsync(",
+            "    ChangeSpan span,",
+            "    [Parent] AssetPrice parent,",
+            "    AssetPriceChangeDataLoader assetPriceBySymbol,",
+            "    CancellationToken cancellationToken)",
+            "    => await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);"
+        ],
+        "description": "_GetChange_2"
+    },
+    "_AddGraphQL": {
+        "prefix": "_AddGraphQL",
+        "body": [
+            ".AddDocumentFromFile(\"./Schema.graphql\")"
+        ],
+        "description": "_AddGraphQL"
+    },
+    "_GetChange_1": {
+        "prefix": "_GetChange_1",
+        "body": [
+            "[GraphQLType(\"AssetPriceChange\")]",
+            "public async Task<JsonElement> GetChangeAsync(",
+            "    ChangeSpan span,",
+            "    [Parent] AssetPrice parent,",
+            "    [Service] IHttpClientFactory clientFactory,",
+            "    CancellationToken cancellationToken)",
+            "{",
+            "    using HttpClient client = clientFactory.CreateClient(Constants.PriceInfoService);",
+            "    using var message = new HttpRequestMessage(",
+            "        HttpMethod.Get,",
+            "        $\"api/asset/price/change?symbol={parent.Symbol}&span={span}\");",
+            "    var response = await client.SendAsync(message, cancellationToken);",
+            "    var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);",
+            "    var document = JsonDocument.Parse(content);",
+            "    return document.RootElement;",
+            "}"
+        ],
+        "description": "_GetChange_1"
+    }
+}

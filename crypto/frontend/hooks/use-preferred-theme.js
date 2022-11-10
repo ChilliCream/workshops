@@ -6,17 +6,9 @@ import {createTheme} from '@/styles';
 
 export const usePreferredTheme = (initial) => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [mode, setMode] = useState(initial);
-
-  useEffect(() => {
-    if (initial === undefined) {
-      const stored = Config.MODE ?? (prefersDarkMode ? 'dark' : 'light');
-
-      if (stored && mode !== stored) {
-        setMode(stored);
-      }
-    }
-  }, []);
+  const [mode, setMode] = useState(
+    () => initial ?? Config.MODE ?? (prefersDarkMode ? 'dark' : 'light'),
+  );
 
   useEffect(() => {
     syncWithStorage({MODE: mode});

@@ -47,6 +47,7 @@ export default memo(function DashboardTicker({fragmentRef}) {
     fragmentRef,
   );
   const assets = data.ticker?.nodes;
+  const symbols = assets?.map(({symbol}) => symbol) ?? [];
 
   useSubscription(
     useMemo(
@@ -58,9 +59,9 @@ export default memo(function DashboardTicker({fragmentRef}) {
             }
           }
         `,
-        variables: {symbols: assets?.map(({symbol}) => symbol) ?? []},
+        variables: {symbols},
       }),
-      [assets],
+      [String(symbols)],
     ),
   );
 
@@ -89,7 +90,36 @@ Behavior, it’ll:
 
 You’ll need to Configure your [Network layer](https://relay.dev/docs/guides/network-layer/) to handle subscriptions.
 
-Usually GraphQL subscriptions are communicated over [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API), here’s an example using [graphql-ws](https://github.com/enisdenjo/graphql-ws):
+Usually GraphQL subscriptions are communicated using [SSE](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) or [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
+
+Here’s an example using [graphql-sse](https://github.com/enisdenjo/graphql-sse):
+
+```js
+import {Network, Observable} from 'relay-runtime';
+import {createClient} from 'graphql-sse';
+
+// ...
+
+const sseClient = createClient({
+  url: 'http://localhost:5000/graphql',
+});
+
+const subscribeFn = (operation, variables) =>
+  Observable.create((sink) =>
+    sseClient.subscribe(
+      {
+        operationName: operation.name,
+        query: operation.text,
+        variables,
+      },
+      sink,
+    ),
+  );
+
+const network = Network.create(fetchFn, subscribeFn);
+```
+
+Here’s an example using [graphql-ws](https://github.com/enisdenjo/graphql-ws):
 
 ```js
 import {Network, Observable} from 'relay-runtime';
@@ -98,7 +128,7 @@ import {createClient} from 'graphql-ws';
 // ...
 
 const wsClient = createClient({
-  url: 'ws://localhost:5000',
+  url: 'ws://localhost:5000/graphql',
 });
 
 const subscribeFn = (operation, variables) =>

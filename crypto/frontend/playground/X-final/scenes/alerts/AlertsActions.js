@@ -25,9 +25,10 @@ import {
   LoadMoreButton,
   NoData,
   PercentageSlider,
+  Price,
 } from '@/components';
 import {CancelIcon} from '@/icons';
-import {formatCurrency, inequality, round} from '@/utils';
+import {inequality, round} from '@/utils';
 
 const useCreateAlert = () => {
   const [commit, isInFlight] = useMutation(graphql`
@@ -272,8 +273,12 @@ export const DeleteAlert = ({fragmentRef}) => {
             <TableCell align="center">
               {inequality(node.percentageChange)}
             </TableCell>
-            <TableCell align="right" sx={{width: 'auto', fontWeight: 600}}>
-              {formatCurrency(node.targetPrice, {currency: node.currency})}
+            <TableCell align="right" sx={{width: 'auto'}}>
+              <Price
+                value={node.targetPrice}
+                options={{currency: node.currency}}
+                size="small"
+              />
             </TableCell>
             <TableCell align="right" sx={{width: 46, paddingLeft: 0}}>
               <IconButton

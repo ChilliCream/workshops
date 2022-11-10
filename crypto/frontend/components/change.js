@@ -1,20 +1,25 @@
-import styled from '@emotion/styled';
+import {Typography} from '@mui/material';
 import {memo} from 'react';
 
-import {direction, formatPercent} from '@/utils';
+import {direction, formatPercent, toPascalCase} from '@/utils';
 
-const Root = styled.div(
-  ({theme, trend}) => `
-  font-size: 1.125rem;
-  font-weight: 400;
-  color: ${theme.palette.trend[trend]};
-`,
-);
-
-export const Change = memo(function Change({value, options, locales}) {
+export const Change = memo(function Change({
+  value,
+  options,
+  locales,
+  size = 'medium',
+}) {
   return (
-    <Root trend={direction(value)}>
+    <Typography
+      variant="caption"
+      sx={(theme) => ({
+        color: theme.palette.trend[direction(value)],
+        fontSize: theme.typography[`fontSize${toPascalCase(size)}`],
+        fontWeight: theme.typography.fontWeightMedium,
+        lineHeight: 1,
+      })}
+    >
       {formatPercent(value, options, locales)}
-    </Root>
+    </Typography>
   );
 });

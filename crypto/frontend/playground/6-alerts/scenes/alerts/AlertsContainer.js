@@ -17,7 +17,10 @@ export default memo(function AlertsContainer({symbol, cacheBuster}) {
       }
     `,
     {symbol},
-    {fetchKey: cacheBuster},
+    {
+      fetchKey: cacheBuster,
+      fetchPolicy: 'store-and-network',
+    },
   );
   const hasAlerts = !!data.assetBySymbol?.hasAlerts;
 
