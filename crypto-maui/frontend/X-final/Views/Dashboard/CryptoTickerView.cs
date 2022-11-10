@@ -1,7 +1,4 @@
-﻿using System;
-using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Converters;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
@@ -19,8 +16,8 @@ class CryptoTickerView : CollectionView
 		ItemTemplate = new StockTickerDataTemplate();
 		HorizontalScrollBarVisibility = ScrollBarVisibility.Never;
 
-		this.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-			.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self));
+		this.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand), BindingMode.OneTime)
+			.Bind(CollectionView.SelectionChangedCommandParameterProperty, mode: BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.Self));
 	}
 
 	class StockTickerDataTemplate : DataTemplate
@@ -55,19 +52,19 @@ class CryptoTickerView : CollectionView
 				new Label()
 					.Row(Row.Symbol).Column(Column.Content)
 					.Font(size: 12)
-					.Bind<Label, string, string?>(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), convert: static symbol => symbol?.ToUpper())
-					.Bind<Label, string, Color?>(Label.TextColorProperty, nameof(IGetAssestsQuery_Assets_Nodes.Color), convert: static colorHex => Color.FromArgb(colorHex)),
+					.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), BindingMode.OneTime, convert: static (string? symbol) => symbol?.ToUpper())
+					.Bind(Label.TextColorProperty, nameof(IGetAssestsQuery_Assets_Nodes.Color), BindingMode.OneTime, convert: static (string? colorHex) => Color.FromArgb(colorHex)),
 
 				new Label()
 					.Row(Row.Price).Column(Column.Content)
 					.Font(size: 16)
-					.Bind(Label.TextProperty, $"{nameof(IGetAssestsQuery_Assets_Nodes.Price)}.{nameof(IGetAssestsQuery_Assets_Nodes.Price.LastPrice)}"),
+					.Bind(Label.TextProperty, $"{nameof(IGetAssestsQuery_Assets_Nodes.Price)}.{nameof(IGetAssestsQuery_Assets_Nodes.Price.LastPrice)}", BindingMode.OneTime),
 
 				new Label()
 					.Row(Row.PercentChange).Column(Column.Content)
 					.Font(size: 12)
-					.Bind(Label.TextProperty, $"{nameof(ObservableCryptoModel.PercentChangeText)}")
-					.Bind(Label.TextColorProperty,nameof(ObservableCryptoModel.PercentChangeTextColor))
+					.Bind(Label.TextProperty, $"{nameof(ObservableCryptoModel.PercentChangeText)}", BindingMode.OneTime)
+					.Bind(Label.TextColorProperty,nameof(ObservableCryptoModel.PercentChangeTextColor), BindingMode.OneTime)
 			}
 		};
 
