@@ -21,7 +21,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 		{
 			RowDefinitions = Rows.Define(
 				(Row.Title, AssetChartTitleRowView.OptimalHeight),
-				(Row.Price, 48),
+				(Row.Price, 68),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 252),
 				(Row.ScrollingContent, Star)),

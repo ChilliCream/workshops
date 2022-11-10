@@ -51,7 +51,7 @@ class AssetChartCarouselViewDataTemplate : DataTemplate
 					new Label()
 						.Row(Row.Text).Column(Column.PercentChange)
 						.TextStart().TextCenterVertical().Font(size: 16)
-						.Bind<Label, double, string>(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), BindingMode.OneTime, convert: static (double change) => double.IsNegative(change)
+						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), BindingMode.OneTime, convert: static (double change) => double.IsNegative(change)
 																																										? $"-{change:P2}"
 																																										: $"+{change:P2}")
 						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), BindingMode.OneTime, convert: static (double change) => double.IsNegative(change)
