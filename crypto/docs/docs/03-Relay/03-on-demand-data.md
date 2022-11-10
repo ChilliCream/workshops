@@ -77,7 +77,7 @@ Fragments cannot be fetched by themselves; instead, they must ultimately be incl
 export default memo(function ScreenerList({fragmentRef}) {
   const data = useFragment(
     graphql`
-      ScreenerListFragment_query on Query {
+      fragment ScreenerListFragment_query on Query {
         assets {
           nodes {
             id

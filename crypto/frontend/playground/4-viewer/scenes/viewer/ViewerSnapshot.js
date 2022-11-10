@@ -1,4 +1,4 @@
-import {Stack, useTheme} from '@mui/material';
+import {Stack} from '@mui/material';
 import {memo, useCallback, useMemo, useState, useTransition} from 'react';
 import {
   graphql,
@@ -7,25 +7,7 @@ import {
   useSubscription,
 } from 'react-relay';
 
-import {Change, Chart, Price, SpanSelector} from '@/components';
-import {findClosestAccessibleColor} from '@/utils';
-
-const SmartChart = memo(function SmartChart({color, currency, span, data}) {
-  const theme = useTheme();
-
-  return (
-    <Chart
-      color={findClosestAccessibleColor(
-        color,
-        theme.palette.background.default,
-        3,
-      )}
-      currency={currency}
-      span={span}
-      data={data.map((item) => [item.price, item.epoch * 1000])}
-    />
-  );
-});
+import {BigChart, Change, SlotRollingPrice, SpanSelector} from '@/components';
 
 export default memo(function ViewerSnapshot({fragmentRef}) {
   const asset = useFragment(
@@ -97,7 +79,7 @@ export default memo(function ViewerSnapshot({fragmentRef}) {
   return (
     <Stack justifyContent="center" alignItems="center" gap={2}>
       <Stack direction="row" gap={2}>
-        <Price
+        <SlotRollingPrice
           key={asset.symbol}
           value={price.lastPrice}
           options={{currency: price.currency}}
@@ -105,7 +87,7 @@ export default memo(function ViewerSnapshot({fragmentRef}) {
         <Change value={price.change.percentageChange} />
       </Stack>
       <SpanSelector span={span} busy={busy} onChange={handleSpanChange} />
-      <SmartChart
+      <BigChart
         color={asset.color}
         currency={price.currency}
         span={span}

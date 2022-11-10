@@ -201,10 +201,10 @@ Relay’s docs mention `babel-plugin-relay` which is only needed for testing, ot
 We’ll need a copy of the schema as a `.graphql` file.
 
 - You could copy it over into `/schema/server.graphql`.
-- Or you can use the preintalled [`graphql-codegen`](https://www.graphql-cli.com/codegen) that together with its configuration file `codegen.yml` will generate your GraphQL schema.
+- Or you can use the script `get-schema` that will download the file from the server using the environment variable `NEXT_PUBLIC_HTTP_ENDPOINT` that you can conveniently store in the same **dotenv** files (e.g., `.env`, `.env.development`) used by Next.js.
 
   ```sh
-  yarn graphql-codegen --require dotenv/config
+  yarn get-schema
   ```
 
 We would need to tweak some settings into `relay.config.js`, no worry, it was added to our project ahead of time and included in the Next.js config as well.
@@ -222,7 +222,7 @@ But to make it easier we’ve added some scripts in `package.json`:
 ```json title="package.json"
 {
   "scripts": {
-    "codegen": "graphql-codegen --require dotenv/config",
+    "get-schema": "node scripts/get-graphql-schema.js",
     "relay": "relay-compiler"
   }
 }
@@ -233,7 +233,7 @@ But to make it easier we’ve added some scripts in `package.json`:
 Update the schema before starting new features:
 
 ```sh
-yarn codegen
+yarn get-schema
 ```
 
 Generate new compiled artifacts after making edits to your application files:

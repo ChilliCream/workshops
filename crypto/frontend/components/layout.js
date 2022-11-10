@@ -208,7 +208,7 @@ const Full = ({children}) => {
               aria-label={title}
               size="small"
               onClick={() => {
-                router.push(`/currencies/${symbol}`);
+                router.push('/currencies/[symbol]', `/currencies/${symbol}`);
               }}
             >
               <Icon fontSize="inherit" />
