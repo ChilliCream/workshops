@@ -27,7 +27,7 @@ class ScreenerPage : BasePage<ScreenerViewModel>
 #endif
 					.Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.FilteredAssetList))
 					.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-					.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self))
+					.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSource.Self)
 			}
 		};
 	}
