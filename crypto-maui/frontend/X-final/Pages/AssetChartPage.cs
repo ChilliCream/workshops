@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-using CommunityToolkit.Maui.Markup;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
@@ -16,6 +14,8 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 		const int statsCategoryTitleRowHeight = 52;
 
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
+
+		Padding = new Thickness(12, 12, 12, 0);
 
 		Content = new Grid
 		{
