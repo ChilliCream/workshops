@@ -1,5 +1,4 @@
-﻿using System;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
@@ -41,28 +40,28 @@ class TopPerformersDataTemplate : DataTemplate
 		{
 			new Image()
 				.Row(Row.Name).RowSpan(2).Column(Column.Icon)
-				.Bind(Image.SourceProperty, nameof(IGetAssestsQuery_Assets_Nodes.ImageUrl)),
+				.Bind(Image.SourceProperty, nameof(IGetAssestsQuery_Assets_Nodes.ImageUrl), BindingMode.OneWay),
 
 			new Label()
 				.Row(Row.Name).Column(Column.Text)
 				.TextStart().TextCenterVertical()
 				.Font(size: 13)
-				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Name))
+				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Name), BindingMode.OneWay)
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.SecondaryTextColor)),
 
 			new Label()
 				.Row(Row.Symbol).Column(Column.Text)
 				.TextStart().TextCenterVertical()
 				.Font(size: 14)
-				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol))
+				.Bind(Label.TextProperty, nameof(IGetAssestsQuery_Assets_Nodes.Symbol), BindingMode.OneWay)
 				.DynamicResource(Label.TextColorProperty, nameof(BaseTheme.PrimaryTextColor)),
 
 			new Label()
 				.Row(Row.Name).RowSpan(2).Column(Column.PercentChange)
 				.TextEnd().TextCenterVertical()
 				.Font(size: 16)
-				.Bind(Label.TextProperty, nameof(ObservableCryptoModel.PercentChangeText))
-				.Bind(Label.TextColorProperty, nameof(ObservableCryptoModel.PercentChangeTextColor)),
+				.Bind(Label.TextProperty, nameof(ObservableCryptoModel.PercentChangeText), BindingMode.OneWay)
+				.Bind(Label.TextColorProperty, nameof(ObservableCryptoModel.PercentChangeTextColor), BindingMode.OneWay),
 
 			new ImageButton()
 				.Row(Row.Name).RowSpan(2).Column(Column.Favorite)

@@ -47,9 +47,9 @@ class TopPerformersView : Grid
 		Children.Add(new CollectionView { SelectionMode = SelectionMode.Single }
 						.Row(Row.Collection).ColumnSpan(All<Column>())
 						.ItemTemplate(new TopPerformersDataTemplate())
-						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath)
-						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
+						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath, BindingMode.OneTime)
+						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand), BindingMode.OneTime)
+						.Bind(CollectionView.SelectionChangedCommandParameterProperty, mode: BindingMode.OneTime, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
 	}
 
 	enum Row { Title, Collection }
