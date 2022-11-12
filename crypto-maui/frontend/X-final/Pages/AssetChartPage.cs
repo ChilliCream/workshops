@@ -7,7 +7,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 {
 	CancellationTokenSource? _updatePriceHistoryCommandTCS;
 
-	public AssetChartPage(AssetChartViewModel assetChartViewModel, IDispatcher dispatcher) : base(assetChartViewModel, dispatcher, "Asset", false)
+	public AssetChartPage(AssetChartViewModel assetChartViewModel) : base(assetChartViewModel, "Asset", false)
 	{
 		const int dataRowHeight = 28;
 		const int separatorRowHeight = 12;
