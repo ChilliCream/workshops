@@ -15,3 +15,8 @@ Example for this kind of setup are Facebook or Twitter.
 Automatic persisted queries stay in the client code, and the GraphQL client will probe the server for persisted queries and dynamically upload them when they do not exist on the server.
 
 Automatic persisted queries do not come with the security benefits of the standard persisted queries but allow for reducing the request size for the standard use case.
+
+## Further Reading
+
+- [Why you should consider using persisted queries.](https://www.youtube.com/watch?v=ZZ5PF3_P_r4)
+- [Relay Documentation](https://relay.dev/docs/guides/persisted-queries)
