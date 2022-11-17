@@ -70,7 +70,7 @@ partial class DashboardViewModel : BaseViewModel
 		}
 		catch
 		{
-			observableHistoryModel.PriceHistory.Clear();
+			Dispatcher.Dispatch(observableHistoryModel.PriceHistory.Clear);
 		}
 	}
 
