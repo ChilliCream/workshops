@@ -33,7 +33,7 @@ class SettingsPage : BasePage<SettingsViewModel>
 			{
 				new Image()
 					.Row(Row.GraphQLEndpoint).Column(Column.Icon)
-					.Source("links_icon"),
+					.Source("links_icon.png"),
 
 				new TitleLabel("Endpoint")
 					.Row(Row.GraphQLEndpoint).Column(Column.Title),
@@ -44,7 +44,7 @@ class SettingsPage : BasePage<SettingsViewModel>
 
 				new Image()
 					.Row(Row.Username).Column(Column.Icon)
-					.Source("credentials_icon"),
+					.Source("credentials_icon.png"),
 
 				new TitleLabel("Username")
 					.Row(Row.Username).Column(Column.Title),

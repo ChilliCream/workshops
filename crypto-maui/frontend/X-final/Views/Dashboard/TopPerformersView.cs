@@ -41,7 +41,7 @@ class TopPerformersView : Grid
 
 		Children.Add(new Image()
 						.Row(Row.Title).Column(Column.Toggle)
-						.Source("toggle_icon"));
+						.Source("toggle_icon.png"));
 
 		Children.Add(new CollectionView { SelectionMode = SelectionMode.Single }
 						.Row(Row.Collection).ColumnSpan(All<Column>())
