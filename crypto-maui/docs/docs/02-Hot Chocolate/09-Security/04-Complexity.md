@@ -162,7 +162,7 @@ If a field has an even higher cost, like our fields that call a REST endpoint, w
 
 :::
 
-Let's say for our service we only want to allow for a maximum cost of 1000. Since we think that this is based on our Hardware and expected parallel user requests, a prudent choice to start with, the user still can fit in the above request by specifying to fetch fewer items at once. 
+Let's say for our service we only want to allow for a maximum cost of 1000. Since we think that this is based on our Hardware and expected parallel user requests, a prudent choice to start with, the user still can fit in the above request by specifying to fetch fewer items at once.
 
 ```graphql
 query GetChartData {

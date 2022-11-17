@@ -65,7 +65,7 @@ The `GetAssets` method within the `Query` class represents a resolver for the Gr
 
 ```graphql
 type Query {
-    assets : [Asset!]!
+  assets: [Asset!]!
 }
 ```
 

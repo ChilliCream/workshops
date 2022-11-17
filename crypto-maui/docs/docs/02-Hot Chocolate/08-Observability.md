@@ -15,9 +15,9 @@ We identified the two GraphQL requests that are issued by the components.
 **GetTopGainerPrices**
 
 ```graphql
-query GetTopGainerPrices{
-  assets(order: { price: { change24Hour: DESC} }) {
-    nodes{
+query GetTopGainerPrices {
+  assets(order: {price: {change24Hour: DESC}}) {
+    nodes {
       symbol
       name
       description
@@ -34,9 +34,9 @@ query GetTopGainerPrices{
 **GetChartData**
 
 ```graphql
-query GetChartData{
-  assets(order: { price: { change24Hour: DESC} }) {
-    nodes{
+query GetChartData {
+  assets(order: {price: {change24Hour: DESC}}) {
+    nodes {
       symbol
       name
       description
@@ -156,9 +156,9 @@ builder.Services
     .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
 ```
 
-We specified two options for our instrumentation events. 
+We specified two options for our instrumentation events.
 
-`RenameRootActivity` will rename the root instrumentation span to include the GraphQL operation name. In our case, the root instrumentation span would be the ASP.NET Core HTTP event, which is an HTTP Post to the `/graphql` route in almost all cases. By rewriting the name of the root span, we make it more useful for our observability back-end. 
+`RenameRootActivity` will rename the root instrumentation span to include the GraphQL operation name. In our case, the root instrumentation span would be the ASP.NET Core HTTP event, which is an HTTP Post to the `/graphql` route in almost all cases. By rewriting the name of the root span, we make it more useful for our observability back-end.
 
 `IncludeDocument` will report the full GraphQL query as metadata of the GraphQL instrumentation events.
 
@@ -303,6 +303,3 @@ Password: **elastic**
 :::
 
 Now, that our ..
-
-
-
