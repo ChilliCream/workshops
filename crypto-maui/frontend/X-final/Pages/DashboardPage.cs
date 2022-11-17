@@ -5,7 +5,11 @@ namespace MauiCrypto;
 
 class DashboardPage : BasePage<DashboardViewModel>
 {
+#if WINDOWS
+	const int _chartCarouselHeight = 280;
+#else
 	const int _chartCarouselHeight = 240;
+#endif
 	readonly CryptoTickerView _stockTickerView;
 
 	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel)
