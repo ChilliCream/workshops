@@ -11,7 +11,7 @@
 		<!-- Display name -->
 		<ApplicationTitle>MauiCrypto</ApplicationTitle>
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.mauicrypto</ApplicationId>
+		<ApplicationId>com.minnick.mauicrypto</ApplicationId>
 		<ApplicationIdGuid>a3a427b5-5cc4-4e7f-9ce6-3ded66a5cd2b</ApplicationIdGuid>
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
