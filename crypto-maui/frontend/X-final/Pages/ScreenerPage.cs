@@ -4,7 +4,7 @@ namespace MauiCrypto;
 
 class ScreenerPage : BasePage<ScreenerViewModel>
 {
-	public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+	public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
 	{
 		Padding = 0;
 
@@ -27,7 +27,7 @@ class ScreenerPage : BasePage<ScreenerViewModel>
 #endif
 					.Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.FilteredAssetList))
 					.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-					.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self))
+					.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSource.Self)
 			}
 		};
 	}

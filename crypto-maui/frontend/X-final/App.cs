@@ -7,6 +7,8 @@ class App : Application
 	public App(AppShell shell, ThemeService themeService)
 	{
 		_themeService = themeService;
+		Resources = new LightTheme();
+
 		MainPage = shell;
 	}
 

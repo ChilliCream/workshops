@@ -1,7 +1,5 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using System.Text;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
@@ -43,6 +41,7 @@ public static partial class MauiProgram
 		builder.Services.AddSingleton<UserService>(userService);
 		builder.Services.AddSingleton<IBrowser>(Browser.Default);
 		builder.Services.AddSingleton<IPreferences>(Preferences.Default);
+		builder.Services.AddSingleton<IDeviceInfo>(DeviceInfo.Current);
 		builder.Services.AddSingleton<IDeviceDisplay>(DeviceDisplay.Current);
 		builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
 

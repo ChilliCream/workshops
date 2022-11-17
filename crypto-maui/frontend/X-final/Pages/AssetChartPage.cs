@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-using CommunityToolkit.Maui.Markup;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
@@ -9,7 +7,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 {
 	CancellationTokenSource? _updatePriceHistoryCommandTCS;
 
-	public AssetChartPage(AssetChartViewModel assetChartViewModel, IDispatcher dispatcher) : base(assetChartViewModel, dispatcher, "Asset", false)
+	public AssetChartPage(AssetChartViewModel assetChartViewModel) : base(assetChartViewModel, "Asset", false)
 	{
 		const int dataRowHeight = 28;
 		const int separatorRowHeight = 12;
@@ -17,11 +15,13 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 
 		Shell.SetPresentationMode(this, PresentationMode.ModalAnimated);
 
+		Padding = new Thickness(12, 12, 12, 0);
+
 		Content = new Grid
 		{
 			RowDefinitions = Rows.Define(
 				(Row.Title, AssetChartTitleRowView.OptimalHeight),
-				(Row.Price, 48),
+				(Row.Price, 68),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 252),
 				(Row.ScrollingContent, Star)),
