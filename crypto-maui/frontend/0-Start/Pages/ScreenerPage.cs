@@ -4,7 +4,7 @@ namespace MauiCrypto;
 
 class ScreenerPage : BasePage<ScreenerViewModel>
 {
-	public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+	public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
 	{
 
 	}

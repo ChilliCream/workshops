@@ -7,7 +7,7 @@ namespace MauiCrypto;
 
 class SettingsPage : BasePage<SettingsViewModel>
 {
-	public SettingsPage(SettingsViewModel settingsViewModel, IDispatcher dispatcher) : base(settingsViewModel, dispatcher, "Settings")
+	public SettingsPage(SettingsViewModel settingsViewModel) : base(settingsViewModel, "Settings")
 	{
 		const int separatorRowHeight = 1;
 		const int settingsRowHeight = 38;
@@ -33,7 +33,7 @@ class SettingsPage : BasePage<SettingsViewModel>
 			{
 				new Image()
 					.Row(Row.GraphQLEndpoint).Column(Column.Icon)
-					.Source("links_icon"),
+					.Source("links_icon.png"),
 
 				new TitleLabel("Endpoint")
 					.Row(Row.GraphQLEndpoint).Column(Column.Title),
@@ -44,7 +44,7 @@ class SettingsPage : BasePage<SettingsViewModel>
 
 				new Image()
 					.Row(Row.Username).Column(Column.Icon)
-					.Source("credentials_icon"),
+					.Source("credentials_icon.png"),
 
 				new TitleLabel("Username")
 					.Row(Row.Username).Column(Column.Title),

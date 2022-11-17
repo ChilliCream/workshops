@@ -9,6 +9,11 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 
 	public AssetChartPage(AssetChartViewModel assetChartViewModel) : base(assetChartViewModel, "Asset", false)
 	{
+#if WINDOWS
+		const int priceHeight = 80;
+#else
+		const int priceHeight = 68;
+#endif
 		const int dataRowHeight = 28;
 		const int separatorRowHeight = 12;
 		const int statsCategoryTitleRowHeight = 52;
@@ -21,7 +26,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 		{
 			RowDefinitions = Rows.Define(
 				(Row.Title, AssetChartTitleRowView.OptimalHeight),
-				(Row.Price, 68),
+				(Row.Price, priceHeight),
 				(Row.TimeSpan, 48),
 				(Row.Chart, 252),
 				(Row.ScrollingContent, Star)),
@@ -158,7 +163,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 								Children =
 								{
 									new Image()
-										.Source("whitepaper_icon")
+										.Source("whitepaper_icon.png")
 										.CenterVertical()
 										.Size(24),
 
@@ -179,7 +184,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 								Children =
 								{
 									new Image()
-										.Source("website_icon")
+										.Source("website_icon.png")
 										.CenterVertical()
 										.Size(24),
 

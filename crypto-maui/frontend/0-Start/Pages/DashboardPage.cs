@@ -8,8 +8,8 @@ class DashboardPage : BasePage<DashboardViewModel>
 	const int _chartCarouselHeight = 240;
 	readonly CryptoTickerView _stockTickerView;
 
-	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel, IDispatcher dispatcher)
-		: base(dashboardViewModel, dispatcher, "Dashboard", false)
+	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel)
+		: base(dashboardViewModel, "Dashboard", false)
 	{
 		Padding = 0;
 
@@ -55,11 +55,11 @@ class DashboardPage : BasePage<DashboardViewModel>
 						.FillHorizontal()
 						.Row(Row.ChartCarouselSeparator),
 
-					new TopPerformersView("top_gainers_icon", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
+					new TopPerformersView("top_gainers_icon.png", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
 						.Margin(12, 0)
 						.Row(Row.TopGainers),
 
-					new TopPerformersView("top_losers_icon", "Top Losers", nameof(DashboardViewModel.TopLosersList))
+					new TopPerformersView("top_losers_icon.png", "Top Losers", nameof(DashboardViewModel.TopLosersList))
 						.Margin(12, 0)
 						.Row(Row.TopLosers),
 				}

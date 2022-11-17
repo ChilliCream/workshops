@@ -7,11 +7,8 @@ namespace MauiCrypto;
 
 abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
 {
-	readonly IDispatcher _dispatcher;
-
-	protected BasePage(in TViewModel viewModel, IDispatcher dispatcher, in string? title = null, in bool shouldUseSafeArea = true) : base(viewModel, title)
+	protected BasePage(in TViewModel viewModel, in string? title = null, in bool shouldUseSafeArea = true) : base(viewModel, title)
 	{
-		_dispatcher = dispatcher;
 		BaseViewModel.HttpClientError += HandleHttpClientError;
 
 		On<iOS>().SetUseSafeArea(shouldUseSafeArea);
@@ -21,7 +18,7 @@ abstract class BasePage<TViewModel> : BasePage where TViewModel : BaseViewModel
 	public new TViewModel BindingContext => (TViewModel)base.BindingContext;
 
 	async void HandleHttpClientError(object? sender, string e) =>
-		await _dispatcher.DispatchAsync(() => DisplayAlert("GraphQL Connection Failed", e, "OK"));
+		await Dispatcher.DispatchAsync(() => DisplayAlert("GraphQL Connection Failed", e, "OK"));
 }
 
 abstract partial class BasePage : ContentPage
