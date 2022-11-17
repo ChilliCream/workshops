@@ -49,7 +49,7 @@ class TopPerformersView : Grid
 						.ItemTemplate(new TopPerformersDataTemplate())
 						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath)
 						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
+						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSourceMode.Self));
 	}
 
 	enum Row { Title, Collection }
