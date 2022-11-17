@@ -1,9 +1,8 @@
-﻿using System;
-namespace MauiCrypto;
+﻿namespace MauiCrypto;
 
 class WatchlistPage : BasePage<WatchlistViewModel>
 {
-	public WatchlistPage(WatchlistViewModel watchlistViewModel, IDispatcher dispatcher) : base(watchlistViewModel, dispatcher)
+	public WatchlistPage(WatchlistViewModel watchlistViewModel) : base(watchlistViewModel)
 	{
 	}
 }

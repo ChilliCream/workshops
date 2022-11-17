@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Markup;
-using Microsoft.Maui;
 using Microsoft.Maui.Controls.Shapes;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
@@ -41,21 +40,21 @@ class AssetChartCarouselViewDataTemplate : DataTemplate
 					new Label()
 						.Row(Row.Text).Column(Column.Symbol)
 						.TextStart().TextCenterVertical().Font(bold: true, size: 16)
-						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.Symbol))
-						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.Color)),
+						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.Symbol), BindingMode.OneTime)
+						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.Color), BindingMode.OneTime),
 
 					new Label()
 						.Row(Row.Text).Column(Column.Price)
 						.TextCenter().Font(size: 16)
-						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.LatestPrice), convert: static (double price) => $"{price:C2}"),
+						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.LatestPrice), BindingMode.OneTime, convert: static (double price) => $"{price:C2}"),
 
 					new Label()
 						.Row(Row.Text).Column(Column.PercentChange)
 						.TextStart().TextCenterVertical().Font(size: 16)
-						.Bind<Label, double, string>(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), convert: static (double change) => double.IsNegative(change)
+						.Bind(Label.TextProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), BindingMode.OneTime, convert: static (double change) => double.IsNegative(change)
 																																										? $"-{change:P2}"
 																																										: $"+{change:P2}")
-						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), convert: static (double change) => double.IsNegative(change)
+						.Bind(Label.TextColorProperty, nameof(ObservableAssetPriceHistoryModel.PercentChange), BindingMode.OneTime, convert: static (double change) => double.IsNegative(change)
 																																					? (Color?)Application.Current?.Resources[nameof(BaseTheme.NegativeStockColor)]
 																																					: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)]),
 

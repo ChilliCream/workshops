@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Maui.Markup;
-using Microsoft.Maui.Controls.Shapes;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
@@ -49,7 +48,7 @@ class TopPerformersView : Grid
 						.ItemTemplate(new TopPerformersDataTemplate())
 						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath)
 						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
+						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSource.Self));
 	}
 
 	enum Row { Title, Collection }

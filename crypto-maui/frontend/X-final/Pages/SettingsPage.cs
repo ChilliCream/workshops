@@ -1,13 +1,11 @@
-﻿using System;
-using System.Data;
-using CommunityToolkit.Maui.Markup;
+﻿using CommunityToolkit.Maui.Markup;
 using static CommunityToolkit.Maui.Markup.GridRowsColumns;
 
 namespace MauiCrypto;
 
 class SettingsPage : BasePage<SettingsViewModel>
 {
-	public SettingsPage(SettingsViewModel settingsViewModel, IDispatcher dispatcher) : base(settingsViewModel, dispatcher, "Settings")
+	public SettingsPage(SettingsViewModel settingsViewModel) : base(settingsViewModel, "Settings")
 	{
 		const int separatorRowHeight = 1;
 		const int settingsRowHeight = 38;
