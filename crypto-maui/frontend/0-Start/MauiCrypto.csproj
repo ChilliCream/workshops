@@ -38,47 +38,19 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.iOS')) != true AND $(TargetFramework.EndsWith('-ios')) != true AND $(TargetFramework.EndsWith('-maccatalyst')) != true ">
-		<Compile Remove="**\**\*.ios.cs" />
-		<None Include="**\**\*.ios.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\ios\**\*.cs" />
-		<None Include="**\ios\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+		<ItemGroup Condition="!$(TargetFramework.EndsWith('-android'))">
+		<Compile Remove="**/*.Android.cs" />
+		<Compile Remove="**/Android/**/*.cs" />
 	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true ">
-		<Compile Remove="**\*.macos.cs" />
-		<None Include="**\*.macos.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\macos\**\*.cs" />
-		<None Include="**\macos\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+
+	<ItemGroup Condition="!$(TargetFramework.EndsWith('-ios')) AND !$(TargetFramework.EndsWith('-maccatalyst'))">
+		<Compile Remove="**/*.macios.cs" />
+		<Compile Remove="**/macios/**/*.cs" />
 	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.StartsWith('Xamarin.Mac')) != true AND $(TargetFramework.StartsWith('Xamarin.iOS')) != true AND $(TargetFramework.EndsWith('-ios')) != true AND $(TargetFramework.EndsWith('-maccatalyst')) != true">
-		<Compile Remove="**\*.macios.cs" />
-		<None Include="**\*.macios.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\macios\**\*.cs" />
-		<None Include="**\macios\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.StartsWith('MonoAndroid')) != true AND $(TargetFramework.EndsWith('-android')) != true ">
-		<Compile Remove="**\**\*.android.cs" />
-		<None Include="**\**\*.android.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\android\**\*.cs" />
-		<None Include="**\android\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.Contains('-windows')) != true ">
-		<Compile Remove="**\*.windows.cs" />
-		<None Include="**\*.windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\windows\**\*.cs" />
-		<None Include="**\windows\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-	<ItemGroup Condition="$(TargetFramework.Contains('-tizen')) != true ">
-		<Compile Remove="**\*.tizen.cs" />
-		<None Include="**\*.tizen.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\tizen\**\*.cs" />
-		<None Include="**\tizen\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-	</ItemGroup>
-	<ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)"> <!-- e.g net6.0 or net7.0 -->
-		<Compile Remove="**\*.net.cs" />
-		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-		<Compile Remove="**\net\**\*.cs" />
-		<None Include="**\net\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+
+	<ItemGroup Condition="!$(TargetFramework.Contains('-windows'))">
+		<Compile Remove="**/*.Windows.cs" />
+		<Compile Remove="**/Windows/**/*.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -97,12 +69,6 @@
 		<GraphQL Remove="schema.graphql" />
 		<GraphQL Remove="schema.extensions.graphql" />
 		<GraphQLConfig Remove=".graphqlrc.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Properties\launchSettings.json">
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>
