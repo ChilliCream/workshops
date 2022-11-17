@@ -27,9 +27,9 @@ When using the Visual Studio Installer, be sure to check the box for .NET MAUI
 Install [Visual Studio 2022 for Mac Preview](https://visualstudio.microsoft.com/vs/)
 
 :::caution
-Visual Studio for Mac 2022 Preview v17.4 (or higher) is required
+Visual Studio for Mac 2022 Preview v17.5 (or higher) is required
 
-As of today (26 September 2022), only the **Preview** version of Visual Studio for Mac currently supports .NET MAUI
+As of today (16 November 2022), only the **Preview** version of Visual Studio for Mac currently supports .NET MAUI
 :::
 
 ## 2. Verify Installation
@@ -42,9 +42,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
 
     ![Windows Command Prompt](../images/windows_command_prompt.png)
 
-2. In the Windows  Terminal, verify the `dotnet --info` command confirms `Version v6.0.401` (or higher) is installed
-
-    ![Windows Dotnet Info](../images/windows_dotnet_info.PNG)
+2. In the Windows  Terminal, verify the `dotnet --info` command confirms `Version v7.0.0` (or higher) is installed
 
 3. In the Windows Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
@@ -59,9 +57,7 @@ Now that we've installed Visual Studio, let's ensure the .NET MAUI workload is i
     ```bash
     dotnet --info
     ```
-3. In the macOS Terminal, verify the `dotnet --info` command confirms `Version: v6.0.401` (or higher) is installed
-
-    ![dotnet info](../images/macos_dotnet_info.png)
+3. In the macOS Terminal, verify the `dotnet --info` command confirms `Version: v7.0.0` (or higher) is installed
 
 4. In the macOS Terminal, ensure the latest version of .NET MAUI is installed by entering the following command:
     ```bash
