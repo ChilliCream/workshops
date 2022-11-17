@@ -6,21 +6,21 @@ public class ThemeService
 {
 	static readonly WeakEventManager<AppTheme> _themeChangedEventManager = new();
 
-	readonly IDeviceInfo _deviceInfo
+	readonly IDeviceInfo _deviceInfo;
 	readonly IDispatcher _dispatcher;
 	readonly IPreferences _preferences;
-
-	public static event EventHandler<AppTheme> PreferredThemeChanged
-	{
-		add => _themeChangedEventManager.AddEventHandler(value);
-		remove => _themeChangedEventManager.RemoveEventHandler(value);
-	}
 
 	public ThemeService(IDispatcher dispatcher, IPreferences preferences, IDeviceInfo deviceInfo)
 	{
 		_deviceInfo = deviceInfo;
 		_dispatcher = dispatcher;
 		_preferences = preferences;
+	}
+
+	public static event EventHandler<AppTheme> PreferredThemeChanged
+	{
+		add => _themeChangedEventManager.AddEventHandler(value);
+		remove => _themeChangedEventManager.RemoveEventHandler(value);
 	}
 
 	public AppTheme PreferredTheme
@@ -32,6 +32,7 @@ public class ThemeService
 			{
 				_preferences.Set<int>(nameof(PreferredTheme), (int)value);
 				SetAppTheme(value).SafeFireAndForget();
+				OnPreferredThemeChanged(value);
 			}
 		}
 	}
@@ -66,7 +67,7 @@ public class ThemeService
 		App app = (App)sender;
 
 		if (PreferredTheme is AppTheme.Unspecified)
-			SetAppTheme(Application.RequestedTheme);
+			SetAppTheme(app.RequestedTheme);
 	}
 
 	void HandleRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
