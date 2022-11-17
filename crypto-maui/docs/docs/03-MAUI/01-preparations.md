@@ -12,7 +12,7 @@ To build a .NET MAUI app, we first need to install our tools.
 
 Install [Visual Studio + .NET MAUI](https://visualstudio.microsoft.com/vs/)
 :::caution
-Visual Studio 2022 v17.3 (or higher) is required.
+Visual Studio 2022 v17.4 (or higher) is required.
 
 Older versions of Visual Studio (before v17.3) do not support .NET MAUI
 :::
