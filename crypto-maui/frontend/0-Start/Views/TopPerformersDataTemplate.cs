@@ -67,7 +67,7 @@ class TopPerformersDataTemplate : DataTemplate
 			new ImageButton()
 				.Row(Row.Name).RowSpan(2).Column(Column.Favorite)
 				.Center()
-				.Source("not_favorite_icon"),
+				.Source("not_favorite_icon.png"),
 
 			new SeparatorView()
 				.Row(Row.Separator).ColumnSpan(All<Column>())

@@ -7,7 +7,7 @@ public class PriceHistoryChartView : SfCartesianChart
 {
 	public PriceHistoryChartView(bool areAxisVisible)
 	{
-		SelectionBehavior = new SeriesSelectionBehavior();
+		SelectionBehavior = new ChartSelectionBehavior();
 		TooltipBehavior = new ChartTooltipBehavior();
 		ZoomPanBehavior = new ChartZoomPanBehavior()
 		{

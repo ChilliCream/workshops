@@ -158,7 +158,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 								Children =
 								{
 									new Image()
-										.Source("whitepaper_icon")
+										.Source("whitepaper_icon.png")
 										.CenterVertical()
 										.Size(24),
 
@@ -179,7 +179,7 @@ sealed class AssetChartPage : BasePage<AssetChartViewModel>, IDisposable
 								Children =
 								{
 									new Image()
-										.Source("website_icon")
+										.Source("website_icon.png")
 										.CenterVertical()
 										.Size(24),
 
