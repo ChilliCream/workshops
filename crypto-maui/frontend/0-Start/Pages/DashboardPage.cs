@@ -8,8 +8,8 @@ class DashboardPage : BasePage<DashboardViewModel>
 	const int _chartCarouselHeight = 240;
 	readonly CryptoTickerView _stockTickerView;
 
-	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel, IDispatcher dispatcher)
-		: base(dashboardViewModel, dispatcher, "Dashboard", false)
+	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel)
+		: base(dashboardViewModel, "Dashboard", false)
 	{
 		Padding = 0;
 

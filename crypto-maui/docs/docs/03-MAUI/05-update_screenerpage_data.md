@@ -81,7 +81,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
 
     class ScreenerPage : BasePage<ScreenerViewModel>
     {
-        public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+        public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
         {
             Padding = 0;
 
@@ -113,7 +113,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
 
     class ScreenerPage : BasePage<ScreenerViewModel>
     {
-        public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+        public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
         {
             Padding = 0;
 
@@ -133,7 +133,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
 
     class ScreenerPage : BasePage<ScreenerViewModel>
     {
-        public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+        public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
         {
             Padding = 0;
 
@@ -141,7 +141,7 @@ Now that the **ScreenerViewModel** contains the list of Assets that we want to d
                         .ItemTemplate(new TopPerformersDataTemplate())
                         .Bind(CollectionView.ItemsSourceProperty, nameof(ScreenerViewModel.AssetList))
                         .Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-                        .Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self));
+                        .Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSource.Self);
 
         }
     }

@@ -6,6 +6,7 @@ public class ThemeService
 {
 	static readonly WeakEventManager<AppTheme> _themeChangedEventManager = new();
 
+	readonly IDeviceInfo _deviceInfo
 	readonly IDispatcher _dispatcher;
 	readonly IPreferences _preferences;
 
@@ -15,8 +16,9 @@ public class ThemeService
 		remove => _themeChangedEventManager.RemoveEventHandler(value);
 	}
 
-	public ThemeService(IDispatcher dispatcher, IPreferences preferences)
+	public ThemeService(IDispatcher dispatcher, IPreferences preferences, IDeviceInfo deviceInfo)
 	{
+		_deviceInfo = deviceInfo;
 		_dispatcher = dispatcher;
 		_preferences = preferences;
 	}
@@ -36,20 +38,20 @@ public class ThemeService
 
 	public Task Initialize()
 	{
-		if (App.Current is not null)
-			App.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
+		if (Application.Current is not null)
+			Application.Current.RequestedThemeChanged += HandleRequestedThemeChanged;
 
 		return SetAppTheme(PreferredTheme);
 	}
 
 	Task SetAppTheme(AppTheme appTheme)
 	{
-		if (App.Current is null)
+		if (Application.Current is null || _deviceInfo.Platform == DevicePlatform.WinUI)
 			return Task.CompletedTask;
 
 		return _dispatcher.DispatchAsync(() =>
 		{
-			App.Current.Resources = appTheme switch
+			Application.Current.Resources = appTheme switch
 			{
 				AppTheme.Dark => new DarkTheme(),
 				_ => new LightTheme()
@@ -64,7 +66,7 @@ public class ThemeService
 		App app = (App)sender;
 
 		if (PreferredTheme is AppTheme.Unspecified)
-			SetAppTheme(app.RequestedTheme);
+			SetAppTheme(Application.RequestedTheme);
 	}
 
 	void HandleRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
