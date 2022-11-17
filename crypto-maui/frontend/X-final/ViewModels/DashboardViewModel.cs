@@ -62,7 +62,7 @@ partial class DashboardViewModel : BaseViewModel
 
 		try
 		{
-			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+			var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
 			await foreach (var priceHistory in _cryptoGraphQLService.GetPriceHistory(observableHistoryModel.Symbol, cts.Token, ChangeSpan.Day).ConfigureAwait(false))
 			{
 				Dispatcher.Dispatch(() => observableHistoryModel.PriceHistory.Add(new CryptoPriceHistoryModel(priceHistory)));
@@ -70,7 +70,7 @@ partial class DashboardViewModel : BaseViewModel
 		}
 		catch
 		{
-			observableHistoryModel.PriceHistory.Clear();
+			Dispatcher.Dispatch(observableHistoryModel.PriceHistory.Clear);
 		}
 	}
 

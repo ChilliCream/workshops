@@ -5,7 +5,11 @@ namespace MauiCrypto;
 
 class DashboardPage : BasePage<DashboardViewModel>
 {
+#if WINDOWS
+	const int _chartCarouselHeight = 280;
+#else
 	const int _chartCarouselHeight = 240;
+#endif
 	readonly CryptoTickerView _stockTickerView;
 
 	public DashboardPage(IDeviceDisplay deviceDisplay, DashboardViewModel dashboardViewModel)
@@ -55,11 +59,11 @@ class DashboardPage : BasePage<DashboardViewModel>
 						.FillHorizontal()
 						.Row(Row.ChartCarouselSeparator),
 
-					new TopPerformersView("top_gainers_icon", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
+					new TopPerformersView("top_gainers_icon.png", "Top Gainers", nameof(DashboardViewModel.TopGainersList))
 						.Margin(12, 0)
 						.Row(Row.TopGainers),
 
-					new TopPerformersView("top_losers_icon", "Top Losers", nameof(DashboardViewModel.TopLosersList))
+					new TopPerformersView("top_losers_icon.png", "Top Losers", nameof(DashboardViewModel.TopLosersList))
 						.Margin(12, 0)
 						.Row(Row.TopLosers),
 				}

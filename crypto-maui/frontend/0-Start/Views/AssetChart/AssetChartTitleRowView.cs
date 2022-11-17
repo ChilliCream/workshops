@@ -41,11 +41,11 @@ class AssetChartTitleRowView : Grid
 		Children.Add(new TitleRowImageButton()
 						.Column(Column.Notifications)
 						.Assign(out ImageButton notificationButton)
-						.Source("notification_icon"));
+						.Source("notification_icon.png"));
 
 		Children.Add(new TitleRowImageButton()
 						.Column(Column.Favorite)
-						.Source("not_favorite_icon"));
+						.Source("not_favorite_icon.png"));
 
 		Children.Add(new TitleRowLabel(14, Color.FromRgba(0, 0, 0, 0.08))
 				.Column(Column.Symbol)

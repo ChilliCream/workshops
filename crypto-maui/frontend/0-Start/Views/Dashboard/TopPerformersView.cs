@@ -42,14 +42,14 @@ class TopPerformersView : Grid
 
 		Children.Add(new Image()
 						.Row(Row.Title).Column(Column.Toggle)
-						.Source("toggle_icon"));
+						.Source("toggle_icon.png"));
 
 		Children.Add(new CollectionView { SelectionMode = SelectionMode.Single }
 						.Row(Row.Collection).ColumnSpan(All<Column>())
 						.ItemTemplate(new TopPerformersDataTemplate())
 						.Bind(CollectionView.ItemsSourceProperty, collectionViewItemSourceBindingPath)
 						.Bind(CollectionView.SelectionChangedCommandProperty, nameof(BaseViewModel.CollectionViewSelectionChangedCommand))
-						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: new RelativeBindingSource(RelativeBindingSourceMode.Self)));
+						.Bind(CollectionView.SelectionChangedCommandParameterProperty, source: RelativeBindingSourceMode.Self));
 	}
 
 	enum Row { Title, Collection }

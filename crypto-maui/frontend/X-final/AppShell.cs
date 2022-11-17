@@ -6,10 +6,10 @@ class AppShell : Shell
 {
 	public AppShell()
 	{
-		Items.Add(new MauiCryptoFlyoutItem<DashboardPage>("Dashboard", "dashboard_icon"));
-		Items.Add(new MauiCryptoFlyoutItem<ScreenerPage>("Screener", "screener_icon"));
-		Items.Add(new MauiCryptoFlyoutItem<WatchlistPage>("Watchlist", "watchlist_icon"));
-		Items.Add(new MauiCryptoFlyoutItem<SettingsPage>("Settings", "settings_icon"));
+		Items.Add(new MauiCryptoFlyoutItem<DashboardPage>("Dashboard", "dashboard_icon.png"));
+		Items.Add(new MauiCryptoFlyoutItem<ScreenerPage>("Screener", "screener_icon.png"));
+		Items.Add(new MauiCryptoFlyoutItem<WatchlistPage>("Watchlist", "watchlist_icon.png"));
+		Items.Add(new MauiCryptoFlyoutItem<SettingsPage>("Settings", "settings_icon.png"));
 	}
 
 	public static string GetRoute<TPage, TViewModel>() where TPage : BasePage<TViewModel>
