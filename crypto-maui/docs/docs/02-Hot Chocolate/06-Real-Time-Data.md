@@ -2,10 +2,10 @@
 
 So far, we have looked at several concepts for GraphQL queries and mutations. If we put this in a REST context, we essentially dealt with the `GET`, `PUT`, `POST`, `PATCH`, `DELETE` verbs. Everything is related to reading data and altering data.
 
-| Operation | GraphQL      | REST                     |
-|-----------|--------------|--------------------------|
-| Read      | Query        | GET                      |
-| Write     | Mutation     | PUT, POST, PATCH, DELETE |
+| Operation | GraphQL  | REST                     |
+| --------- | -------- | ------------------------ |
+| Read      | Query    | GET                      |
+| Write     | Mutation | PUT, POST, PATCH, DELETE |
 
 In this chapter, we will learn how to bring real-time functionality into the coin portal by implementing GraphQL subscriptions. The goal is to expose two subscription events by our GraphQL server:
 
@@ -30,7 +30,7 @@ code workshops/crypto/backend/playground/example5
 
 First, head over to the `Program.cs` and inspect it a bit.
 
-We already have set up the server to support WebSockets. 
+We already have set up the server to support WebSockets.
 
 ```csharp
 app.UseWebSockets(); // <-----
@@ -39,7 +39,7 @@ app.UseStaticFiles();
 app.MapGraphQL();
 ```
 
-`UseWebSockets` is an ASP.NET Core middleware and adds transport support for raw WebSockets. 
+`UseWebSockets` is an ASP.NET Core middleware and adds transport support for raw WebSockets.
 
 `MapGraphQL` adds the GraphQL transport layer and supports the `graphql-ws` and `graphql-transport-ws` sub-protocols which specify how the client will communicate with the server for GraphQL when using WebSockets.
 
@@ -270,7 +270,7 @@ When executing a subscription, we might not get an immediate result. We will onl
 
 ## Notifications
 
-OK, we have another use case that we want to solve with subscriptions in our application: notifications. We want to give the user the ability to create price alerts. Whenever a certain price target is hit, we want to send a notification down to the client informing the user of that fact. Further, whenever we subscribe to our event, we want to immediately get a notification whenever there is a new unread notification. Think of this as an initial indicator where the server tells the client that there are new notifications that we have not seen since the last time we have logged in, but we do not want to overwhelm the user with repeating all the missed messages. 
+OK, we have another use case that we want to solve with subscriptions in our application: notifications. We want to give the user the ability to create price alerts. Whenever a certain price target is hit, we want to send a notification down to the client informing the user of that fact. Further, whenever we subscribe to our event, we want to immediately get a notification whenever there is a new unread notification. Think of this as an initial indicator where the server tells the client that there are new notifications that we have not seen since the last time we have logged in, but we do not want to overwhelm the user with repeating all the missed messages.
 
 ```graphql
 subscription OnNotification {
@@ -345,7 +345,7 @@ public sealed class NotificationSubscriptions
                 Constants.OnNotification(_username),
                 cancellationToken);
 
-            await foreach (NotificationUpdate message in 
+            await foreach (NotificationUpdate message in
                 stream.ReadEventsAsync().WithCancellation(cancellationToken))
             {
                 yield return message;
@@ -382,7 +382,6 @@ Before we can finish up, we need to add one more functionality, which is a way t
 Head over to the `NotificationMutations.cs` located in the `Types/Notifications` directory.
 
 Add the mutation below to your class.
-
 
 ```csharp
 [Error<UnknownNotificationException>]
@@ -488,7 +487,7 @@ Clear the operation tab and paste in the following mutation.
 
 ```graphql
 mutation CreateAlert {
-  createAlert(input: { symbol: "BTC" currency: "USD" targetPrice: 42420 }) {
+  createAlert(input: {symbol: "BTC", currency: "USD", targetPrice: 42420}) {
     createdAlert {
       id
     }
@@ -522,7 +521,7 @@ Now, head back to the second tab and add the following operation.
 
 ```graphql
 mutation MarkAsRead {
-  markNotificationRead(input: {  notificationId: "Tm90aWZpY2F0aW9uCmk5" }) {
+  markNotificationRead(input: {notificationId: "Tm90aWZpY2F0aW9uCmk5"}) {
     readNotification {
       read
     }

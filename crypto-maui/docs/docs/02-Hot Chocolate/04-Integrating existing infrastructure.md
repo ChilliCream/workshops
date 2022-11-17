@@ -2,7 +2,7 @@
 
 Until now, we have provided data for the ticker component of our GUI. Further, we have used the same data to create some asset list components to show the daily losers and gainers. We now want to provide historical price data through our GraphQL server so that we can build a price chart component in our GUI.
 
-The historical price data are available through REST services that represent our existing infrastructure. 
+The historical price data are available through REST services that represent our existing infrastructure.
 In this chapter we will focus on existing REST services with our new GraphQL server to provide historical price data.
 
 ## Infrastructure
@@ -205,7 +205,7 @@ public abstract class HttpBatchDataLoader<TKey>
 
 Our base class will just have some convenience added sp that we do not need to create the actual HTTP client every time. Moreover, we fixed the result type to a `JsonElement`.
 
-With this in place, we need to define the actual **DataLoader**. As we have learned in the previous chapter, a **DataLoader** is a straightforward utility that will fetch an entity for a key. 
+With this in place, we need to define the actual **DataLoader**. As we have learned in the previous chapter, a **DataLoader** is a straightforward utility that will fetch an entity for a key.
 
 Still, in this case, we need to pass along two pieces of information to our **DataLoader**: the `span` and the `symbol`. We could approach this from different angles. One solution would be to have a **DataLoader** per span, but thinking about this already tells us that this would not scale very well. What we will do for our service is to introduce a new struct called `KeyAndSpan`, which holds both information and represents our composite key.
 
@@ -366,7 +366,7 @@ Open `http://localhost:5000/graphql` and refresh the schema.
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
-Execute the following query to see if we have integrated our service correctly. 
+Execute the following query to see if we have integrated our service correctly.
 
 ```graphql
 query Asset {
@@ -485,13 +485,13 @@ This is the part where things become more tricky. To fetch the history data, we 
 **Hot Chocolate** allows storing three different kinds of execution states to customize execution behavior.
 
 - Global Execution State
- The global execution states can be accessed and mutated before the execution begins and after it ends. It can also be accessed and modified by request- and field-middleware and the resolver itself.
+  The global execution states can be accessed and mutated before the execution begins and after it ends. It can also be accessed and modified by request- and field-middleware and the resolver itself.
 
 - Scoped Execution State
- The scoped execution state can be accessed and modified by the request- and field-middleware and also by the resolver. Modifications to the scoped state are only accessible from the subtree where the change happened.
+  The scoped execution state can be accessed and modified by the request- and field-middleware and also by the resolver. Modifications to the scoped state are only accessible from the subtree where the change happened.
 
 - Local Execution State
- The local execution state can only be accessed and modified within a field resolver pipeline.
+  The local execution state can only be accessed and modified within a field resolver pipeline.
 
 :::
 
@@ -517,7 +517,6 @@ public async Task<JsonElement> GetChangeAsync(
 We added a new `SetState<KeyAndSpan>` parameter to our resolver, a delegate that allows us to set a `KeyAndSpan` on our scoped execution state. This state will be available to all resolvers in our subtree.
 
 Next, head over to the `AssetPriceChangeType` and add a nested class `Resolvers`. You can copy & paste the code below for this.
-
 
 ```csharp
 private class Resolvers
@@ -597,7 +596,7 @@ Also, we are using paging in a custom way by using the `ApplyCursorPaginationAsy
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
-Execute the following query to see if we have integrated our service correctly. 
+Execute the following query to see if we have integrated our service correctly.
 
 ```graphql
 query Asset {
@@ -759,7 +758,7 @@ dotnet run
 
 ![Banana Cake Pop - Refresh Schema](./images/example2-part1-bcp1.png)
 
-Execute the following query to see if we have integrated our service correctly. 
+Execute the following query to see if we have integrated our service correctly.
 
 ```graphql
 query GrabPriceChangeId {

@@ -8,7 +8,7 @@ We need to decide if we have a public GraphQL API or a private GraphQL API.
 
 Think about GitHub; GitHub has a public GraphQL API so that people can write extensions on top of GitHub to automate things like builds and whatnot.
 
-However, most companies only have private GraphQL APIs, meaning a GraphQL API that is only used by themselves. 
+However, most companies only have private GraphQL APIs, meaning a GraphQL API that is only used by themselves.
 
 Meta, for instance, has a private GraphQL API. Although Meta uses its GraphQL API for Facebook and Instagram, it is a private GraphQL API because only Facebook's developers can use the GraphQL API to build things with it. The Graph API of Facebook that developers outside of Facebook can use is actually a REST API.
 

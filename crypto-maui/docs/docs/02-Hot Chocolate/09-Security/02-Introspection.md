@@ -121,7 +121,7 @@ public sealed class CustomHttpRequestInterceptor : DefaultHttpRequestInterceptor
     {
         requestBuilder.SetGlobalState("username", null);
 
-        if (context.Request.Headers.TryGetValue("Authorization", out var value) && 
+        if (context.Request.Headers.TryGetValue("Authorization", out var value) &&
             AuthenticationHeaderValue.Parse(value) is { Parameter: { } parameters })
         {
             var credentialBytes = Convert.FromBase64String(parameters);

@@ -582,7 +582,7 @@ While our mutation feels great already, we might want to let people decide if th
 
 ```graphql
 mutation {
-  addAssetToWatchlist(input: { symbol: "BTC" }) {
+  addAssetToWatchlist(input: {symbol: "BTC"}) {
     addedAsset {
       id
     }
