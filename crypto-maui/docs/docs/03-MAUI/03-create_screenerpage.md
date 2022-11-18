@@ -29,7 +29,7 @@ In .NET MAUI, a `CollectionView` is used to display rows of homogenious data. In
 
     class ScreenerPage : BasePage<ScreenerViewModel>
     {
-        public ScreenerPage(ScreenerViewModel screenerViewModel, IDispatcher dispatcher) : base(screenerViewModel, dispatcher, "Screener", false)
+        public ScreenerPage(ScreenerViewModel screenerViewModel) : base(screenerViewModel, "Screener", false)
         {
             Padding = 0;
 
