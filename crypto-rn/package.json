@@ -1,0 +1,85 @@
+{
+  "name": "crypto",
+  "private": true,
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
+  "keywords": [
+    "crypto",
+    "native"
+  ],
+  "engines": {
+    "node": ">=16.1.0"
+  },
+  "packageManager": "yarn@3.3.1",
+  "workspaces": [
+    ".proactive/*"
+  ],
+  "dependencies": {
+    "@emotion/native": "latest",
+    "@emotion/react": "latest",
+    "@react-navigation/native": "latest",
+    "@react-navigation/native-stack": "latest",
+    "fast-text-encoding": "latest",
+    "i18next": "latest",
+    "react": "18.2.0",
+    "react-i18next": "latest",
+    "react-native": "^0.70.6",
+    "react-native-gesture-handler": "latest",
+    "react-native-reanimated": "latest",
+    "react-native-safe-area-context": "latest",
+    "react-native-screens": "latest",
+    "react-native-splash-screen": "latest",
+    "react-native-svg": "latest",
+    "react-relay": "main"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@babel/runtime": "latest",
+    "@emotion/babel-plugin": "latest",
+    "@emotion/jest": "latest",
+    "@react-native-community/eslint-config": "latest",
+    "@rnx-kit/metro-config": "latest",
+    "@rnx-kit/metro-resolver-symlinks": "latest",
+    "@testing-library/jest-native": "latest",
+    "@testing-library/react-hooks": "latest",
+    "@testing-library/react-native": "latest",
+    "@types/jest": "latest",
+    "@types/node": "^16.18.0",
+    "@types/react": "^18.0.21",
+    "@types/react-native": "latest",
+    "@types/react-relay": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "babel-jest": "latest",
+    "babel-plugin-module-resolver": "latest",
+    "babel-plugin-relay": "latest",
+    "chalk": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "find-cache-dir": "latest",
+    "get-graphql-schema": "latest",
+    "inquirer": "latest",
+    "jest": "latest",
+    "jest-environment-jsdom": "latest",
+    "metro-react-native-babel-preset": "latest",
+    "node-notifier": "latest",
+    "prettier": "latest",
+    "react-native-svg-transformer": "latest",
+    "react-test-renderer": "latest",
+    "relay-compiler": "main",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "get-schema": "get-graphql-schema https://api-crypto-workshop.chillicream.com/graphql > ./src/schema/server.graphql",
+    "lint": "yarn lint:es && yarn lint:typecheck",
+    "lint:es": "eslint . --ext .js,.jsx,.ts,.tsx --quiet",
+    "lint:typecheck": "tsc -p tsconfig.json",
+    "prettify": "prettier . --write --ignore-unknown",
+    "relay": "relay-compiler",
+    "start": "react-native start",
+    "test": "jest --coverage"
+  }
+}
