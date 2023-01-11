@@ -2969,7 +2969,7 @@ __metadata:
     eslint-config-next: latest
     extract-files: latest
     graphql: 15.3.0
-    graphql-sse: ^1.3.0
+    graphql-sse: ^1.3.2
     graphql-ws: latest
     jest: latest
     jest-environment-jsdom: latest
@@ -4227,12 +4227,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-sse@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "graphql-sse@npm:1.3.0"
+"graphql-sse@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "graphql-sse@npm:1.3.2"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: d973656355397e45d056c32e8011e88e936f223e5adedcf017da7f1cd1f976567a28185d4864b94b53a17f39f86b2b04221de2da8bfdd9ec5d82c3486339e997
+  checksum: e1ce19308c5317575f72d61cbcf5954176baee4ae866abb5aaaa17f75e277c9579fdfeb5ad55abf5d7a08488282d6b8b01d9e1a2904482d7e8c878c605f8b1c1
   languageName: node
   linkType: hard
 

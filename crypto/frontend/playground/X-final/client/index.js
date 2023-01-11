@@ -248,14 +248,14 @@ const subscribeFnWithSSE = (operation, variables) => {
       },
       {
         ...sink,
-        error: (err) => {
+        error(err) {
           if (Array.isArray(err)) {
-            return sink.error(
+            sink.error(
               new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
             );
+          } else {
+            sink.error(err, true);
           }
-
-          return sink.error(err, true);
         },
       },
     ),
@@ -288,20 +288,18 @@ const subscribeFnWithWS = (operation, variables) => {
       },
       {
         ...sink,
-        error: (err) => {
+        error(err) {
           if (Array.isArray(err)) {
-            return sink.error(
+            sink.error(
               new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
             );
-          }
-
-          if (err instanceof CloseEvent) {
-            return sink.error(
+          } else if (err instanceof CloseEvent) {
+            sink.error(
               new NetworkError(ErrorMessages.SOCKET_CLOSED, {cause: err}),
             );
+          } else {
+            sink.error(err, true);
           }
-
-          return sink.error(err, true);
         },
       },
     ),
