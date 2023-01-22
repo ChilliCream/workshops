@@ -1,5 +1,4 @@
-using Demo.Data;
-using Demo.DataLoader;
+using Demo.Types.Assets;
 
 namespace Demo.Types.Account;
 
