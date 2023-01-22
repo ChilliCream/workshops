@@ -1,3 +1,5 @@
+using Demo.Types.Account;
+
 namespace Demo.Types.Assets;
 
 [ExtendObjectType<Asset>]
@@ -24,7 +26,7 @@ public static class AssetNode
         return $"{scheme}://{host}/images/{asset.ImageKey}";
     }
 
-    public async Task<bool?> IsInWatchlistAsync(
+    public static async Task<bool?> IsInWatchlistAsync(
         [Parent] Asset asset,
         [GlobalState] string? username,
         WatchlistByUserDataLoader watchListByUser,
@@ -35,7 +37,7 @@ public static class AssetNode
             return null;
         }
 
-        HashSet<string>? symbols = await watchListByUser.LoadAsync(username, cancellationToken);
+        IReadOnlySet<string>? symbols = await watchListByUser.LoadAsync(username, cancellationToken);
 
         if (symbols is null)
         {
