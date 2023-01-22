@@ -1,53 +1,97 @@
 {
-    "_AssetPriceChange": {
-        "prefix": "_AssetPriceChange",
+    "_query": {
+        "prefix": "_query",
         "body": [
-            "type AssetPriceChange {",
-            "    percentageChange: Float! @fromJson",
-            "}"
-        ],
-        "description": "_AssetPriceChange"
-    },
-    "_GetChange_2": {
-        "prefix": "_GetChange_2",
-        "body": [
-            "[GraphQLType(\"AssetPriceChange\")]",
-            "public async Task<JsonElement> GetChangeAsync(",
-            "    ChangeSpan span,",
-            "    [Parent] AssetPrice parent,",
-            "    AssetPriceChangeDataLoader assetPriceBySymbol,",
-            "    CancellationToken cancellationToken)",
-            "    => await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);"
-        ],
-        "description": "_GetChange_2"
-    },
-    "_AddGraphQL": {
-        "prefix": "_AddGraphQL",
-        "body": [
-            ".AddDocumentFromFile(\"./Schema.graphql\")"
-        ],
-        "description": "_AddGraphQL"
-    },
-    "_GetChange_1": {
-        "prefix": "_GetChange_1",
-        "body": [
-            "[GraphQLType(\"AssetPriceChange\")]",
-            "public async Task<JsonElement> GetChangeAsync(",
-            "    ChangeSpan span,",
-            "    [Parent] AssetPrice parent,",
-            "    [Service] IHttpClientFactory clientFactory,",
-            "    CancellationToken cancellationToken)",
+            "namespace Demo.Types;",
+            "",
+            "public class Query",
             "{",
-            "    using HttpClient client = clientFactory.CreateClient(Constants.PriceInfoService);",
-            "    using var message = new HttpRequestMessage(",
-            "        HttpMethod.Get,",
-            "        $\"api/asset/price/change?symbol={parent.Symbol}&span={span}\");",
-            "    var response = await client.SendAsync(message, cancellationToken);",
-            "    var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);",
-            "    var document = JsonDocument.Parse(content);",
-            "    return document.RootElement;",
+            "    ",
             "}"
         ],
-        "description": "_GetChange_1"
+        "description": "_query"
+    },
+    "_GetAssets": {
+        "prefix": "_GetAssets",
+        "body": [
+            "[UsePaging]",
+            "public IQueryable<Asset> GetAssets(AssetContext context)",
+            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
+        ],
+        "description": "_GetAssets"
+    },
+    "_GetAssetById": {
+        "prefix": "_GetAssetById",
+        "body": [
+            "[NodeResolver]",
+            "public static async Task<Asset?> GetAssetById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_GetAssetById"
+    },
+    "_AssetNode": {
+        "prefix": "_AssetNode",
+        "body": [
+            "namespace Demo.Types;",
+            "",
+            "[ExtendObjectType<Asset>]",
+            "public class AssetNode",
+            "{",
+            "    ",
+            "}",
+            ""
+        ],
+        "description": "_AssetNode"
+    },
+    "_GetAssetPriceById": {
+        "prefix": "_GetAssetPriceById",
+        "body": [
+            "[NodeResolver]",
+            "public static async Task<AssetPrice?> GetAssetPriceById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_GetAssetPriceById"
+    },
+    "_AssetPriceNode": {
+        "prefix": "_AssetPriceNode",
+        "body": [
+            "namespace Demo.Types;",
+            "",
+            "[Node]",
+            "[ExtendObjectType<AssetPrice>]",
+            "public class AssetPriceNode",
+            "{",
+            "    ",
+            "}"
+        ],
+        "description": "_AssetPriceNode"
+    },
+    "_Query_GetAssetById": {
+        "prefix": "_Query_GetAssetById",
+        "body": [
+            "public async Task<Asset?> GetAssetById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_Query_GetAssetById"
+    },
+    "_Query_GetAssetPriceById": {
+        "prefix": "_Query_GetAssetPriceById",
+        "body": [
+            "public async Task<AssetPrice?> GetAssetPriceById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_Query_GetAssetPriceById"
     }
 }
