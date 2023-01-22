@@ -54,9 +54,10 @@ Next, create the `Query.cs` file and add it to the `Types` directory. Copy the f
 ```csharp title="/Types/Query.cs"
 namespace Demo.Types;
 
-public class Query
+[QueryType]
+public static class Query
 {
-    public IQueryable<Asset> GetAssets(AssetContext context)
+    public static IQueryable<Asset> GetAssets(AssetContext context)
         => context.Assets.OrderBy(t => t.Symbol);
 }
 ```
@@ -91,19 +92,17 @@ By default, the execution engine will try to execute resolvers in parallel when 
 
 Now that we have added our `Query` root type, we need to register it with our GraphQL configuration. Head over to the `Program.cs` where all our service configuration is located.
 
-Now, register the `Query` root type with the GraphQL configuration.
+Hot Chocolate comes with a source generator that generates GraphQL configuration code for us. Now that a GraphQL type exists it has created an extension method called `AddTypes` that we can use in our GraphQL configuration.
 
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>();
+    .AddTypes();
 ```
 
-The completed `Program.cs` should look like the following after you have added `AddQueryType<Query>()`.
+The completed `Program.cs` should look like the following after you have added `AddTypes()`.
 
 ```csharp title="/Program.cs"
-using Demo.Types;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -112,11 +111,11 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>();
+    .AddTypes();
 
 var app = builder.Build();
 
@@ -127,20 +126,55 @@ app.MapGraphQL();
 app.Run();
 ```
 
-Last but not least, we need to register the `AssetContext` with the GraphQL configuration so that the execution engine understands that `AssetContext` is a pooled `DbContext`. For this chain in the following line with the GraphQL configuration.
+:::note
+
+The **HotChocolate** source generator will automatically add all types that are annotated with one of the following attributes the the schema module.
+
+- ExtendObjectTypeAttribute
+- ObjectTypeAttribute
+- InterfaceTypeAttribute
+- UnionTypeAttribute
+- EnumTypeAttribute
+- InputObjectTypeAttribute
+
+Also, all classes extending the following classes will be automatically added.
+
+- ObjectType
+- InterfaceType
+- UnionType
+- EnumType
+- InputObjectType
+- ScalarType
+- ObjectTypeExtension
+- InterfaceTypeExtension
+- UnionTypeExtension
+- InputObjectTypeExtension
+- EnumTypeExtension
+
+Also all **DataLoader** will be automatically added to the GraphQL module.
+
+- IDataLoader
+
+The GraphQL module name is defined in the `ModuleInfo.cs` file.
+
+```csharp title="Properties/ModuleInfo.cs"
+[assembly: Module("Types")]
+```
+
+:::
+
+Last but not least, we need to register the `AssetContext` with the GraphQL configuration so that the execution engine understands that `AssetContext` is a service and how to handle this service. For this chain in the following line with the GraphQL configuration.
 
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddTypes()
+    .RegisterDbContext<AssetContext>();
 ```
 
 The `Program.cs` should now look like the following.
 
 ```csharp title="/Program.cs"
-using Demo.Types;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -149,12 +183,12 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddTypes()
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
@@ -164,6 +198,12 @@ app.MapGraphQL();
 
 app.Run();
 ```
+
+:::note
+
+With version 13 we set the default of `RegisterService` and `RegisterDbContext`to `ServiceKind.Resolver`. This essentially will lead the resolver to create a service scope and retrieve the registered services from this resolver bound service scope.
+
+:::
 
 Before we can move ahead, let us test our new resolver.
 

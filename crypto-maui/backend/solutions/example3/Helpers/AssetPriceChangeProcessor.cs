@@ -5,7 +5,7 @@ namespace Demo.Helpers;
 public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
+    private readonly IServiceProvider _services;
     private readonly IFileStorage _fileStorage;
     private bool _disposed;
 
@@ -180,19 +180,24 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         "SYN"
     };
 
-    public AssetPriceChangeProcessor(IDbContextFactory<AssetContext> contextFactory, IFileStorage fileStorage)
+    public AssetPriceChangeProcessor(IServiceProvider services, IFileStorage fileStorage)
     {
-        _contextFactory = contextFactory;
+        _services = services;
         _fileStorage = fileStorage;
     }
 
     public async Task StartAsync(CancellationToken stoppingToken)
     {
-        using AssetContext context = await _contextFactory.CreateDbContextAsync(stoppingToken);
-        await context.Database.EnsureCreatedAsync(stoppingToken);
-
+        await CreateDatabaseAsync(stoppingToken);
         await SeedAssetsAsync(stoppingToken);
         BeginUpdatePrices();
+    }
+
+    private async Task CreateDatabaseAsync(CancellationToken ct)
+    {
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
+        await context.Database.EnsureCreatedAsync(ct);
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
@@ -214,7 +219,8 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
 
     private async Task SeedAssetsAsync(CancellationToken cancellationToken)
     {
-        using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
         var storedSymbols = _symbols.Except(await context.Assets.Select(t => t.Symbol!).ToListAsync(cancellationToken)).ToArray();
         if (storedSymbols.Length == 0)
@@ -223,12 +229,7 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
         }
 
         var map = await LoadAssetsAsync(storedSymbols, cancellationToken);
-
-        foreach (Asset asset in map.Values)
-        {
-            context.Assets.Add(asset);
-        }
-
+        context.Assets.AddRange(map.Values);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -281,7 +282,8 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
     {
         try
         {
-            using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            await using var scope = _services.CreateAsyncScope();
+            await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
             var assets = await context.Assets.ToListAsync(cancellationToken);
 
             foreach (var asset in assets)
@@ -307,7 +309,8 @@ public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
             try
             {
                 using var client = new HttpClient();
-                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                await using var scope = _services.CreateAsyncScope();
+                await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
                 client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
 

@@ -2,7 +2,7 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
+[MutationType]
 public sealed class UserMutations
 {
     [UseMutationConvention(PayloadFieldName = "updatedUser")]
@@ -33,7 +33,6 @@ public sealed class UserMutations
         await context.SaveChangesAsync(cancellationToken);
         return user;
     }
-
     private static async Task<string?> TryStoreImage(
         IFile image,
         IFileStorage storage,

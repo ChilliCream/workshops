@@ -1,50 +1,97 @@
 {
-  "_mutation": {
-    "prefix": "_mutation",
-    "body": [
-      "[UseMutationConvention(PayloadFieldName = \"updatedUser\")]",
-      "public async Task<User?> UpdateUserProfile(",
-      "    [GlobalState] string username,",
-      "    UpdateUserProfileInput input,",
-      "    IFileStorage storage,",
-      "    AssetContext context,",
-      "    CancellationToken cancellationToken)",
-      "{",
-      "    if (username is null)",
-      "    {",
-      "        throw new NotAuthenticatedException(\"User Profile\");",
-      "    }",
-      "",
-      "    User user = await context.Users.FirstAsync(t => t.Name == username, cancellationToken);",
-      "",
-      "    if (input.DisplayName.HasValue)",
-      "    {",
-      "        user.DisplayName = input.DisplayName.Value;",
-      "    }",
-      "",
-      "    if (input.Image.HasValue)",
-      "    {",
-      "        user.ImageKey = input.Image.Value is null ? null : await TryStoreImage(input.Image.Value, storage, cancellationToken);",
-      "    }",
-      "",
-      "    await context.SaveChangesAsync(cancellationToken);",
-      "    return user;",
-      "}"
-    ],
-    "description": "_mutation"
-  },
-  "_store": {
-    "prefix": "_store",
-    "body": [
-      "private static async Task<string?> TryStoreImage(",
-      "    IFile image,",
-      "    IFileStorage storage,",
-      "    CancellationToken cancellationToken)",
-      "{",
-      "    await using Stream iconStream = image.OpenReadStream();",
-      "    return await storage.UploadAsync(iconStream, cancellationToken);",
-      "}"
-    ],
-    "description": "_store"
-  }
+    "_query": {
+        "prefix": "_query",
+        "body": [
+            "namespace Demo.Types;",
+            "",
+            "public class Query",
+            "{",
+            "    ",
+            "}"
+        ],
+        "description": "_query"
+    },
+    "_GetAssets": {
+        "prefix": "_GetAssets",
+        "body": [
+            "[UsePaging]",
+            "public IQueryable<Asset> GetAssets(AssetContext context)",
+            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
+        ],
+        "description": "_GetAssets"
+    },
+    "_GetAssetById": {
+        "prefix": "_GetAssetById",
+        "body": [
+            "[NodeResolver]",
+            "public static async Task<Asset?> GetAssetById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_GetAssetById"
+    },
+    "_AssetNode": {
+        "prefix": "_AssetNode",
+        "body": [
+            "namespace Demo.Types;",
+            "",
+            "[ExtendObjectType<Asset>]",
+            "public class AssetNode",
+            "{",
+            "    ",
+            "}",
+            ""
+        ],
+        "description": "_AssetNode"
+    },
+    "_GetAssetPriceById": {
+        "prefix": "_GetAssetPriceById",
+        "body": [
+            "[NodeResolver]",
+            "public static async Task<AssetPrice?> GetAssetPriceById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_GetAssetPriceById"
+    },
+    "_AssetPriceNode": {
+        "prefix": "_AssetPriceNode",
+        "body": [
+            "namespace Demo.Types;",
+            "",
+            "[Node]",
+            "[ExtendObjectType<AssetPrice>]",
+            "public class AssetPriceNode",
+            "{",
+            "    ",
+            "}"
+        ],
+        "description": "_AssetPriceNode"
+    },
+    "_Query_GetAssetById": {
+        "prefix": "_Query_GetAssetById",
+        "body": [
+            "public async Task<Asset?> GetAssetById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_Query_GetAssetById"
+    },
+    "_Query_GetAssetPriceById": {
+        "prefix": "_Query_GetAssetPriceById",
+        "body": [
+            "public async Task<AssetPrice?> GetAssetPriceById(",
+            "    int id,",
+            "    AssetContext context,",
+            "    CancellationToken cancellationToken)",
+            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+        ],
+        "description": "_Query_GetAssetPriceById"
+    }
 }

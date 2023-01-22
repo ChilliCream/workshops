@@ -1,19 +1,32 @@
-namespace Demo.Types.Assets;
+
+namespace Demo.Types;
 
 [Node]
-[ExtendObjectType(typeof(AssetPrice), IgnoreProperties = new[] { nameof(AssetPrice.AssetId) })]
-public sealed class AssetPriceNode
+[ExtendObjectType<AssetPrice>]
+public static class AssetPriceNode
 {
-    public async Task<Asset> GetAssetAsync(
-        [Parent] AssetPrice parent,
-        AssetBySymbolDataLoader assetBySymbol,
-        CancellationToken cancellationToken) 
-        => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, AssetPrice>> GetAssetPriceBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<int, AssetPrice>> GetAssetPriceByIdAsync(
+        IReadOnlyList<int> ids,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, cancellationToken);
 
     [NodeResolver]
-    public static Task<AssetPrice> GetByIdAsyncAsync(
+    public static async Task<AssetPrice> GetAssetPriceByIdAsync(
         int id,
-        AssetPriceByIdDataLoader dataLoader,
+        AssetPriceByIdDataLoader assetPriceById,
         CancellationToken cancellationToken)
-        => dataLoader.LoadAsync(id, cancellationToken);
+        => await assetPriceById.LoadAsync(id, cancellationToken);
 }
