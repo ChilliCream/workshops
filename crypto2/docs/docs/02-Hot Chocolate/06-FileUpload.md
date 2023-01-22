@@ -56,17 +56,13 @@ The `Upload` scalar is a unique scalar that only works as an input type. All oth
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddSubscriptionType()
-    .AddAssetTypes()
-    .AddType<UploadType>() // <----
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions()
+    .AddTypes()
+    .AddType<UploadType>()    // <-----
     .AddFiltering()
     .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
+    .RegisterDbContext<AssetContext>();
 ```
 
 ## Mutation
