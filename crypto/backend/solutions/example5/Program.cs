@@ -6,27 +6,25 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddHttpClient(
+        Constants.PriceInfoService, 
+        c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 
 builder.Services
-    .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddSubscriptionType()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions()
+    .AddTypes()
+    .AddType<UploadType>()
     .AddFiltering()
     .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
-app.UseWebSockets();
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseStaticFiles();
 app.MapGraphQL();

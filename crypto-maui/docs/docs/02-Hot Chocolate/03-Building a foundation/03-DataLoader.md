@@ -42,45 +42,66 @@ If we did a naive implementation, we would fetch multiple times from the databas
 
 The **DataLoader** instead batches requests to the database or any other data source and uses a request-bound cache so that repeated requests for the same item will be served from that cache instead of fetching it from the database. This also has a second benefit since it guarantees that objects used multiple times in a query graph have a consistent state throughout the request.
 
-Let's first create a new directory called `DataLoader`.
-
-```bash
-mkdir DataLoader
-```
-
-Next, we will create a file called `AssetPriceBySymbolDataLoader` located in the `DataLoader` directory.
+First, we will create a file called `DataLoaders` located in the `Types` directory.
 Copy the following code into the file.
 
 ```csharp title="/DataLoader/AssetPriceBySymbolDataLoader.cs"
-namespace Demo.DataLoader;
+namespace Demo.Types;
 
-public sealed class AssetPriceBySymbolDataLoader : BatchDataLoader<string, AssetPrice>
+public static class DataLoaders
 {
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
-
-    public AssetPriceBySymbolDataLoader(
-        IDbContextFactory<AssetContext> contextFactory,
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        _contextFactory = contextFactory ??
-            throw new ArgumentNullException(nameof(contextFactory));
-    }
-
-    protected override async Task<IReadOnlyDictionary<string, AssetPrice>> LoadBatchAsync(
-        IReadOnlyList<string> keys,
+    [DataLoader(ServiceScope = DataLoaderServiceScope.DataLoaderScope)]
+    internal static async Task<IReadOnlyDictionary<string, AssetPrice>> GetAssetPriceBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
         CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        return await context.AssetPrices.Where(t => keys.Contains(t.Symbol)).ToDictionaryAsync(t => t.Symbol!, cancellationToken);
-    }
+        => await context.AssetPrices
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
 }
 ```
 
-The `AssetPriceBySymbolDataLoader` inherits from a class called `BatchDataLoader`, which allows us to batch multiple requests to the database. There are other kinds of **DataLoader** for more specific use-cases.
+The method `GetAssetPriceBySymbolAsync` in this class represents our **DataLoader**. Our class `DataLoaders` could contain multiple of these **DataLoader** methods. Each **DataLoader** method must be `internal` or `public` and also be static. Further it must be annotated with the `DataLoaderAttribute`.
 
-The `LoadBatchAsync` method is invoked when the execution engine wants to execute a batch. The `keys` parameter passed into the `LoadBatchAsync` are all the symbols for which we shall resolve entities.
+:::note
+
+We recommend co-locating the **DataLoader** methods with the GraphQL specific types. As we go forward with this workshop we will refactor the code and move this code to the extension code of `AssetPrice`.
+
+:::
+
+The Hot Chocolate source generator will pick up these **DataLoader** methods and generate an actual class for our **DataLoader** that handles all the code to batch and cache data.
+
+In our case the source generator created the `AssetPriceBySymbolDataLoader` class that inherits from a class called `BatchDataLoader`, which allows us to batch multiple requests to the database. There are other kinds of **DataLoader** for more specific use-cases.
+
+The `GetAssetPriceBySymbolAsync` method is invoked when the execution engine wants to execute a batch. The `symbols` parameter passed into the `GetAssetPriceBySymbolAsync` are all the symbols for which we shall resolve entities.
+
+The `DataLoaderAttribute` in our case has the `ServiceScope` set to `DataLoaderServiceScope.DataLoaderScope`. This is done so that the source generator will create a service scope around the execution of the **DataLoader** to avoid thread access exceptions from the `DBContext`.
+
+In our case this is a good option as a default to all our **DataLoader**. In order for us not to repeat this for every DataLoader let's head over to the `Properties/ModuleInfo.cs` and add there the `DataLoaderDefaultsAttribute`.
+
+```csharp title="/Properties/ModuleInfo.cs"
+[assembly: Module("Types")]
+[assembly: DataLoaderDefaults(
+    ServiceScope = DataLoaderServiceScope.DataLoaderScope)]
+```
+
+With this default added we now can simplify our argument on the `DataLoaderAttribute`.
+
+```csharp title="/DataLoader/AssetPriceBySymbolDataLoader.cs"
+namespace Demo.Types;
+
+public static class DataLoaders
+{
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, AssetPrice>> GetAssetPriceBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+}
+```
 
 Now that we have a **DataLoader** to fetch the `AssetPrice`, let's introduce the price field to our `Asset`.
 
@@ -91,10 +112,10 @@ Copy the following code into the file.
 ```csharp title="/Types/AssetNode.cs"
 namespace Demo.Types;
 
-[ExtendObjectType(typeof(Asset))]
-public sealed class AssetNode
+[ExtendObjectType<Asset>]
+public static class AssetNode
 {
-    public async Task<AssetPrice> GetPriceAsync(
+    public static async Task<AssetPrice> GetPriceAsync(
         [Parent] Asset asset,
         AssetPriceBySymbolDataLoader priceBySymbol,
         CancellationToken cancellationToken)
@@ -108,7 +129,7 @@ The `ParentAttributes` marks parameters that represent the runtime value of the 
 
 :::
 
-The class `AssetNode` is annotated with the `ExtendObjectTypeAttribute`, allowing us to extend an existing type `Asset` with additional fields.
+The class `AssetNode` is annotated with the `ExtendObjectTypeAttribute`, allowing us to extend an existing type `Asset` with additional fields or overlay existing fields.
 
 ```graphql
 extend type Asset {
@@ -116,86 +137,9 @@ extend type Asset {
 }
 ```
 
-The **HotChocolate** source generator will automatically add all annotated types with one of the following attributes to the schema module.
-
-:::note
-
-The **HotChocolate** source generator will automatically add all types that are annotated with one of the following attributes the the schema module.
-
-- ExtendObjectTypeAttribute
-- ObjectTypeAttribute
-- InterfaceTypeAttribute
-- UnionTypeAttribute
-- EnumTypeAttribute
-- InputObjectTypeAttribute
-
-Also, all classes extending the following classes will be automatically added.
-
-- ObjectType
-- InterfaceType
-- UnionType
-- EnumType
-- InputObjectType
-- ScalarType
-- ObjectTypeExtension
-- InterfaceTypeExtension
-- UnionTypeExtension
-- InputObjectTypeExtension
-- EnumTypeExtension
-
-Last, all **DataLoader** will be automatically added to the GraphQL module.
-
-- IDataLoader
-
-:::
-
-To register the generated GraphQL module with the GraphQL configuration, we need to head over to the `Program.cs` and chain in `AddAssetTypes` to the GraphQL configuration builder.
-
-:::note
-
-The GraphQL module name is defined in the `ModuleInfo.cs` file.
-
-```csharp title="/ModuleInfo.cs"
-[assembly: Module("AssetTypes")]
-```
-
-:::
-
-```csharp
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-```
+As mentioned before the **HotChocolate** source generator will automatically add all annotated types with one of the following attributes to our GraphQL types module.
 
 The `Program.cs` should now look like the following.
-
-```csharp title="/Program.cs"
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddHttpContextAccessor()
-    .AddCors()
-    .AddHelperServices();
-
-builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
-
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-
-var app = builder.Build();
-
-app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-app.UseStaticFiles();
-app.MapGraphQL();
-
-app.Run();
-```
 
 Let us test our new **DataLoader**.
 

@@ -6,19 +6,20 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddHttpClient(
+        Constants.PriceInfoService, 
+        c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 
 builder.Services
-    .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
+    .AddTypes()
     .AddFiltering()
     .AddSorting()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
