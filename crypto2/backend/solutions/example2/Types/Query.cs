@@ -1,20 +1,23 @@
-using HotChocolate.Language;
+using HotChocolate.Data.Filters;
+using HotChocolate.Data.Sorting;
 using HotChocolate.Resolvers;
 
 namespace Demo.Types;
 
-public class Query
+[QueryType]
+public static class Query
 {
     [UsePaging]
-    [UseFiltering(typeof(AssetFilterInputType))]
-    [UseSorting(typeof(AssetSortInputType))]
-    public IQueryable<Asset> GetAssets(AssetContext context, IResolverContext resolverContext)
-        => resolverContext.ArgumentLiteral<IValueNode>("order").Kind is SyntaxKind.NullValue
+    [UseFiltering]
+    [UseSorting]
+    public static IQueryable<Asset> GetAssets(AssetContext context, IResolverContext resolverContext)
+        => resolverContext.ArgumentKind("order") is ValueKind.Null
             ? context.Assets.OrderBy(t => t.Symbol)
             : context.Assets;
 
-    public async Task<Asset?> GetAssetByIdAsync(
-        [ID(nameof(Asset))] int id,
+    [NodeResolver]
+    public static async Task<Asset?> GetAssetByIdAsync(
+        int id,
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
