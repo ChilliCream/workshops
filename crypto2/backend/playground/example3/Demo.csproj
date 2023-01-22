@@ -12,6 +12,7 @@
     <Using Include="Demo.DataLoader"/>
     <Using Include="Demo.Helpers"/>
     <Using Include="Demo.Types"/>
+    <Using Include="Demo.Properties"/>
     <Using Include="Microsoft.EntityFrameworkCore"/>
     <Using Include="System.ComponentModel.DataAnnotations"/>
   </ItemGroup>
