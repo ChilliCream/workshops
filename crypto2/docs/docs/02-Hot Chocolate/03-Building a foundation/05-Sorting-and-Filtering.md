@@ -10,7 +10,7 @@ public IQueryable<Asset> GetAssets(AssetContext context)
 
 But in our frontend component for the ticker, we want to sort the assets by the `tradableMarketCapRank`. Further, we also want to introduce new UI components that allow sorting of the assets in lists. **Hot Chocolate** comes with integrations for many data sources to rewrite exposed filters and sort order into the native query language.
 
-In our case, we want to again apply these custom filters and sort orders onto the returned `IQueryable<Asset>`. While paging is actually built into the core of **Hot Chocolate**, the data integrations like sorting and filtering come with the `HotChocolate.Data.*` packages. We have already added the `HotChocolate.Data.EntityFramework` package to the current project.
+In our case, we want to apply these custom filters and sort orders onto the returned `IQueryable<Asset>`. While paging is actually built into the core of **Hot Chocolate**, the data integrations like sorting and filtering come with the `HotChocolate.Data.*` packages. We have already added the `HotChocolate.Data.EntityFramework` package to the current project.
 
 ## Configuration
 
@@ -21,12 +21,11 @@ Head over to the `Program.cs`. Chain `AddFiltering()` and `AddSorting()` into th
 ```graphql
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
+    .AddTypes()
     .AddFiltering()
     .AddSorting()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .RegisterDbContext<AssetContext>();
 ```
 
 Your Program.cs should now look like the following.
@@ -40,16 +39,15 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
+    .AddTypes()
     .AddFiltering()
     .AddSorting()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
@@ -62,7 +60,9 @@ app.Run();
 
 ## Middleware
 
-The attribute `UsePagingAttribute` is a so called `DescriptorAttribute` that wraps GraphQL fluent configuration logic.
+Before we dive into filtering let's quickly explore how things like `UsePaging` change the execution behavior and are able to rewrite a returned queryable.
+
+The attribute `UsePagingAttribute` is a so called `DescriptorAttribute` that wraps GraphQL fluent configuration logic like shown in the example code below.
 
 ```csharp
 /// <summary>
@@ -92,7 +92,7 @@ public sealed class UsePagingAttribute : DescriptorAttribute
 }
 ```
 
-By annotating this attribute to your resolver, it will intercept the field descriptor and apply the configuration to it. Attributes that start with the verb `Use` will apply field middleware to the field, changing the runtime behavior of the annotated resolver.
+By annotating this attribute to your resolver, it will intercept the field descriptor and apply configuration to it. Attributes that start with the verb `Use` will apply field middleware to the field, changing the runtime behavior of the annotated resolver.
 
 <img src="/img/backend/example2-part1-middleware.png" width="300" />
 
@@ -196,7 +196,7 @@ Head over to the `Query.cs` file located in the `Types` directory and add the `U
 [UsePaging]
 [UseFiltering]
 [UseSorting]
-public IQueryable<Asset> GetAssets(AssetContext context)
+public static IQueryable<Asset> GetAssets(AssetContext context)
     => context.Assets.OrderBy(t => t.Symbol);
 ```
 
@@ -256,13 +256,17 @@ public sealed class AssetFilterInputType : FilterInputType<Asset>
 }
 ```
 
-Next, head over to the file `Query.cs` and pass in the `AssetFilterInputType` type to the `UseFilteringAttribute`.
+:::info
+
+The `AssetFilterInputType` class is automatic registered with the Hot Chocolate source generator and also is applied to all filters of `Asset`. If you have the need of different filter types for a type you can use the filter attribute to specify which one it should pick for the annotated field. 
 
 ```csharp
-[UseFiltering(typeof(AssetFilterInputType))]
+[UseFiltering<AssetFilterInputType>]
 ```
 
-With the filtering configured, we still need to configure our sorting middleware.
+:::
+
+With the filtering specified, we still need to configure our sorting middleware.
 
 Create a new file `AssetSortInputType.cs` located in the `Types` directory.
 
@@ -284,20 +288,14 @@ public sealed class AssetSortInputType : SortInputType<Asset>
 }
 ```
 
-As for filtering, we need to pass the `AssetSortInputType` type into the filtering middleware.
-
-```csharp
-[UseSorting(typeof(AssetSortInputType))]
-```
-
 Last but not least, we need to refine our resolver a bit so that we apply the default order only to our `IQueryable` if the user did not specify a sort order of his/her own.
 
 ```csharp
 [UsePaging]
-[UseFiltering(typeof(AssetFilterInputType))]
-[UseSorting(typeof(AssetSortInputType))]
-public IQueryable<Asset> GetAssets(AssetContext context, IResolverContext resolverContext)
-    => resolverContext.ArgumentLiteral<IValueNode>("order").Kind is SyntaxKind.NullValue
+[UseFiltering]
+[UseSorting]
+public static IQueryable<Asset> GetAssets(AssetContext context, IResolverContext resolverContext)
+    => resolverContext.ArgumentKind("order") is ValueKind.Null
         ? context.Assets.OrderBy(t => t.Symbol)
         : context.Assets;
 ```
@@ -363,24 +361,21 @@ query {
 
 Before wrapping up this last part of our chapter, we need to add one more thing to our `Asset` type. As of now, the `Asset` exposes an image key that the UI cannot leverage to fetch the `Asset` icon.
 
-We need to rewrite this file to expose a URL for that image. For this, we will add a new resolver to our `AssetNode` class.
+We need to rewrite this to expose a URL for that image. For this, we will add a new resolver to our `AssetNode` class.
 
 ```csharp
 [BindMember(nameof(Asset.ImageKey))]
-public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor httpContextAccessor)
+public static string? GetImageUrl(
+    [Parent] Asset asset,
+    HttpContext httpContext)
 {
     if (asset.ImageKey is null)
     {
         return null;
     }
 
-    string? scheme = httpContextAccessor.HttpContext?.Request.Scheme;
-    string? host = httpContextAccessor.HttpContext?.Request.Host.Value;
-    if (scheme is null || host is null)
-    {
-        return null;
-    }
-
+    var scheme = httpContext.Request.Scheme;
+    var host = httpContext.Request.Host.Value;
     return $"{scheme}://{host}/images/{asset.ImageKey}";
 }
 ```
@@ -392,40 +387,38 @@ The completed file should look like the following.
 ```csharp title="/Types/AssetNode.cs"
 namespace Demo.Types;
 
-[Node]
-[ExtendObjectType(typeof(Asset))]
-public sealed class AssetNode
+[ExtendObjectType<Asset>]
+public static class AssetNode
 {
-    public async Task<AssetPrice> GetPriceAsync(
+    public static async Task<AssetPrice> GetPriceAsync(
         [Parent] Asset asset,
         AssetPriceBySymbolDataLoader priceBySymbol,
         CancellationToken cancellationToken)
         => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
 
     [BindMember(nameof(Asset.ImageKey))]
-    public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor httpContextAccessor)
+    public static string? GetImageUrl(
+        [Parent] Asset asset,
+        HttpContext httpContext)
     {
         if (asset.ImageKey is null)
         {
             return null;
         }
 
-        string? scheme = httpContextAccessor.HttpContext?.Request.Scheme;
-        string? host = httpContextAccessor.HttpContext?.Request.Host.Value;
-        if (scheme is null || host is null)
-        {
-            return null;
-        }
-
+        var scheme = httpContext.Request.Scheme;
+        var host = httpContext.Request.Host.Value;
         return $"{scheme}://{host}/images/{asset.ImageKey}";
     }
 
-    [NodeResolver]
-    public static async Task<Asset> GetByIdAsync(
-        int id,
-        AssetByIdDataLoader assetById,
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<int, Asset>> GetAssetByIdAsync(
+        IReadOnlyList<int> ids,
+        AssetContext context,
         CancellationToken cancellationToken)
-        => await assetById.LoadAsync(id, cancellationToken);
+        => await context.Assets
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id!, cancellationToken);
 }
 ```
 
@@ -449,4 +442,4 @@ query {
 
 ## Summary
 
-In this last part of this chapter, we have explored what field middleware is and how it enables the paging, filtering, and sorting capabilities of **Hot Chocolate**. We have extended our `assets` field to allow custom filters and to sort the dataset by the user. We also learned that it's best not to just expose all the fields to the consumer for performance and security reasons.
+In this last part of this chapter, we have explored what field middleware is and how it enables the paging, filtering, and sorting capabilities of **Hot Chocolate**. We have extended our `assets` field to allow custom filters and to sort the dataset by the user. We also learned that it's best not to just expose all the fields to the consumer for performance and security reasons. Last we learned how to explicitly bind members when extending types.
