@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+
+# temporary
+tmp/
+*.tmp
+
+# misc
+.DS_Store
+.*/
+*.log*

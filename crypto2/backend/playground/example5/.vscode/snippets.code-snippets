@@ -1,0 +1,66 @@
+{
+  "_OnPriceChange": {
+    "prefix": "_OnPriceChange",
+    "body": [
+      "[Subscribe(With = nameof(PriceChangeStreamAsync))]",
+      "public async Task<AssetPrice> OnPriceChangeAsync(",
+      "    string[]? symbols,",
+      "    AssetPriceBySymbolDataLoader assetPriceBySymbol,",
+      "    [EventMessage] string symbol,",
+      "    CancellationToken cancellationToken)",
+      "    => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);"
+    ],
+    "description": "_OnPriceChange"
+  },
+  "_stream": {
+    "prefix": "_stream",
+    "body": [
+      "public async IAsyncEnumerable<string> PriceChangeStreamAsync(",
+      "    string[]? symbols,",
+      "    [Service] ITopicEventReceiver receiver,",
+      "    [EnumeratorCancellation] CancellationToken cancellationToken)",
+      "{",
+      "    symbols ??= Array.Empty<string>();",
+      "    var symbolSet = new HashSet<string>(symbols);",
+      "    ISourceStream stream = await receiver.SubscribeAsync<string, string>(Constants.OnPriceChange, cancellationToken);",
+      "",
+      "    await foreach (string symbol in stream.ReadEventsAsync().WithCancellation(cancellationToken))",
+      "    {",
+      "        if (symbols.Length == 0 || symbolSet.Contains(symbol))",
+      "        {",
+      "            yield return symbol;",
+      "        }",
+      "    }",
+      "}"
+    ],
+    "description": "_stream"
+  },
+  "_markRead": {
+    "prefix": "_markRead",
+    "body": [
+      "[Error<UnknownNotificationException>]",
+      "[UseMutationConvention(PayloadFieldName = \"readNotification\")]",
+      "public async Task<Notification?> MarkNotificationReadAsync(",
+      "    [ID(nameof(Notification))] int notificationId,",
+      "    [GlobalState] string username,",
+      "    AssetContext context,",
+      "    CancellationToken cancellationToken)",
+      "{",
+      "    var notification = await context.Notifications.FirstOrDefaultAsync(",
+      "        t => t.Id == notificationId && t.Username == username,",
+      "        cancellationToken);",
+      "",
+      "    if (notification is null)",
+      "    {",
+      "        throw new UnknownNotificationException(notificationId);",
+      "    }",
+      "",
+      "    notification.Read = true;",
+      "    await context.SaveChangesAsync(cancellationToken);",
+      "",
+      "    return notification;",
+      "}"
+    ],
+    "description": "_markRead"
+  }
+}
