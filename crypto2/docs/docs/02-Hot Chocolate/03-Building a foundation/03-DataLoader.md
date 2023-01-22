@@ -63,7 +63,7 @@ public static class DataLoaders
 
 The method `GetAssetPriceBySymbolAsync` in this class represents our **DataLoader**. Our class `DataLoaders` could contain multiple of these **DataLoader** methods. Each **DataLoader** method must be `internal` or `public` and also be static. Further it must be annotated with the `DataLoaderAttribute`.
 
-::: note
+:::note
 
 We recommend co-locating the **DataLoader** methods with the GraphQL specific types. As we go forward with this workshop we will refactor the code and move this code to the extension code of `AssetPrice`.
 
