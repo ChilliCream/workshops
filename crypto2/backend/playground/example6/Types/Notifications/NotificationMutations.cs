@@ -5,13 +5,13 @@ using static Demo.Properties.Constants;
 
 namespace Demo.Types.Notifications;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class NotificationMutations
+[MutationType]
+public static class NotificationMutations
 {
     [Error<InvalidTargetPriceException>]
     [Error<UnknownCurrencyException>]
     [UseMutationConvention(PayloadFieldName = "createdAlert")]
-    public async Task<Alert?> CreateAlertAsync(
+    public static async Task<Alert?> CreateAlertAsync(
         CreateAlertInput input,
         [GlobalState] string username,
         AssetContext context,
@@ -50,7 +50,7 @@ public sealed class NotificationMutations
 
     [Error<EntityNotFoundException>]
     [UseMutationConvention(PayloadFieldName = "deletedAlert")]
-    public async Task<Alert?> DeleteAlertAsync(
+    public static async Task<Alert?> DeleteAlertAsync(
         [ID(nameof(Alert))] int alertId,
         AssetContext context,
         CancellationToken cancellationToken)
