@@ -61,32 +61,14 @@ The second thing that we have already configured in our GraphQL server is an in-
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions()
+    .AddTypes()
+    .AddType<UploadType>()
     .AddFiltering()
     .AddSorting()
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
     .AddInMemorySubscriptions() // <----
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-```
-
-What we still have to do here is add a subscription root type. Chain `AddSubscriptionType` in after `AddMutationType`.
-
-```csharp
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddSubscriptionType() // <----
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions()
-    .AddFiltering()
-    .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .RegisterDbContext<AssetContext>();
 ```
 
 The first event we want to introduce is a price update event where we can subscribe to price updates for specific assets of all price updates.
@@ -120,12 +102,11 @@ using HotChocolate.Subscriptions;
 
 namespace Demo.Types.Assets;
 
-[ExtendObjectType(OperationTypeNames.Subscription)]
-public sealed class AssetSubscriptions
+[SubscriptionType]
+public static class AssetSubscriptions
 {
     [Subscribe]
-    public async Task<AssetPrice> OnPriceChangeAsync(
-        string[]? symbols,
+    public static async Task<AssetPrice> OnPriceChangeAsync(
         AssetPriceBySymbolDataLoader assetPriceBySymbol,
         [EventMessage] string symbol,
         CancellationToken cancellationToken)
@@ -138,14 +119,14 @@ public sealed class AssetSubscriptions
 Next, add a subscribe method to the `AssetSubscriptions` class, which will connect to the internal price update events and create an async iterable for the execution engine that represents the event stream.
 
 ```csharp
-public async IAsyncEnumerable<string> PriceChangeStreamAsync(
+public static async IAsyncEnumerable<string> CreateOnPriceChangeStreamAsync(
     string[]? symbols,
     [Service] ITopicEventReceiver receiver,
     [EnumeratorCancellation] CancellationToken cancellationToken)
 {
     symbols ??= Array.Empty<string>();
     var symbolSet = new HashSet<string>(symbols);
-    ISourceStream stream = await receiver.SubscribeAsync<string, string>(Constants.OnPriceChange, cancellationToken);
+    ISourceStream stream = await receiver.SubscribeAsync<string>(Constants.OnPriceChange, cancellationToken);
 
     await foreach (string symbol in stream.ReadEventsAsync().WithCancellation(cancellationToken))
     {
@@ -160,7 +141,7 @@ public async IAsyncEnumerable<string> PriceChangeStreamAsync(
 We need to update our `OnPriceChangeAsync` resolver to indicate how we want to subscribe to the event stream. For this, we will swap out the `SubscribeAttribute`.
 
 ```csharp
-[Subscribe(With = nameof(PriceChangeStreamAsync))]
+[Subscribe(With = nameof(CreateOnPriceChangeStreamAsync))]
 ```
 
 The code should now be like the following.
@@ -172,17 +153,24 @@ using HotChocolate.Subscriptions;
 
 namespace Demo.Types.Assets;
 
-[ExtendObjectType(OperationTypeNames.Subscription)]
-public sealed class AssetSubscriptions
+[SubscriptionType]
+public static class AssetSubscriptions
 {
-    public async IAsyncEnumerable<string> PriceChangeStreamAsync(
+    [Subscribe(With = nameof(CreateOnPriceChangeStreamAsync))]
+    public static async Task<AssetPrice> OnPriceChangeAsync(
+        AssetPriceBySymbolDataLoader assetPriceBySymbol,
+        [EventMessage] string symbol,
+        CancellationToken cancellationToken)
+        => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);
+
+    public static async IAsyncEnumerable<string> CreateOnPriceChangeStreamAsync(
         string[]? symbols,
         [Service] ITopicEventReceiver receiver,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         symbols ??= Array.Empty<string>();
         var symbolSet = new HashSet<string>(symbols);
-        ISourceStream stream = await receiver.SubscribeAsync<string, string>(Constants.OnPriceChange, cancellationToken);
+        ISourceStream stream = await receiver.SubscribeAsync<string>(Constants.OnPriceChange, cancellationToken);
 
         await foreach (string symbol in stream.ReadEventsAsync().WithCancellation(cancellationToken))
         {
@@ -192,14 +180,6 @@ public sealed class AssetSubscriptions
             }
         }
     }
-
-    [Subscribe(With = nameof(PriceChangeStreamAsync))]
-    public async Task<AssetPrice> OnPriceChangeAsync(
-        string[]? symbols,
-        AssetPriceBySymbolDataLoader assetPriceBySymbol,
-        [EventMessage] string symbol,
-        CancellationToken cancellationToken)
-        => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);
 }
 ```
 
@@ -296,15 +276,15 @@ using HotChocolate.Subscriptions;
 
 namespace Demo.Types.Notifications;
 
-[ExtendObjectType(OperationTypeNames.Subscription)]
-public sealed class NotificationSubscriptions
+[SubscriptionType]
+public static class NotificationSubscriptions
 {
-    [Subscribe(With = nameof(CreateOnNotificationUpdateStream))]
-    public NotificationUpdate OnNotification(
+    [Subscribe(With = nameof(CreateOnNotificationStream))]
+    public static NotificationUpdate OnNotification(
         [EventMessage] NotificationUpdate message)
         => message;
 
-    public IAsyncEnumerable<NotificationUpdate> CreateOnNotificationUpdateStream(
+    public static IAsyncEnumerable<NotificationUpdate> CreateOnNotificationStream(
         [GlobalState] string username,
         [Service] ITopicEventReceiver receiver,
         [Service] IDbContextFactory<AssetContext> contextFactory)
@@ -341,7 +321,7 @@ public sealed class NotificationSubscriptions
                 }
             }
 
-            var stream = await _receiver.SubscribeAsync<string, NotificationUpdate>(
+            var stream = await _receiver.SubscribeAsync<NotificationUpdate>(
                 Constants.OnNotification(_username),
                 cancellationToken);
 
