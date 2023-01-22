@@ -25,6 +25,7 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseWebSockets();
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseStaticFiles();
 app.MapGraphQL();
