@@ -1,4 +1,4 @@
-namespace Demo;
+namespace Demo.Properties;
 
 public static class Constants
 {
