@@ -1,30 +1,26 @@
 namespace Demo.Types.Assets;
 
-[Node]
-[ExtendObjectType(typeof(Asset))]
-public sealed class AssetNode
+[ExtendObjectType<Asset>]
+public static class AssetNode
 {
-    public async Task<AssetPrice> GetPriceAsync(
+    public static async Task<AssetPrice> GetPriceAsync(
         [Parent] Asset asset,
         AssetPriceBySymbolDataLoader priceBySymbol,
         CancellationToken cancellationToken)
         => await priceBySymbol.LoadAsync(asset.Symbol!, cancellationToken);
 
     [BindMember(nameof(Asset.ImageKey))]
-    public string? GetImageUrl([Parent] Asset asset, [Service] IHttpContextAccessor httpContextAccessor)
+    public static string? GetImageUrl(
+        [Parent] Asset asset,
+        HttpContext httpContext)
     {
         if (asset.ImageKey is null)
         {
             return null;
         }
 
-        string? scheme = httpContextAccessor.HttpContext?.Request.Scheme;
-        string? host = httpContextAccessor.HttpContext?.Request.Host.Value;
-        if (scheme is null || host is null)
-        {
-            return null;
-        }
-
+        var scheme = httpContext.Request.Scheme;
+        var host = httpContext.Request.Host.Value;
         return $"{scheme}://{host}/images/{asset.ImageKey}";
     }
 
@@ -49,10 +45,30 @@ public sealed class AssetNode
         return symbols.Contains(asset.Symbol!);
     }
 
-    [NodeResolver]
-    public static async Task<Asset> GetByIdAsync(
-        int id, 
-        AssetByIdDataLoader assetById,
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, Asset>> GetAssetBySlugAsync(
+        IReadOnlyList<string> slugs,
+        AssetContext context,
         CancellationToken cancellationToken)
-        => await assetById.LoadAsync(id, cancellationToken);
+        => await context.Assets
+            .Where(t => slugs.Contains(t.Slug))
+            .ToDictionaryAsync(t => t.Slug!, cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, Asset>> GetAssetBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.Assets
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<int, Asset>> GetAssetByIdAsync(
+        IReadOnlyList<int> ids,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.Assets
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, cancellationToken);
 }
