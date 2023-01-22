@@ -20,8 +20,7 @@ builder.Services
     .AddSorting()
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
-    .RegisterDbContext<AssetContext>()
-    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true);
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
