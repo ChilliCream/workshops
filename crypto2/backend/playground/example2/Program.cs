@@ -6,7 +6,7 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer();

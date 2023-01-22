@@ -111,10 +111,9 @@ To opt in to the `Global Object Identification` specification, we need to change
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
+    .AddTypes()
     .AddGlobalObjectIdentification()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .RegisterDbContext<AssetContext>();
 ```
 
 The `Program.cs` should now look like the following.
@@ -128,14 +127,14 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
+    .AddTypes()
     .AddGlobalObjectIdentification()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .RegisterDbContext<AssetContext>();
+
 var app = builder.Build();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
