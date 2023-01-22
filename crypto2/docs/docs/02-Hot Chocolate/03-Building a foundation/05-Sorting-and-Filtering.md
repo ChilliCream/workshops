@@ -4,7 +4,7 @@ In this last part of creating the backend for our price ticker, we want to give 
 
 ```csharp
 [UsePaging]
-public IQueryable<Asset> GetAssets(AssetContext context)
+public static IQueryable<Asset> GetAssets(AssetContext context)
     => context.Assets.OrderBy(t => t.Symbol);
 ```
 

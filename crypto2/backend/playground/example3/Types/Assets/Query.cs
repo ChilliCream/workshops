@@ -19,4 +19,16 @@ public static class Query
         AssetByIdDataLoader assetById,
         CancellationToken cancellationToken)
         => await assetById.LoadAsync(id, cancellationToken);
+
+    public static async Task<Asset?> GetAssetBySymbolAsync(
+        string symbol,
+        AssetBySymbolDataLoader assetBySymbol,
+        CancellationToken cancellationToken)
+        => await assetBySymbol.LoadAsync(symbol, cancellationToken);
+
+    public static async Task<Asset?> GetAssetBySlugAsync(
+        string slug,
+        AssetBySlugDataLoader assetBySlug,
+        CancellationToken cancellationToken)
+        => await assetBySlug.LoadAsync(slug, cancellationToken);
 }
