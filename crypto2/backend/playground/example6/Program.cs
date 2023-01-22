@@ -21,6 +21,7 @@ builder.Services
     .AddSorting()
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
+    .AddInMemorySubscriptions()
     .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
