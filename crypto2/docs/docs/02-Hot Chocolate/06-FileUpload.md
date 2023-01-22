@@ -102,8 +102,8 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class UserMutations
+[MutationType]
+public static sealed class UserMutations
 {
 
 }
@@ -126,7 +126,7 @@ Now, add the actual mutation to the `UserMutations` class.
 
 ```csharp
 [UseMutationConvention(PayloadFieldName = "updatedUser")]
-public async Task<User?> UpdateUserProfile(
+public static async Task<User?> UpdateUserProfile(
     [GlobalState] string username,
     UpdateUserProfileInput input,
     IFileStorage storage,
