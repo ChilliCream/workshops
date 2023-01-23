@@ -8,8 +8,7 @@ using StrawberryShake;
 
 namespace MauiCrypto;
 
-[INotifyPropertyChanged]
-abstract partial class BaseViewModel : IDisposable
+abstract partial class BaseViewModel : ObservableObject, IDisposable
 {
 	static readonly WeakEventManager<string> _httpClientErrorEventManager = new();
 
