@@ -1,15 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using System.Net;
-using AsyncAwaitBestPractices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StrawberryShake;
 
 namespace MauiCrypto;
 
-[INotifyPropertyChanged]
-abstract partial class BaseViewModel : IDisposable
+abstract partial class BaseViewModel : ObservableObject, IDisposable
 {
 	static readonly AsyncAwaitBestPractices.WeakEventManager<string> _httpClientErrorEventManager = new();
 
