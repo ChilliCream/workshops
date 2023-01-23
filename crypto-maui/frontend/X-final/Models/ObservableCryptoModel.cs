@@ -3,8 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MauiCrypto;
 
-[INotifyPropertyChanged]
-partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
+partial class ObservableCryptoModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
 {
 	[ObservableProperty]
 	string _id = string.Empty,
@@ -53,8 +52,7 @@ partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
 											: (Color?)Application.Current?.Resources[nameof(BaseTheme.PositiveStockColor)];
 }
 
-[INotifyPropertyChanged]
-partial class ObservableCryptoPriceModel : IGetAssestsQuery_Assets_Nodes_Price
+partial class ObservableCryptoPriceModel : ObservableObject, IGetAssestsQuery_Assets_Nodes_Price
 {
 	[ObservableProperty]
 	double _lastPrice, _change24Hour, _marketCap, _volume24Hour,

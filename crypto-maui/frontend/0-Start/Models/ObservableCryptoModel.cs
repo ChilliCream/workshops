@@ -3,8 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace MauiCrypto;
 
-[INotifyPropertyChanged]
-partial class ObservableCryptoModel : IGetAssestsQuery_Assets_Nodes
+partial class ObservableCryptoModel : ObservableObject, IGetAssestsQuery_Assets_Nodes
 {
 	[ObservableProperty]
 	string _id = string.Empty,
