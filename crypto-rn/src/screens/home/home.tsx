@@ -1,27 +1,58 @@
 import styled from '@emotion/native';
 import React from 'react';
-import {Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Dimensions, ScrollView, View} from 'react-native';
+import {graphql, useLazyLoadQuery} from 'react-relay';
 
-import {useTranslation} from '@/translations';
+import type {homeQuery} from '@/__generated__/homeQuery.graphql';
 
-const $SafeAreaView = styled(SafeAreaView)`
+import {HomeFeatured} from './home-featured';
+import {HomeSpotlight} from './home-spotlight';
+import {HomeTicker} from './home-ticker';
+
+const WIDTH = Dimensions.get('screen').width;
+
+const $SafeAreaView = styled(View)`
   flex: 1;
   justify-content: center;
   align-items: center;
+  background-color: ${({theme}) => theme.pallete.background};
 `;
 
-const $Text = styled(Text)`
-  ${({theme}) => theme.typography.title}
-  color: ${({theme}) => theme.pallete.brand.primary};
+const Stack = styled(ScrollView)`
+  flex: 1;
+`;
+
+const Divider = styled(View)`
+  width: ${WIDTH - 20}px;
+  margin: 0px 10px;
+  height: 1px;
+  background-color: ${({theme}) => theme.pallete.border.primary};
 `;
 
 export const Home: React.FC = () => {
-  const {t} = useTranslation();
+  const data = useLazyLoadQuery<homeQuery>(
+    graphql`
+      query homeQuery {
+        ...homeTickerFragment_query
+        ...homeFeaturedFragment_query
+        ...homeSpotlightFragment_query
+      }
+    `,
+    {},
+  );
 
   return (
     <$SafeAreaView testID="view:home">
-      <$Text>{t('home:title')}</$Text>
+      <Stack
+        showsVerticalScrollIndicator={false}
+        disableScrollViewPanResponder={true}
+      >
+        <HomeTicker fragmentRef={data} />
+        <Divider />
+        <HomeFeatured fragmentRef={data} />
+        <Divider />
+        <HomeSpotlight fragmentRef={data} />
+      </Stack>
     </$SafeAreaView>
   );
 };

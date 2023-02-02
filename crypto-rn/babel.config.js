@@ -15,5 +15,6 @@ module.exports = {
       },
     ],
     ['@emotion'],
+    ['react-native-reanimated/plugin'],
   ],
 };
