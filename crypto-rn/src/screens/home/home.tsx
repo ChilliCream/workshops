@@ -4,6 +4,7 @@ import {Dimensions, ScrollView, View} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 import type {homeQuery} from '@/__generated__/homeQuery.graphql';
+import type {StackScreenProps} from '@/root';
 
 import {HomeFeatured} from './home-featured';
 import {HomeSpotlight} from './home-spotlight';
@@ -15,7 +16,7 @@ const $SafeAreaView = styled(View)`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({theme}) => theme.pallete.background};
+  background-color: ${({theme}) => theme.pallete.background.primary};
 `;
 
 const Stack = styled(ScrollView)`
@@ -29,7 +30,7 @@ const Divider = styled(View)`
   background-color: ${({theme}) => theme.pallete.border.primary};
 `;
 
-export const Home: React.FC = () => {
+export const Home: React.FC<StackScreenProps<'Home'>> = () => {
   const data = useLazyLoadQuery<homeQuery>(
     graphql`
       query homeQuery {

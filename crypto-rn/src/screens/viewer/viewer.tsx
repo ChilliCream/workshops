@@ -1,13 +1,62 @@
-import {Link} from '@react-navigation/native';
-import React from 'react';
-import {View} from 'react-native';
+import styled from '@emotion/native';
+import React, {memo} from 'react';
+import {ScrollView} from 'react-native';
+import {graphql, useLazyLoadQuery} from 'react-relay';
 
+import type {viewerQuery} from '@/__generated__/viewerQuery.graphql';
 import {Typography} from '@/components';
+import type {StackScreenProps} from '@/root';
 
-export const Viewer: React.FC = () => (
-  <View style={{flex: 1}}>
-    <Typography variant="title">VIEW SCREEN</Typography>
+import {ViewerHeader} from './viewer-header';
+import {ViewerOverview} from './viewer-overview';
+import {ViewerSnapshot} from './viewer-snapshot';
+import {ViewerStats} from './viewer-stats';
 
-    <Link to="/Home">Go Home</Link>
-  </View>
-);
+type ViewerDataProp = viewerQuery;
+
+const Root = styled(ScrollView)`
+  flex: 1;
+  padding: 12px;
+  background-color: ${({theme}) => theme.pallete.background.primary};
+`;
+
+export const Viewer = memo<StackScreenProps<'Viewer'>>(function Viewer({
+  route,
+}) {
+  const {
+    params: {symbol},
+  } = route;
+
+  const data = useLazyLoadQuery<ViewerDataProp>(
+    graphql`
+      query viewerQuery($symbol: String!) {
+        assetBySymbol(symbol: $symbol) {
+          ...viewerHeaderFragment_asset
+          ...viewerSnapshotFragment_asset
+          ...viewerStatsFragment_asset
+          ...viewerOverviewFragment_asset
+          # ...ViewerResourcesFragment_asset
+        }
+      }
+    `,
+    {symbol},
+  );
+
+  if (!data.assetBySymbol) {
+    return (
+      <Typography variant="body">This currency could not be found</Typography>
+    );
+  }
+
+  return (
+    <Root
+      showsVerticalScrollIndicator={false}
+      disableScrollViewPanResponder={true}
+    >
+      <ViewerHeader fragmentRef={data.assetBySymbol} />
+      <ViewerSnapshot fragmentRef={data.assetBySymbol} />
+      <ViewerStats fragmentRef={data.assetBySymbol} />
+      <ViewerOverview fragmentRef={data.assetBySymbol} />
+    </Root>
+  );
+});

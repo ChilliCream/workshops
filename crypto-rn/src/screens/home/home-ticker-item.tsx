@@ -48,7 +48,7 @@ export const HomeTickerItem = memo<HomeTickerItemProps>(
     const {price, symbol, color} = asset;
 
     return (
-      <Link to="/Viewer">
+      <Link to={{screen: 'Viewer', params: {symbol}}}>
         <Stack>
           <Symbol value={symbol} color={color} size="small" />
           <Price value={price.lastPrice} options={{currency: price.currency}} />

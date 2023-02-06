@@ -1,4 +1,5 @@
 import styled from '@emotion/native';
+import {Link} from '@react-navigation/native';
 import React from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
@@ -64,30 +65,30 @@ export const HomeSpotlightItem: React.FC<HomeSpotlightItemProps> = ({
 
   const {price} = asset;
 
-  console.log('VIEW ===> ', view);
-
   return (
-    <Root>
-      <Stack>
-        <$Currency
-          symbol={asset.symbol}
-          name={asset.name}
-          imageUrl={asset.imageUrl}
-        />
+    <Link to={{screen: 'Viewer', params: {symbol: asset.symbol}}}>
+      <Root>
+        <Stack>
+          <$Currency
+            symbol={asset.symbol}
+            name={asset.name}
+            imageUrl={asset.imageUrl}
+          />
 
-        <Value>
-          {price && view === 'price' && (
-            <Price
-              value={price.lastPrice}
-              options={{currency: price.currency}}
-              typographyVariant="caption"
-            />
-          )}
-          {price && view === 'change' && (
-            <Change value={price.change24Hour} typographyVariant="caption" />
-          )}
-        </Value>
-      </Stack>
-    </Root>
+          <Value>
+            {price && view === 'price' && (
+              <Price
+                value={price.lastPrice}
+                options={{currency: price.currency}}
+                typographyVariant="caption"
+              />
+            )}
+            {price && view === 'change' && (
+              <Change value={price.change24Hour} typographyVariant="caption" />
+            )}
+          </Value>
+        </Stack>
+      </Root>
+    </Link>
   );
 };

@@ -123,6 +123,7 @@ export const HomeTicker = memo<HomeTickerProps>(function HomeTicker({
         data={assets}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        disableScrollViewPanResponder={true}
         renderItem={({item}) => (
           <HomeTickerItem key={item.id} fragmentRef={item} />
         )}
