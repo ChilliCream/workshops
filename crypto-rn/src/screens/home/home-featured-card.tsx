@@ -15,14 +15,12 @@ interface HomeFeaturedCardProps {
   fragmentRef: FragmentRef<any>;
 }
 
-const $Link = styled(Link)`
-  min-height: 200px;
-  width: ${WIDTH - 32}px;
-  margin: 16px 16px;
+const Root = styled(View)`
   border: 1px solid ${({theme}) => theme.pallete.border.primary};
 `;
 
 const Stack = styled(View)`
+  width: ${WIDTH};
   flex-direction: row;
   margin-bottom: 8px;
   padding: 16px;
@@ -64,8 +62,11 @@ export const HomeFeaturedCard = memo<HomeFeaturedCardProps>(
     }
 
     return (
-      <$Link to="/Viewer" style={{flex: 1}}>
-        <View>
+      <Link
+        to={{screen: 'Viewer', params: {symbol: asset.symbol}}}
+        style={{margin: 16}}
+      >
+        <Root>
           <Stack>
             <Symbol size="medium" value={asset.symbol} color={asset.color} />
             <Gap />
@@ -77,8 +78,8 @@ export const HomeFeaturedCard = memo<HomeFeaturedCardProps>(
             <Change value={price.change24Hour} />
           </Stack>
           <SmallChart color={asset.color} data={price.change.history.nodes} />
-        </View>
-      </$Link>
+        </Root>
+      </Link>
     );
   },
 );

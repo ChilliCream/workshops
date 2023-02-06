@@ -75,8 +75,6 @@ export const HomeSpotlightCard: React.FC<HomeSpotlightCardProps> = ({
 
   const assets = data?.nodes;
 
-  console.log('VIEW in CARD ===> ', view);
-
   return (
     <Root>
       <Stack layout="row" space={{top: 16, bottom: 8}}>

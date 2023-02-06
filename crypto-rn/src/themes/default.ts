@@ -7,7 +7,10 @@ export const defaultTheme = {
       primary: Colors.ORANGE,
     },
     foreground: Colors.BLACK,
-    background: Colors.WHITE,
+    background: {
+      primary: Colors.WHITE,
+      secondary: Colors.OPAQUE,
+    },
     border: {
       primary: Colors.OPAQUE,
     },

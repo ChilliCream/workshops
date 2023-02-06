@@ -21,10 +21,6 @@ interface SmallChartProps {
   data: SmallChartDataProp;
 }
 
-const SmallPane = styled(View)`
-  position: relative;
-`;
-
 export const SmallChart = memo<SmallChartProps>(function SmallChart({
   color,
   data,
@@ -35,14 +31,12 @@ export const SmallChart = memo<SmallChartProps>(function SmallChart({
   ]);
 
   return (
-    <SmallPane>
-      <Graph
-        height={150}
-        width={WIDTH}
-        offset={6}
-        color={color}
-        data={dataInMs}
-      />
-    </SmallPane>
+    <Graph
+      height={150}
+      width={WIDTH}
+      offset={6}
+      color={color}
+      data={dataInMs}
+    />
   );
 });
