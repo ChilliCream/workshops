@@ -14,7 +14,11 @@ export const Symbol = memo<SymbolProps>(function Symbol({
   size = 'medium',
 }) {
   return (
-    <Typography variant={size === 'medium' ? 'body' : 'caption'} color={color}>
+    <Typography
+      variant={size === 'medium' ? 'body' : 'caption'}
+      color={color}
+      weight="bold"
+    >
       {value}
     </Typography>
   );

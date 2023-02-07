@@ -22,9 +22,9 @@ export const defaultTheme = {
   },
   typography: {
     title: genTypo('default', 28, 36, 2),
-    subtitle: genTypo('default', 16, 20, 2),
-    body: genTypo('default', 14, 20),
-    caption: genTypo('default', 12, 18),
+    subtitle: genTypo('default', 18, 24, 2),
+    body: genTypo('default', 16, 22),
+    caption: genTypo('default', 14, 20),
   },
 } as const;
 

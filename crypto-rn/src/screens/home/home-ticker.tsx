@@ -21,7 +21,7 @@ interface HomeTickerProps {
 
 const Root = styled(View)`
   width: 100%;
-  height: 68px;
+  height: 72px;
   padding: 8px 0px;
   align-items: center;
 `;

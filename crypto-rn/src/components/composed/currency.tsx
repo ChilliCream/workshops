@@ -50,7 +50,11 @@ export const Currency = memo<CurrencyProps>(function Currency({
       {!!imageUrl && <CryptoIcon src={imageUrl} size="medium" />}
       <Gap size={8} layout="row" />
       <Stack layout="column">
-        <Typography variant="caption" color={pallete.brand.primary}>
+        <Typography
+          variant="caption"
+          color={pallete.brand.primary}
+          weight="bold"
+        >
           {name}
         </Typography>
         <Typography variant="caption">{symbol}</Typography>
