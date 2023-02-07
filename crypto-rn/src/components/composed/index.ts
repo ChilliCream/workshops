@@ -4,3 +4,4 @@ export * from './currency';
 export * from './change';
 export * from './small-chart';
 export * from './big-chart';
+export * from './header';
