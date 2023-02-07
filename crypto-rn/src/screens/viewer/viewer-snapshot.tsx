@@ -22,6 +22,7 @@ import type {viewerSnapshotFragment_asset$key} from '@/__generated__/viewerSnaps
 import type {viewerSnapshotFragment_price$key} from '@/__generated__/viewerSnapshotFragment_price.graphql';
 import {BigChart, Typography} from '@/components';
 import {SpanSelector} from '@/components/core/span-selector';
+import {formatPercent} from '@/utils';
 
 // import {formatCurrencyToParts} from '@/utils';
 
@@ -138,7 +139,9 @@ export const ViewerSnapshot = memo<ViewerSnapshotProps>(
           )} */}
           <Typography variant="subtitle">$</Typography>
           <Typography variant="title">{price.lastPrice}</Typography>
-          <Typography variant="caption">{price.currency}</Typography>
+          <Typography variant="caption">
+            {formatPercent(price.change.percentageChange)}
+          </Typography>
         </Stack>
 
         <SpanSelector onChange={handleSpanChange} span={span} busy={busy} />
