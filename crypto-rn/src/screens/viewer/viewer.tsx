@@ -4,7 +4,7 @@ import {ScrollView} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 import type {viewerQuery} from '@/__generated__/viewerQuery.graphql';
-import {Typography} from '@/components';
+import {Header, Typography} from '@/components';
 import type {StackScreenProps} from '@/root';
 
 import {ViewerHeader} from './viewer-header';
@@ -49,14 +49,17 @@ export const Viewer = memo<StackScreenProps<'Viewer'>>(function Viewer({
   }
 
   return (
-    <Root
-      showsVerticalScrollIndicator={false}
-      disableScrollViewPanResponder={true}
-    >
-      <ViewerHeader fragmentRef={data.assetBySymbol} />
-      <ViewerSnapshot fragmentRef={data.assetBySymbol} />
-      <ViewerStats fragmentRef={data.assetBySymbol} />
-      <ViewerOverview fragmentRef={data.assetBySymbol} />
-    </Root>
+    <>
+      <Header back={true} />
+      <Root
+        showsVerticalScrollIndicator={false}
+        disableScrollViewPanResponder={true}
+      >
+        <ViewerHeader fragmentRef={data.assetBySymbol} />
+        <ViewerSnapshot fragmentRef={data.assetBySymbol} />
+        <ViewerStats fragmentRef={data.assetBySymbol} />
+        <ViewerOverview fragmentRef={data.assetBySymbol} />
+      </Root>
+    </>
   );
 });

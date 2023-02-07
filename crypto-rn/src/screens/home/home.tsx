@@ -4,6 +4,7 @@ import {Dimensions, ScrollView, View} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 import type {homeQuery} from '@/__generated__/homeQuery.graphql';
+import {Header} from '@/components';
 import type {StackScreenProps} from '@/root';
 
 import {HomeFeatured} from './home-featured';
@@ -12,7 +13,7 @@ import {HomeTicker} from './home-ticker';
 
 const WIDTH = Dimensions.get('screen').width;
 
-const $SafeAreaView = styled(View)`
+const Root = styled(View)`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -43,7 +44,8 @@ export const Home: React.FC<StackScreenProps<'Home'>> = () => {
   );
 
   return (
-    <$SafeAreaView testID="view:home">
+    <Root testID="view:home">
+      <Header />
       <Stack
         showsVerticalScrollIndicator={false}
         disableScrollViewPanResponder={true}
@@ -54,6 +56,6 @@ export const Home: React.FC<StackScreenProps<'Home'>> = () => {
         <Divider />
         <HomeSpotlight fragmentRef={data} />
       </Stack>
-    </$SafeAreaView>
+    </Root>
   );
 };
