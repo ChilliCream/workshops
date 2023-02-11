@@ -30,6 +30,7 @@
     "extract-files": "latest",
     "fast-text-encoding": "^1.0.6",
     "graphql-sse": "^1.3.2",
+    "graphql-ws": "^5.11.3",
     "i18next": "latest",
     "lodash": "latest",
     "meros": "^1.2.1",

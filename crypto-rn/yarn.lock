@@ -4458,6 +4458,7 @@ __metadata:
     find-cache-dir: latest
     get-graphql-schema: latest
     graphql-sse: ^1.3.2
+    graphql-ws: ^5.11.3
     i18next: latest
     inquirer: latest
     jest: latest
@@ -6470,6 +6471,15 @@ __metadata:
   peerDependencies:
     graphql: ">=0.11 <=16"
   checksum: e1ce19308c5317575f72d61cbcf5954176baee4ae866abb5aaaa17f75e277c9579fdfeb5ad55abf5d7a08488282d6b8b01d9e1a2904482d7e8c878c605f8b1c1
+  languageName: node
+  linkType: hard
+
+"graphql-ws@npm:^5.11.3":
+  version: 5.11.3
+  resolution: "graphql-ws@npm:5.11.3"
+  peerDependencies:
+    graphql: ">=0.11 <=16"
+  checksum: 75ea80702fa027b8d4ff1faba9824b11184fef0946560c535040b79f0f7f56ac7ce42873ea3b34083373ddf3a439cda1e7b7bfae20939ab739330456f4e7776b
   languageName: node
   linkType: hard
 
