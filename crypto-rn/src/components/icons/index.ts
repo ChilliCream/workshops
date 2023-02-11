@@ -8,6 +8,7 @@ export * from './search-icon';
 export * from './dashboard-icon';
 export * from './screener-icon';
 export * from './back-icon';
+export * from './order-icon';
 
 export * from './bitcoin-icon';
 export * from './cardano-icon';

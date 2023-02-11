@@ -8,15 +8,46 @@ import React, {
   useState,
   useTransition,
 } from 'react';
-import {Button, ListRenderItem, Pressable, Text, View} from 'react-native';
-import {FlatList, TextInput} from 'react-native-gesture-handler';
+import {Button, ListRenderItem, Modal, View} from 'react-native';
+import {
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
 import {graphql, usePaginationFragment} from 'react-relay';
 
 import type {ScreenerListRefetchableQuery} from '@/__generated__/ScreenerListRefetchableQuery.graphql';
 import type {screenerListFragment_query$key} from '@/__generated__/screenerListFragment_query.graphql';
-import {SearchIcon, Typography} from '@/components';
+import {OrderIcon, SearchIcon, Typography} from '@/components';
 
 import {ScreenerListItem} from './screener-list-item';
+
+const Order = [
+  {
+    title: 'Market cap ↓',
+    expression: {price: {marketCap: 'DESC'}},
+  },
+  {
+    title: 'Change 24H ↓',
+    expression: {price: {change24Hour: 'DESC'}},
+  },
+  {
+    title: 'Change 24H ↑',
+    expression: {price: {change24Hour: 'ASC'}},
+  },
+  {
+    title: 'Symbol ↑',
+    expression: {symbol: 'ASC'},
+  },
+  {
+    title: 'Slug ↑',
+    expression: {slug: 'ASC'},
+  },
+  {
+    title: 'Name ↑',
+    expression: {name: 'ASC'},
+  },
+];
 
 type ScreenerListDataProp = screenerListFragment_query$key;
 
@@ -100,6 +131,10 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
   const qRef = useRef(q);
   const deferredQ = useDeferredValue(q);
 
+  const [showOrderOptions, setShowOrderOptions] = useState(false);
+  const [order, setOrder] = useState(0);
+  const orderRef = useRef(order);
+
   const [busy, startTransition] = useTransition();
 
   const renderItem: ListRenderItem<Asset> = ({item}) => (
@@ -111,11 +146,12 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
   }, []);
 
   useEffect(() => {
-    if (qRef.current !== deferredQ) {
+    if (qRef.current !== deferredQ || orderRef.current !== order) {
       qRef.current = deferredQ;
+      orderRef.current = order;
 
       startTransition(() => {
-        const variables = deferredQ
+        const filterVars = deferredQ
           ? {
               where: {
                 or: [
@@ -125,12 +161,32 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
                 ],
               },
             }
-          : {};
+          : null;
 
-        refetch(variables);
+        const orderVars: any = order
+          ? {order: [Order[order].expression]}
+          : null;
+
+        refetch(Object.assign({}, filterVars, orderVars));
       });
+
+      // startTransition(() => {
+      //   const variables = deferredQ
+      //     ? {
+      //         where: {
+      //           or: [
+      //             {symbol: {contains: deferredQ}},
+      //             {name: {contains: deferredQ}},
+      //             {slug: {contains: deferredQ}},
+      //           ],
+      //         },
+      //       }
+      //     : {};
+
+      //   refetch(variables);
+      // });
     }
-  }, [deferredQ]);
+  }, [deferredQ, order]);
 
   return (
     <Root>
@@ -142,6 +198,9 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
           autoFocus={true}
           onChangeText={handleChangeText}
         />
+        <TouchableOpacity onPress={() => setShowOrderOptions(true)}>
+          <OrderIcon />
+        </TouchableOpacity>
       </Stack>
 
       <Divider />
@@ -167,12 +226,34 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
         <LoadMore
           title="Load more ..."
           onPress={() => {
-            if (!busy) {
+            if (!busy || !isLoadingNext) {
               loadNext(10);
             }
           }}
         />
       )}
+
+      <Modal
+        animationType="slide"
+        visible={showOrderOptions}
+        onRequestClose={() => {
+          setShowOrderOptions(false);
+        }}
+      >
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          {Order.map(({title}, index) => (
+            <TouchableOpacity
+              key={title}
+              onPress={() => {
+                setOrder(index);
+                setShowOrderOptions(false);
+              }}
+            >
+              <Typography variant="body">{title}</Typography>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </Modal>
     </Root>
   );
 });
