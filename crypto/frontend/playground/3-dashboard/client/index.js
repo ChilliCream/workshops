@@ -118,23 +118,22 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
                   break;
                 }
 
-                // If any exceptions occurred when processing the request,
-                // throw an error to indicate to the developer what went wrong.
-                if ('errors' in part.body) {
-                  sink.error(
-                    new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
-                      request,
-                      response,
-                    }),
-                  );
-                  break;
-                }
-
                 // DEMO: delay chunked responses
                 // await pause(2_000);
 
                 if ('data' in part.body) {
                   sink.next(part.body);
+                } else if ('errors' in part.body) {
+                  // If any exceptions occurred when processing the request,
+                  // throw an error to indicate to the developer what went wrong.
+                  sink.error(
+                    new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
+                      request,
+                      response,
+                      errors: part.body.errors,
+                    }),
+                  );
+                  break;
                 }
 
                 if ('incremental' in part.body) {
@@ -176,20 +175,21 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
             } else {
               const json = await response.json();
 
-              // If any exceptions occurred when processing the request,
-              // throw an error to indicate to the developer what went wrong.
-              if ('errors' in json) {
+              // DEMO: delay response
+              // await pause(2_000);
+
+              if ('data' in json) {
+                sink.next(json);
+              } else if ('errors' in json) {
+                // If any exceptions occurred when processing the request,
+                // throw an error to indicate to the developer what went wrong.
                 sink.error(
                   new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
                     request,
                     response,
+                    errors: json.errors,
                   }),
                 );
-              } else {
-                // DEMO: delay response
-                // await pause(2_000);
-
-                sink.next(json);
               }
             }
 
