@@ -2968,6 +2968,7 @@ __metadata:
     eslint: latest
     eslint-config-next: latest
     extract-files: latest
+    graphql: 15.3.0
     graphql-sse: latest
     graphql-ws: latest
     jest: latest
