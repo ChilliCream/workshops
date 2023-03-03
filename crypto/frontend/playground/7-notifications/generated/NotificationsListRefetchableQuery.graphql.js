@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<7c90f6413566371e0505977f47b33e0a>>
- * @flow
+ * @generated SignedSource<<98e913ef0a4158cbacaa6e394ab5c8e3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,24 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-import type { NotificationsListFragment_query$fragmentType } from "./NotificationsListFragment_query.graphql";
-export type NotificationsListRefetchableQuery$variables = {|
-  count?: ?number,
-  cursor?: ?string,
-|};
-export type NotificationsListRefetchableQuery$data = {|
-  +$fragmentSpreads: NotificationsListFragment_query$fragmentType,
-|};
-export type NotificationsListRefetchableQuery = {|
-  response: NotificationsListRefetchableQuery$data,
-  variables: NotificationsListRefetchableQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": 10,
@@ -278,9 +260,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "0e5e27789efaf889e60a6859c7c162b3";
+node.hash = "0e5e27789efaf889e60a6859c7c162b3";
 
-module.exports = ((node/*: any*/)/*: Query<
-  NotificationsListRefetchableQuery$variables,
-  NotificationsListRefetchableQuery$data,
->*/);
+module.exports = node;

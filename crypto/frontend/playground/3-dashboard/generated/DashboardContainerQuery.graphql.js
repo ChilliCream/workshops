@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<8d98d2faa83dbbc57ea52cbb9f28becf>>
- * @flow
+ * @generated SignedSource<<a3be9b3c573bb8c9a77fcbe0d631bf51>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,22 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { DashboardFeaturedFragment_query$fragmentType } from "./DashboardFeaturedFragment_query.graphql";
-import type { DashboardSpotlightFragment_query$fragmentType } from "./DashboardSpotlightFragment_query.graphql";
-import type { DashboardTickerFragment_query$fragmentType } from "./DashboardTickerFragment_query.graphql";
-export type DashboardContainerQuery$variables = {||};
-export type DashboardContainerQuery$data = {|
-  +$fragmentSpreads: DashboardFeaturedFragment_query$fragmentType & DashboardSpotlightFragment_query$fragmentType & DashboardTickerFragment_query$fragmentType,
-|};
-export type DashboardContainerQuery = {|
-  response: DashboardContainerQuery$data,
-  variables: DashboardContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -396,9 +380,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "36cb06ea9a915eeb17386e150b0cf23b";
+node.hash = "36cb06ea9a915eeb17386e150b0cf23b";
 
-module.exports = ((node/*: any*/)/*: Query<
-  DashboardContainerQuery$variables,
-  DashboardContainerQuery$data,
->*/);
+module.exports = node;

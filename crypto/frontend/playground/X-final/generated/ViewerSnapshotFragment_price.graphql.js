@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<d1d23d612331231d67ba86977dc4302a>>
- * @flow
+ * @generated SignedSource<<e951dd9c60cc4e67e82a0674321c5dc4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ViewerSnapshotFragment_price$fragmentType: FragmentType;
-import type { ViewerSnapshotRefetchableQuery$variables } from "./ViewerSnapshotRefetchableQuery.graphql";
-export type ViewerSnapshotFragment_price$data = {|
-  +change: ?{|
-    +history: ?{|
-      +nodes: ?$ReadOnlyArray<?{|
-        +epoch: number,
-        +price: number,
-      |}>,
-    |},
-    +percentageChange: number,
-  |},
-  +currency: string,
-  +id: string,
-  +lastPrice: number,
-  +$fragmentType: ViewerSnapshotFragment_price$fragmentType,
-|};
-export type ViewerSnapshotFragment_price$key = {
-  +$data?: ViewerSnapshotFragment_price$data,
-  +$fragmentSpreads: ViewerSnapshotFragment_price$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [
     {
       "defaultValue": "DAY",
@@ -143,10 +115,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "92f04f73a86ad17b385a146cb370f432";
+node.hash = "92f04f73a86ad17b385a146cb370f432";
 
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  ViewerSnapshotFragment_price$fragmentType,
-  ViewerSnapshotFragment_price$data,
-  ViewerSnapshotRefetchableQuery$variables,
->*/);
+module.exports = node;

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<54026db195b569b77bd281cc38892dfb>>
- * @flow
+ * @generated SignedSource<<76b71de5da4ebb0cc069b751974e42e0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,23 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { SettingsProfileFragment_query$fragmentType } from "./SettingsProfileFragment_query.graphql";
-export type SettingsContainerQuery$variables = {||};
-export type SettingsContainerQuery$data = {|
-  +me: ?{|
-    +id: string,
-  |},
-  +$fragmentSpreads: SettingsProfileFragment_query$fragmentType,
-|};
-export type SettingsContainerQuery = {|
-  response: SettingsContainerQuery$data,
-  variables: SettingsContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -113,9 +96,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "20fcbc8036d965f99cb30e386edd7814";
+node.hash = "20fcbc8036d965f99cb30e386edd7814";
 
-module.exports = ((node/*: any*/)/*: Query<
-  SettingsContainerQuery$variables,
-  SettingsContainerQuery$data,
->*/);
+module.exports = node;

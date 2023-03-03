@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<2bdab563bd2af59d24ffce6df0f2c847>>
- * @flow
+ * @generated SignedSource<<c77ec8ecf732b0df938cae6f19e69d72>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,31 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-import type { ScreenerListItemFragment_asset$fragmentType } from "./ScreenerListItemFragment_asset.graphql";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ScreenerListFragment_query$fragmentType: FragmentType;
-import type { ScreenerListRefetchableQuery$variables } from "./ScreenerListRefetchableQuery.graphql";
-export type ScreenerListFragment_query$data = {|
-  +assets: ?{|
-    +edges: ?$ReadOnlyArray<{|
-      +node: {|
-        +id: string,
-        +$fragmentSpreads: ScreenerListItemFragment_asset$fragmentType,
-      |},
-    |}>,
-  |},
-  +$fragmentType: ScreenerListFragment_query$fragmentType,
-|};
-export type ScreenerListFragment_query$key = {
-  +$data?: ScreenerListFragment_query$data,
-  +$fragmentSpreads: ScreenerListFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = (function(){
+var node = (function(){
 var v0 = [
   "assets"
 ];
@@ -190,10 +165,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "35a34d660d7155895c77082e8a7c5436";
+node.hash = "35a34d660d7155895c77082e8a7c5436";
 
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  ScreenerListFragment_query$fragmentType,
-  ScreenerListFragment_query$data,
-  ScreenerListRefetchableQuery$variables,
->*/);
+module.exports = node;

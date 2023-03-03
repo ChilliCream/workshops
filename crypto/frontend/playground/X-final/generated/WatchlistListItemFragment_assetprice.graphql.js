@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f74b280178e91571d9af618e8464a3f3>>
- * @flow
+ * @generated SignedSource<<e58e0e6dcf8390c9dc50df5875ec26ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,25 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type WatchlistListItemFragment_assetprice$fragmentType: FragmentType;
-export type WatchlistListItemFragment_assetprice$data = {|
-  +change24Hour: number,
-  +currency: string,
-  +lastPrice: number,
-  +marketCap: number,
-  +$fragmentType: WatchlistListItemFragment_assetprice$fragmentType,
-|};
-export type WatchlistListItemFragment_assetprice$key = {
-  +$data?: WatchlistListItemFragment_assetprice$data,
-  +$fragmentSpreads: WatchlistListItemFragment_assetprice$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -66,9 +47,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "b5130efcee1a3d8ce1a16ba094b97457";
+node.hash = "b5130efcee1a3d8ce1a16ba094b97457";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  WatchlistListItemFragment_assetprice$fragmentType,
-  WatchlistListItemFragment_assetprice$data,
->*/);
+module.exports = node;
