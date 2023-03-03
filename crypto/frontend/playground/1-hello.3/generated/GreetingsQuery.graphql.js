@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<c8a3e7085ae35da7c834bf2d0ca866b5>>
- * @flow
+ * @generated SignedSource<<15df7b8fa3fd9ffaa2a9d7c02fcce998>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,21 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type GreetingsQuery$variables = {|
-  name: string,
-|};
-export type GreetingsQuery$data = {|
-  +greetings: string,
-|};
-export type GreetingsQuery = {|
-  response: GreetingsQuery$data,
-  variables: GreetingsQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -74,9 +59,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "8100c9379a13b8b002da3186b76f05d6";
+node.hash = "8100c9379a13b8b002da3186b76f05d6";
 
-module.exports = ((node/*: any*/)/*: Query<
-  GreetingsQuery$variables,
-  GreetingsQuery$data,
->*/);
+module.exports = node;

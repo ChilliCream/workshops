@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<7a6f5a3a6009b4fff1d58046f904b9dd>>
- * @flow
+ * @generated SignedSource<<0c8ac25b9e52a7ae38913cf35d0038e7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type MarkNotificationReadInput = {|
-  notificationId: string,
-|};
-export type NotificationsListItemMNRMutation$variables = {|
-  input: MarkNotificationReadInput,
-|};
-export type NotificationsListItemMNRMutation$data = {|
-  +markNotificationRead: {|
-    +readNotification: ?{|
-      +read: boolean,
-    |},
-  |},
-|};
-export type NotificationsListItemMNRMutation = {|
-  response: NotificationsListItemMNRMutation$data,
-  variables: NotificationsListItemMNRMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -135,9 +113,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "ac35bf7e019ba0540f4502d49a7c00c1";
+node.hash = "ac35bf7e019ba0540f4502d49a7c00c1";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  NotificationsListItemMNRMutation$variables,
-  NotificationsListItemMNRMutation$data,
->*/);
+module.exports = node;

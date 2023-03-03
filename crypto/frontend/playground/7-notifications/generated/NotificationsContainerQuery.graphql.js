@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<7d67fa6401461235f1b0855e62a0757b>>
- * @flow
+ * @generated SignedSource<<b97ff1dc98cca3cbfe63a24c36405b51>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { NotificationsListFragment_query$fragmentType } from "./NotificationsListFragment_query.graphql";
-export type NotificationsContainerQuery$variables = {||};
-export type NotificationsContainerQuery$data = {|
-  +$fragmentSpreads: NotificationsListFragment_query$fragmentType,
-|};
-export type NotificationsContainerQuery = {|
-  response: NotificationsContainerQuery$data,
-  variables: NotificationsContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "kind": "Literal",
@@ -246,9 +232,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "d8ae39b861e73f19b049877d1b0dee29";
+node.hash = "d8ae39b861e73f19b049877d1b0dee29";
 
-module.exports = ((node/*: any*/)/*: Query<
-  NotificationsContainerQuery$variables,
-  NotificationsContainerQuery$data,
->*/);
+module.exports = node;

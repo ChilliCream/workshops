@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<d2e4e141e32be552eb8c4ca6cb0d138f>>
- * @flow
+ * @generated SignedSource<<15d480e03d77f648b472dbaf069ba968>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,24 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-import type { WatchlistListItemFragment_assetprice$fragmentType } from "./WatchlistListItemFragment_assetprice.graphql";
-export type WatchlistListSubscription$variables = {|
-  symbols?: ?$ReadOnlyArray<string>,
-|};
-export type WatchlistListSubscription$data = {|
-  +onPriceChange: {|
-    +$fragmentSpreads: WatchlistListItemFragment_assetprice$fragmentType,
-  |},
-|};
-export type WatchlistListSubscription = {|
-  response: WatchlistListSubscription$data,
-  variables: WatchlistListSubscription$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -133,9 +115,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "1a87ebbc2629abf6397d2f9ecf321f6f";
+node.hash = "1a87ebbc2629abf6397d2f9ecf321f6f";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  WatchlistListSubscription$variables,
-  WatchlistListSubscription$data,
->*/);
+module.exports = node;

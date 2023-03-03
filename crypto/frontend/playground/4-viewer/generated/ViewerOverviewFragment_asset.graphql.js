@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<6621f8a18534e846031730ab5f0d77fb>>
- * @flow
+ * @generated SignedSource<<6ab5f916b0976fccce0d004a0e203dd7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,22 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type ViewerOverviewFragment_asset$fragmentType: FragmentType;
-export type ViewerOverviewFragment_asset$data = {|
-  +description: ?string,
-  +$fragmentType: ViewerOverviewFragment_asset$fragmentType,
-|};
-export type ViewerOverviewFragment_asset$key = {
-  +$data?: ViewerOverviewFragment_asset$data,
-  +$fragmentSpreads: ViewerOverviewFragment_asset$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -42,9 +26,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "4a497ef77b1f964eafaee0d6d3490d85";
+node.hash = "4a497ef77b1f964eafaee0d6d3490d85";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  ViewerOverviewFragment_asset$fragmentType,
-  ViewerOverviewFragment_asset$data,
->*/);
+module.exports = node;

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<38da308a1df07721a6ab56df605ce069>>
- * @flow
+ * @generated SignedSource<<d71afec2659dd50c5f0272ea86de0b1b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type SettingsProfileFragment_query$fragmentType: FragmentType;
-export type SettingsProfileFragment_query$data = {|
-  +me: ?{|
-    +displayName: ?string,
-    +id: string,
-    +imageUrl: ?string,
-    +name: string,
-  |},
-  +$fragmentType: SettingsProfileFragment_query$fragmentType,
-|};
-export type SettingsProfileFragment_query$key = {
-  +$data?: SettingsProfileFragment_query$data,
-  +$fragmentSpreads: SettingsProfileFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -79,9 +58,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "44e477a33e75832ed8eac68415b459a6";
+node.hash = "44e477a33e75832ed8eac68415b459a6";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  SettingsProfileFragment_query$fragmentType,
-  SettingsProfileFragment_query$data,
->*/);
+module.exports = node;

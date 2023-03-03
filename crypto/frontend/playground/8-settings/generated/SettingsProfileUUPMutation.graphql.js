@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<78afa7b5c74ca6538fb173f47ea826e8>>
- * @flow
+ * @generated SignedSource<<c9f602520540ac690e55d4614007698f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,30 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type UpdateUserProfileInput = {|
-  displayName?: ?string,
-  image?: ?File,
-|};
-export type SettingsProfileUUPMutation$variables = {|
-  input: UpdateUserProfileInput,
-|};
-export type SettingsProfileUUPMutation$data = {|
-  +updateUserProfile: {|
-    +updatedUser: ?{|
-      +displayName: ?string,
-      +imageUrl: ?string,
-    |},
-  |},
-|};
-export type SettingsProfileUUPMutation = {|
-  response: SettingsProfileUUPMutation$data,
-  variables: SettingsProfileUUPMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -146,9 +122,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "dfb0375f9e1199ed14b99df82fdde270";
+node.hash = "dfb0375f9e1199ed14b99df82fdde270";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  SettingsProfileUUPMutation$variables,
-  SettingsProfileUUPMutation$data,
->*/);
+module.exports = node;

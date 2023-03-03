@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<ee08f7ceb20223dcf158154a488483aa>>
- * @flow
+ * @generated SignedSource<<18387a206a4185efbde3afd6a6f1defc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,24 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-import type { DashboardTickerItemFragment_assetprice$fragmentType } from "./DashboardTickerItemFragment_assetprice.graphql";
-export type DashboardTickerSubscription$variables = {|
-  symbols?: ?$ReadOnlyArray<string>,
-|};
-export type DashboardTickerSubscription$data = {|
-  +onPriceChange: {|
-    +$fragmentSpreads: DashboardTickerItemFragment_assetprice$fragmentType,
-  |},
-|};
-export type DashboardTickerSubscription = {|
-  response: DashboardTickerSubscription$data,
-  variables: DashboardTickerSubscription$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -126,9 +108,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "7fdab90c9db1c4557a97491aadf2eae9";
+node.hash = "7fdab90c9db1c4557a97491aadf2eae9";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  DashboardTickerSubscription$variables,
-  DashboardTickerSubscription$data,
->*/);
+module.exports = node;
