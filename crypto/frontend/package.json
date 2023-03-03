@@ -53,6 +53,7 @@
     "typescript": "latest"
   },
   "scripts": {
+    "audit": "node scripts/audit.js",
     "build": "next build",
     "dev": "next dev",
     "export": "next export",
