@@ -186,7 +186,7 @@ Next, we will introduce our `KeyAndSpan` struct. Since we need proper equivalenc
 
 Create a `KeyAndSpan.cs` file in the `Types/Assets` directory and copy the code below.
 
-```csharp title="/Types/Assets/HttpBatchDataLoader.cs"
+```csharp title="/Types/Assets/KeyAndSpan.cs"
 namespace Demo.Types.Assets;
 
 public readonly record struct KeyAndSpan(string Symbol, ChangeSpan Span);
@@ -604,7 +604,6 @@ The completed `AssetPriceChangeType` should now look like the following.
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
-using HotChocolate.Types.Pagination.Extensions;
 
 namespace Demo.Types.Assets;
 
@@ -762,7 +761,6 @@ The completed `AssetPriceChangeType` should look like the following.
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
-using HotChocolate.Types.Pagination.Extensions;
 
 namespace Demo.Types.Assets;
 
