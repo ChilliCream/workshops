@@ -3,7 +3,7 @@ using HotChocolate.Resolvers;
 namespace Demo.Types.Assets;
 
 [QueryType]
-public static class Query
+public static class AssetQueries
 {
     [UsePaging]
     [UseFiltering]
