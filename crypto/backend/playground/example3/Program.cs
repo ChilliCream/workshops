@@ -22,4 +22,4 @@ app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseStaticFiles();
 app.MapGraphQL();
 
-app.Run();
+app.RunWithGraphQLCommands(args);
