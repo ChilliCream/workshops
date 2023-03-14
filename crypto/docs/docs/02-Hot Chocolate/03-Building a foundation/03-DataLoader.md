@@ -45,7 +45,7 @@ The **DataLoader** instead batches requests to the database or any other data so
 First, we will create a file called `DataLoaders` located in the `Types` directory.
 Copy the following code into the file.
 
-```csharp title="/DataLoader/AssetPriceBySymbolDataLoader.cs"
+```csharp title="/Types/DataLoaders.cs"
 namespace Demo.Types;
 
 public static class DataLoaders
@@ -87,7 +87,7 @@ In our case this is a good option as a default to all our **DataLoader**. In ord
 
 With this default added we now can simplify our argument on the `DataLoaderAttribute`.
 
-```csharp title="/DataLoader/AssetPriceBySymbolDataLoader.cs"
+```csharp title="/Types/DataLoaders.cs"
 namespace Demo.Types;
 
 public static class DataLoaders
