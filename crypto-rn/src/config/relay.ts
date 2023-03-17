@@ -1,7 +1,7 @@
 // @ts-nocheck
 import extractFiles from 'extract-files/extractFiles.mjs';
 import isExtractableFile from 'extract-files/isExtractableFile.mjs';
-// import {createClient as createClientSSE} from 'graphql-sse';
+import {createClient as createClientSSE} from 'graphql-sse';
 import {createClient as createClientWS} from 'graphql-ws';
 import {meros} from 'meros/browser';
 import {useMemo} from 'react';
@@ -39,6 +39,9 @@ class NetworkError extends Error {
     }
   }
 }
+
+const nativeFetchFn = async (url, options) =>
+  fetch(url, Object.assign({}, options, {reactNative: {textStreaming: true}}));
 
 const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
   const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
@@ -100,7 +103,7 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
       const request = new Request(httpEndpoint, init);
 
       try {
-        const response = await fetch(request);
+        const response = await nativeFetchFn(request);
 
         // Status code in range 200-299 inclusive (2xx).
         if (response.ok) {
@@ -224,44 +227,46 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
  * With `graphql-sse`.
  * @see https://github.com/enisdenjo/graphql-sse
  */
-// const subscribeFnWithSSE = (operation, variables) => {
-//   const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
-//   const authToken = undefined;
+const subscribeFnWithSSE = (operation, variables) => {
+  const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
+  const authToken = undefined;
 
-//   const client = createClientSSE({
-//     url: httpEndpoint,
+  const client = createClientSSE({
+    fetchFn: nativeFetchFn,
 
-//     /** If you have an HTTP/2 server, it is recommended to use the client in "distinct connections mode" (singleConnection = false) which will create a new SSE connection for each subscribe. */
-//     singleConnection: false,
+    url: httpEndpoint,
 
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: authToken ? `basic ${authToken}` : undefined,
-//     },
-//   });
+    /** If you have an HTTP/2 server, it is recommended to use the client in "distinct connections mode" (singleConnection = false) which will create a new SSE connection for each subscribe. */
+    singleConnection: false,
 
-//   return Observable.create((sink) =>
-//     client.subscribe(
-//       {
-//         id: operation.id ?? undefined,
-//         query: operation.text,
-//         variables,
-//       },
-//       {
-//         ...sink,
-//         error: (err) => {
-//           if (Array.isArray(err)) {
-//             return sink.error(
-//               new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
-//             );
-//           }
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: authToken ? `basic ${authToken}` : undefined,
+    },
+  });
 
-//           return sink.error(err, true);
-//         },
-//       },
-//     ),
-//   );
-// };
+  return Observable.create((sink) =>
+    client.subscribe(
+      {
+        id: operation.id ?? undefined,
+        query: operation.text,
+        variables,
+      },
+      {
+        ...sink,
+        error: (err) => {
+          if (Array.isArray(err)) {
+            return sink.error(
+              new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
+            );
+          }
+
+          return sink.error(err, true);
+        },
+      },
+    ),
+  );
+};
 
 let wsClient;
 
@@ -310,8 +315,8 @@ const subscribeFnWithWS = (operation, variables) => {
 };
 
 // DEMO: choose one of the implementations
-// const subscribeFn = subscribeFnWithSSE;
-const subscribeFn = subscribeFnWithWS;
+const subscribeFn = subscribeFnWithSSE;
+// const subscribeFn = subscribeFnWithWS;
 
 const createEnvironment = (initialRecords) => {
   const source = new RecordSource(initialRecords);

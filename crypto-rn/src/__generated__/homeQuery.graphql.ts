@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<431f27d5f1599bffa4e175bb2a0e3269>>
+ * @generated SignedSource<<bc9158862b6d1fcbe373eb0e6f60881e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -301,78 +301,92 @@ return {
         "storageKey": "assets(where:{\"symbol\":{\"in\":[\"BTC\",\"ADA\",\"ALGO\"]}})"
       },
       {
-        "alias": "gainers",
-        "args": [
-          (v7/*: any*/),
+        "if": null,
+        "kind": "Defer",
+        "label": "homeSpotlightFragment_query$defer$gainers",
+        "selections": [
           {
-            "kind": "Literal",
-            "name": "order",
-            "value": {
-              "price": {
-                "change24Hour": "DESC"
-              }
-            }
-          },
-          {
-            "kind": "Literal",
-            "name": "where",
-            "value": {
-              "price": {
-                "change24Hour": {
-                  "gt": 0
+            "alias": "gainers",
+            "args": [
+              (v7/*: any*/),
+              {
+                "kind": "Literal",
+                "name": "order",
+                "value": {
+                  "price": {
+                    "change24Hour": "DESC"
+                  }
+                }
+              },
+              {
+                "kind": "Literal",
+                "name": "where",
+                "value": {
+                  "price": {
+                    "change24Hour": {
+                      "gt": 0
+                    }
+                  }
                 }
               }
-            }
+            ],
+            "concreteType": "AssetsConnection",
+            "kind": "LinkedField",
+            "name": "assets",
+            "plural": false,
+            "selections": (v8/*: any*/),
+            "storageKey": "assets(first:5,order:{\"price\":{\"change24Hour\":\"DESC\"}},where:{\"price\":{\"change24Hour\":{\"gt\":0}}})"
           }
-        ],
-        "concreteType": "AssetsConnection",
-        "kind": "LinkedField",
-        "name": "assets",
-        "plural": false,
-        "selections": (v8/*: any*/),
-        "storageKey": "assets(first:5,order:{\"price\":{\"change24Hour\":\"DESC\"}},where:{\"price\":{\"change24Hour\":{\"gt\":0}}})"
+        ]
       },
       {
-        "alias": "losers",
-        "args": [
-          (v7/*: any*/),
+        "if": null,
+        "kind": "Defer",
+        "label": "homeSpotlightFragment_query$defer$losers",
+        "selections": [
           {
-            "kind": "Literal",
-            "name": "order",
-            "value": {
-              "price": {
-                "change24Hour": "ASC"
-              }
-            }
-          },
-          {
-            "kind": "Literal",
-            "name": "where",
-            "value": {
-              "price": {
-                "change24Hour": {
-                  "lt": 0
+            "alias": "losers",
+            "args": [
+              (v7/*: any*/),
+              {
+                "kind": "Literal",
+                "name": "order",
+                "value": {
+                  "price": {
+                    "change24Hour": "ASC"
+                  }
+                }
+              },
+              {
+                "kind": "Literal",
+                "name": "where",
+                "value": {
+                  "price": {
+                    "change24Hour": {
+                      "lt": 0
+                    }
+                  }
                 }
               }
-            }
+            ],
+            "concreteType": "AssetsConnection",
+            "kind": "LinkedField",
+            "name": "assets",
+            "plural": false,
+            "selections": (v8/*: any*/),
+            "storageKey": "assets(first:5,order:{\"price\":{\"change24Hour\":\"ASC\"}},where:{\"price\":{\"change24Hour\":{\"lt\":0}}})"
           }
-        ],
-        "concreteType": "AssetsConnection",
-        "kind": "LinkedField",
-        "name": "assets",
-        "plural": false,
-        "selections": (v8/*: any*/),
-        "storageKey": "assets(first:5,order:{\"price\":{\"change24Hour\":\"ASC\"}},where:{\"price\":{\"change24Hour\":{\"lt\":0}}})"
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "ad2d6b5b50626ea08dcaa639a04a8887",
+    "cacheID": "7c462e3d550eb580daabfb05a1811624",
     "id": null,
     "metadata": {},
     "name": "homeQuery",
     "operationKind": "query",
-    "text": "query homeQuery {\n  ...homeTickerFragment_query\n  ...homeFeaturedFragment_query\n  ...homeSpotlightFragment_query\n}\n\nfragment homeFeaturedCardFragment_asset on Asset {\n  symbol\n  color\n  price {\n    currency\n    lastPrice\n    change24Hour\n    change(span: DAY) {\n      history {\n        nodes {\n          epoch\n          price\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment homeFeaturedFragment_query on Query {\n  featured: assets(where: {symbol: {in: [\"BTC\", \"ADA\", \"ALGO\"]}}) {\n    nodes {\n      id\n      ...homeFeaturedCardFragment_asset\n    }\n  }\n}\n\nfragment homeSpotlightCardFragment_asset on AssetsConnection {\n  nodes {\n    id\n    ...homeSpotlightItemFragment_asset\n  }\n}\n\nfragment homeSpotlightFragment_query on Query {\n  ...homeSpotlightGainersFragment_query\n  ...homeSpotlightLosersFragment_query\n}\n\nfragment homeSpotlightGainersFragment_query on Query {\n  gainers: assets(first: 5, where: {price: {change24Hour: {gt: 0}}}, order: {price: {change24Hour: DESC}}) {\n    ...homeSpotlightCardFragment_asset\n  }\n}\n\nfragment homeSpotlightItemFragment_asset on Asset {\n  id\n  symbol\n  name\n  imageUrl\n  isInWatchlist\n  price {\n    currency\n    lastPrice\n    change24Hour\n    id\n  }\n}\n\nfragment homeSpotlightLosersFragment_query on Query {\n  losers: assets(first: 5, where: {price: {change24Hour: {lt: 0}}}, order: {price: {change24Hour: ASC}}) {\n    ...homeSpotlightCardFragment_asset\n  }\n}\n\nfragment homeTickerFragment_query on Query {\n  ticker: assets(first: 10, order: {price: {tradableMarketCapRank: ASC}}) {\n    nodes {\n      id\n      symbol\n      ...homeTickerItemFragment_asset\n    }\n  }\n}\n\nfragment homeTickerItemFragment_asset on Asset {\n  symbol\n  color\n  price {\n    currency\n    lastPrice\n    change24Hour\n    id\n  }\n}\n"
+    "text": "query homeQuery {\n  ...homeTickerFragment_query\n  ...homeFeaturedFragment_query\n  ...homeSpotlightFragment_query\n}\n\nfragment homeFeaturedCardFragment_asset on Asset {\n  symbol\n  color\n  price {\n    currency\n    lastPrice\n    change24Hour\n    change(span: DAY) {\n      history {\n        nodes {\n          epoch\n          price\n        }\n      }\n      id\n    }\n    id\n  }\n}\n\nfragment homeFeaturedFragment_query on Query {\n  featured: assets(where: {symbol: {in: [\"BTC\", \"ADA\", \"ALGO\"]}}) {\n    nodes {\n      id\n      ...homeFeaturedCardFragment_asset\n    }\n  }\n}\n\nfragment homeSpotlightCardFragment_asset on AssetsConnection {\n  nodes {\n    id\n    ...homeSpotlightItemFragment_asset\n  }\n}\n\nfragment homeSpotlightFragment_query on Query {\n  ...homeSpotlightGainersFragment_query @defer(label: \"homeSpotlightFragment_query$defer$gainers\")\n  ...homeSpotlightLosersFragment_query @defer(label: \"homeSpotlightFragment_query$defer$losers\")\n}\n\nfragment homeSpotlightGainersFragment_query on Query {\n  gainers: assets(first: 5, where: {price: {change24Hour: {gt: 0}}}, order: {price: {change24Hour: DESC}}) {\n    ...homeSpotlightCardFragment_asset\n  }\n}\n\nfragment homeSpotlightItemFragment_asset on Asset {\n  id\n  symbol\n  name\n  imageUrl\n  isInWatchlist\n  price {\n    currency\n    lastPrice\n    change24Hour\n    id\n  }\n}\n\nfragment homeSpotlightLosersFragment_query on Query {\n  losers: assets(first: 5, where: {price: {change24Hour: {lt: 0}}}, order: {price: {change24Hour: ASC}}) {\n    ...homeSpotlightCardFragment_asset\n  }\n}\n\nfragment homeTickerFragment_query on Query {\n  ticker: assets(first: 10, order: {price: {tradableMarketCapRank: ASC}}) {\n    nodes {\n      id\n      symbol\n      ...homeTickerItemFragment_asset\n    }\n  }\n}\n\nfragment homeTickerItemFragment_asset on Asset {\n  symbol\n  color\n  price {\n    currency\n    lastPrice\n    change24Hour\n    id\n  }\n}\n"
   }
 };
 })();

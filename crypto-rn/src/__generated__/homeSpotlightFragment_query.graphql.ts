@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f46c7335e29be08965007a34b7dfbc7d>>
+ * @generated SignedSource<<2ecec082e3b5d205a36f23ae2a028c5a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,20 +26,30 @@ const node: ReaderFragment = {
   "name": "homeSpotlightFragment_query",
   "selections": [
     {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "homeSpotlightGainersFragment_query"
+      "kind": "Defer",
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "homeSpotlightGainersFragment_query"
+        }
+      ]
     },
     {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "homeSpotlightLosersFragment_query"
+      "kind": "Defer",
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "homeSpotlightLosersFragment_query"
+        }
+      ]
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "49b87c5d83e24e588a16356571074a3d";
+(node as any).hash = "40120ef619cd50a9eb588c0fa45724ce";
 
 export default node;
