@@ -96,8 +96,8 @@ export const HomeSpotlight = memo<HomeSpotlightProps>(function HomeSpotlight({
   const data = useFragment<HomeSpotlightDataProp>(
     graphql`
       fragment homeSpotlightFragment_query on Query {
-        ...homeSpotlightGainersFragment_query
-        ...homeSpotlightLosersFragment_query
+        ...homeSpotlightGainersFragment_query @defer(label: "gainers")
+        ...homeSpotlightLosersFragment_query @defer(label: "losers")
       }
     `,
     fragmentRef,

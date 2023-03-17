@@ -16,6 +16,8 @@
     ".proactive/*"
   ],
   "dependencies": {
+    "@azure/core-asynciterator-polyfill": "^1.0.2",
+    "@craftzdog/react-native-buffer": "^6.0.5",
     "@emotion/native": "latest",
     "@emotion/react": "latest",
     "@react-navigation/native": "latest",
@@ -29,6 +31,7 @@
     "d3-transition": "^3.0.1",
     "extract-files": "latest",
     "fast-text-encoding": "^1.0.6",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "graphql-sse": "^1.3.2",
     "graphql-ws": "^5.11.3",
     "i18next": "latest",
@@ -40,6 +43,7 @@
     "react-native-fetch-api": "^3.0.0",
     "react-native-gesture-handler": "latest",
     "react-native-polyfill-globals": "^3.1.0",
+    "react-native-quick-base64": "^2.0.5",
     "react-native-reanimated": "latest",
     "react-native-safe-area-context": "latest",
     "react-native-screens": "latest",

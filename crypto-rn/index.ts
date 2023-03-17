@@ -1,10 +1,13 @@
-// import { polyfill as polyfillCrypto } from 'react-native-polyfill-globals/src/crypto';
-import 'fast-text-encoding';
+import '@azure/core-asynciterator-polyfill';
+import {Buffer} from '@craftzdog/react-native-buffer';
+import 'fastestsmallesttextencoderdecoder';
 import {AppRegistry} from 'react-native';
-// import {polyfill as polyfillEncoding} from 'react-native-polyfill-globals/src/encoding';
-// import { polyfill as polyfillURL } from 'react-native-polyfill-globals/src/url';
-import {polyfill as polyfillFetch} from 'react-native-polyfill-globals/src/fetch';
-import {polyfill as polyfillReadableStream} from 'react-native-polyfill-globals/src/readable-stream';
+import {Headers, Request, Response, fetch} from 'react-native-fetch-api';
+import {polyfillGlobal} from 'react-native/Libraries/Utilities/PolyfillFunctions';
+import {
+  ReadableStream,
+  WritableStream,
+} from 'web-streams-polyfill/ponyfill/es6';
 
 import {name as appName} from './app.json';
 import {App} from './src/app';
@@ -12,11 +15,19 @@ import {App} from './src/app';
 const init = () => {
   // Register and start the app.
   AppRegistry.registerComponent(appName, () => App);
+
+  const b = Buffer.from([255, 220, 210, 150]);
+
+  console.log(b);
 };
 
-// Apply polyfills
-// polyfillEncoding();
-polyfillReadableStream();
-polyfillFetch();
+polyfillGlobal('Buffer', () => Buffer);
+polyfillGlobal('ReadableStream', () => ReadableStream);
+polyfillGlobal('WritableStream', () => WritableStream);
+
+polyfillGlobal('fetch', () => fetch);
+polyfillGlobal('Headers', () => Headers);
+polyfillGlobal('Request', () => Request);
+polyfillGlobal('Response', () => Response);
 
 init();
