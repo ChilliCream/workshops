@@ -57,7 +57,7 @@ The `Upload` scalar is a unique scalar that only works as an input type. All oth
 builder.Services
     .AddGraphQLServer()
     .AddTypes()
-    .AddType<UploadType>()    // <-----
+    .AddUploadType()    // <-----
     .AddFiltering()
     .AddSorting()
     .AddGlobalObjectIdentification()
@@ -103,7 +103,7 @@ using Demo.Types.Errors;
 namespace Demo.Types.Account;
 
 [MutationType]
-public static sealed class UserMutations
+public static class UserMutations
 {
 
 }
