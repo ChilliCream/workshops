@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class HelersServiceCollectionExtensions
@@ -8,5 +10,7 @@ public static class HelersServiceCollectionExtensions
             .AddHostedService<AssetPriceChangeProcessor>()
             .AddGraphQLServer()
             .RegisterService<IFileStorage>()
+            .AddHttpRequestInterceptor<Demo.Transport.CustomHttpRequestInterceptor>()
+            .AddSocketSessionInterceptor<Demo.Transport.CustomSocketSessionInterceptor>()
             .Services;
 }

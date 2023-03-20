@@ -125,6 +125,7 @@ private static async Task<string?> TryStoreImage(
 Now, add the actual mutation to the `UserMutations` class.
 
 ```csharp
+[Error<NotAuthenticatedException>]
 [UseMutationConvention(PayloadFieldName = "updatedUser")]
 public static async Task<User?> UpdateUserProfile(
     [GlobalState] string username,
