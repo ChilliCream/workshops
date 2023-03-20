@@ -16,7 +16,8 @@ public sealed class CustomSocketSessionInterceptor : DefaultSocketSessionInterce
     {
         try
         {
-            var payload = connectionInitMessage.As<Dictionary<string, string?>>();
+            var payload = connectionInitMessage.As<Dictionary<string, string?>>()?
+                .ToDictionary(t => t.Key, t => t.Value, StringComparer.OrdinalIgnoreCase);
 
             if (payload is not null &&
                 payload.TryGetValue("Authorization", out var value) &&
@@ -52,6 +53,8 @@ public sealed class CustomSocketSessionInterceptor : DefaultSocketSessionInterce
         IQueryRequestBuilder requestBuilder,
         CancellationToken cancellationToken = default)
     {
+        requestBuilder.SetGlobalState("username", null);
+
         if (session.Connection.HttpContext.Items.TryGetValue("username", out var value) &&
             value is string username)
         {
