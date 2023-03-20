@@ -251,8 +251,7 @@ builder.Services
     .AddSorting()
     .AddGlobalObjectIdentification()
     .AddMutationConventions()             // <----
-    .RegisterDbContext<AssetContext>()
-    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true);
+    .RegisterDbContext<AssetContext>();
 ```
 
 The updated `Program.cs` should now look like the following.
@@ -280,8 +279,7 @@ builder.Services
     .AddSorting()
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
-    .RegisterDbContext<AssetContext>()
-    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true);
+    .RegisterDbContext<AssetContext>();
 
 var app = builder.Build();
 
