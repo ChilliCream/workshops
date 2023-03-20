@@ -1,3 +1,5 @@
+using Demo.Transport;
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class HelersServiceCollectionExtensions
@@ -8,5 +10,6 @@ public static class HelersServiceCollectionExtensions
             .AddHostedService<AssetPriceChangeProcessor>()
             .AddGraphQLServer()
             .RegisterService<IFileStorage>()
+            .AddHttpRequestInterceptor<CustomHttpRequestInterceptor>()
             .Services;
 }

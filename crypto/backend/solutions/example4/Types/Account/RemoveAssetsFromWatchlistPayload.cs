@@ -1,5 +1,3 @@
-using Demo.Types.Assets;
-
 namespace Demo.Types.Account;
 
 public sealed class RemoveAssetsFromWatchlistPayload

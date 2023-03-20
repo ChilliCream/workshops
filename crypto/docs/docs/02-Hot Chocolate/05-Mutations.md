@@ -956,6 +956,8 @@ public sealed class UnknownWatchlistException : Exception
 }
 ```
 
+Last replace the WatchlistMutations class with the following code:
+
 ```csharp title="/Types/Account/WatchlistMutations.cs"
 using Demo.Types.Errors;
 
