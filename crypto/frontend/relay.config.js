@@ -17,11 +17,11 @@ module.exports = {
 
   // @see https://relay.dev/docs/guides/persisted-queries/
   // persistConfig: {
-  //   // Remote Persisting
-  //   url: 'http://localhost:4000/persist',
-  //   params: {},
-  //   concurrency: 10,
-  //
+  //   //   // Remote Persisting
+  //   //   url: 'http://localhost:4000/persist',
+  //   //   params: {},
+  //   //   concurrency: 10,
+  //   //
   //   // Local Persisting
   //   file: './persisted.json',
   // },
