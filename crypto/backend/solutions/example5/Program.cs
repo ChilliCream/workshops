@@ -16,7 +16,7 @@ builder.Services
 builder.Services
     .AddGraphQLServer()
     .AddTypes()
-    .AddType<UploadType>()
+    .AddUploadType()
     .AddFiltering()
     .AddSorting()
     .AddGlobalObjectIdentification()

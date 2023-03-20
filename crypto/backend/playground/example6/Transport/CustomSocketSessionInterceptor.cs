@@ -9,13 +9,6 @@ namespace Demo.Transport;
 
 public sealed class CustomSocketSessionInterceptor : DefaultSocketSessionInterceptor
 {
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
-
-    public CustomSocketSessionInterceptor(IDbContextFactory<AssetContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-
     public override async ValueTask<ConnectionStatus> OnConnectAsync(
         ISocketSession session,
         IOperationMessagePayload connectionInitMessage,
@@ -36,7 +29,8 @@ public sealed class CustomSocketSessionInterceptor : DefaultSocketSessionInterce
                 session.Connection.HttpContext.Items.TryAdd("username", username);
                 session.Connection.HttpContext.User.AddIdentity(new ClaimsIdentity(new[] { new Claim("sub", username) }, "basic"));
 
-                await using var assetContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                await using var scope = session.Connection.RequestServices.CreateAsyncScope();
+                await using var assetContext = scope.ServiceProvider.GetRequiredService<AssetContext>();
                 if (!await assetContext.Users.AnyAsync(t => t.Name == username, cancellationToken))
                 {
                     assetContext.Users.Add(new User { Name = username });

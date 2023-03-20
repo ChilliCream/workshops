@@ -8,13 +8,6 @@ namespace Demo.Transport;
 
 public sealed class CustomHttpRequestInterceptor : DefaultHttpRequestInterceptor
 {
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
-
-    public CustomHttpRequestInterceptor(IDbContextFactory<AssetContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-
     public override async ValueTask OnCreateAsync(
         HttpContext context,
         IRequestExecutor requestExecutor,
@@ -34,7 +27,8 @@ public sealed class CustomHttpRequestInterceptor : DefaultHttpRequestInterceptor
                 context.User.AddIdentity(new ClaimsIdentity(new[] { new Claim("sub", credentials[0]) }, "basic"));
                 requestBuilder.SetGlobalState("username", credentials[0]);
 
-                await using var assetContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                await using var scope = context.RequestServices.CreateAsyncScope();
+                await using var assetContext = scope.ServiceProvider.GetRequiredService<AssetContext>();
                 if (!await assetContext.Users.AnyAsync(t => t.Name == username, cancellationToken))
                 {
                     assetContext.Users.Add(new User { Name = username });
