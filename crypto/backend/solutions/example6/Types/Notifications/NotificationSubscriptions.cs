@@ -13,23 +13,23 @@ public static class NotificationSubscriptions
     public static IAsyncEnumerable<NotificationUpdate> CreateOnNotificationStream(
         [GlobalState] string username,
         [Service] ITopicEventReceiver receiver,
-        [Service] IDbContextFactory<AssetContext> contextFactory)
-        => new OnNotificationUpdateStream(username, receiver, contextFactory);
+        [Service] IServiceProvider services)
+        => new OnNotificationUpdateStream(username, receiver, services);
 
     private sealed class OnNotificationUpdateStream : IAsyncEnumerable<NotificationUpdate>
     {
         private readonly string _username;
         private readonly ITopicEventReceiver _receiver;
-        private readonly IDbContextFactory<AssetContext> _contextFactory;
+        private readonly IServiceProvider _services;
 
         public OnNotificationUpdateStream(
             string username,
             ITopicEventReceiver receiver,
-            IDbContextFactory<AssetContext> contextFactory)
+            IServiceProvider services)
         {
             _username = username;
             _receiver = receiver;
-            _contextFactory = contextFactory;
+            _services = services;
         }
 
         public async IAsyncEnumerator<NotificationUpdate> GetAsyncEnumerator(CancellationToken cancellationToken = default)
@@ -39,11 +39,14 @@ public static class NotificationSubscriptions
                 throw new GraphQLException("You need to be signed in for this subscription!");
             }
 
-            await using (AssetContext context = await _contextFactory.CreateDbContextAsync(cancellationToken))
+            await using (var scope = _services.CreateAsyncScope())
             {
-                if (await context.Notifications.AnyAsync(t => t.Username == _username, cancellationToken))
+                await using var context = scope.ServiceProvider.GetRequiredService<AssetContext>();
                 {
-                    yield return new();
+                    if (await context.Notifications.AnyAsync(t => t.Username == _username, cancellationToken))
+                    {
+                        yield return new();
+                    }
                 }
             }
 

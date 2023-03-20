@@ -1,5 +1,7 @@
+using Demo.Types.Assets;
 using Demo.Types.Errors;
 using HotChocolate.Subscriptions;
+using static Demo.Properties.Constants;
 
 namespace Demo.Types.Notifications;
 
@@ -87,7 +89,7 @@ public static class NotificationMutations
         notification.Read = true;
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notification;
     }
@@ -118,7 +120,7 @@ public static class NotificationMutations
 
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notifications;
     }
@@ -144,7 +146,7 @@ public static class NotificationMutations
         notification.Read = true;
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notification;
     }
@@ -171,7 +173,7 @@ public static class NotificationMutations
         context.Notifications.RemoveRange(notifications);
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notifications;
     }
