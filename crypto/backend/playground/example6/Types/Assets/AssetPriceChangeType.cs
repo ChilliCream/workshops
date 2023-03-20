@@ -1,7 +1,6 @@
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
-using HotChocolate.Types.Pagination.Extensions;
 
 namespace Demo.Types.Assets;
 
