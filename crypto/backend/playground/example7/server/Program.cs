@@ -27,7 +27,8 @@ builder.Services
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
     .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>();
+    .RegisterDbContext<AssetContext>()
+    .ModifyOptions(o => o.EnableDefer = true);
 
 var app = builder.Build();
 
