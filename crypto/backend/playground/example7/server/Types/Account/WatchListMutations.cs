@@ -2,12 +2,12 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class WatchlistMutations
+[MutationType]
+public static class WatchlistMutations
 {
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
+    public static async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -40,7 +40,7 @@ public sealed class WatchlistMutations
 
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+    public static async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
         string[] symbols,
         [GlobalState] string? username,
         AssetContext context,
@@ -73,7 +73,7 @@ public sealed class WatchlistMutations
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
     [UseMutationConvention]
-    public async Task<RemoveAssetFromWatchlistPayload> RemoveAssetFromWatchlistAsync(
+    public static async Task<RemoveAssetFromWatchlistPayload> RemoveAssetFromWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -108,7 +108,7 @@ public sealed class WatchlistMutations
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
     [UseMutationConvention(PayloadFieldName = "removedAssets")]
-    public async Task<RemoveAssetsFromWatchlistPayload> RemoveAssetsFromWatchlistAsync(
+    public static async Task<RemoveAssetsFromWatchlistPayload> RemoveAssetsFromWatchlistAsync(
         string[] symbols,
         [GlobalState] string? username,
         AssetContext context,
@@ -144,7 +144,7 @@ public sealed class WatchlistMutations
     [Error<NotAuthenticatedException>]
     [Error<UnknownWatchlistException>]
     [Error<IndexOutOfRangeException>]
-    public async Task<Watchlist> ChangeAssetPositionInWatchlistAsync(
+    public static async Task<Watchlist> ChangeAssetPositionInWatchlistAsync(
         string symbol,
         int index,
         [GlobalState] string? username,

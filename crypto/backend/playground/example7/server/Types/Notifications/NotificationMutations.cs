@@ -1,15 +1,17 @@
+using Demo.Types.Assets;
 using Demo.Types.Errors;
 using HotChocolate.Subscriptions;
+using static Demo.Properties.Constants;
 
 namespace Demo.Types.Notifications;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class NotificationMutations
+[MutationType]
+public static class NotificationMutations
 {
     [Error<InvalidTargetPriceException>]
     [Error<UnknownCurrencyException>]
     [UseMutationConvention(PayloadFieldName = "createdAlert")]
-    public async Task<Alert?> CreateAlertAsync(
+    public static async Task<Alert?> CreateAlertAsync(
         CreateAlertInput input,
         [GlobalState] string username,
         AssetContext context,
@@ -48,7 +50,7 @@ public sealed class NotificationMutations
 
     [Error<EntityNotFoundException>]
     [UseMutationConvention(PayloadFieldName = "deletedAlert")]
-    public async Task<Alert?> DeleteAlertAsync(
+    public static async Task<Alert?> DeleteAlertAsync(
         [ID(nameof(Alert))] int alertId,
         AssetContext context,
         CancellationToken cancellationToken)
@@ -68,7 +70,7 @@ public sealed class NotificationMutations
 
     [Error<UnknownNotificationException>]
     [UseMutationConvention(PayloadFieldName = "readNotification")]
-    public async Task<Notification?> MarkNotificationReadAsync(
+    public static async Task<Notification?> MarkNotificationReadAsync(
         [ID(nameof(Notification))] int notificationId,
         [GlobalState] string username,
         AssetContext context,
@@ -87,14 +89,14 @@ public sealed class NotificationMutations
         notification.Read = true;
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notification;
     }
 
     [Error<UnknownNotificationException>]
     [UseMutationConvention(PayloadFieldName = "readNotifications")]
-    public async Task<IReadOnlyList<Notification>?> MarkNotificationsReadAsync(
+    public static async Task<IReadOnlyList<Notification>?> MarkNotificationsReadAsync(
         [ID(nameof(Notification))] int[] notificationIds,
         [GlobalState] string username,
         AssetContext context,
@@ -118,14 +120,14 @@ public sealed class NotificationMutations
 
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notifications;
     }
 
     [Error<UnknownNotificationException>]
     [UseMutationConvention(PayloadFieldName = "deletedNotification")]
-    public async Task<Notification?> DeleteNotificationAsync(
+    public static async Task<Notification?> DeleteNotificationAsync(
         [ID(nameof(Notification))] int notificationId,
         [GlobalState] string username,
         AssetContext context,
@@ -144,14 +146,14 @@ public sealed class NotificationMutations
         notification.Read = true;
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notification;
     }
 
     [Error<UnknownNotificationException>]
     [UseMutationConvention(PayloadFieldName = "deletedNotifications")]
-    public async Task<List<Notification>?> DeleteNotificationsAsync(
+    public static async Task<List<Notification>?> DeleteNotificationsAsync(
         [ID(nameof(Notification))] int[] notificationIds,
         [GlobalState] string username,
         AssetContext context,
@@ -171,7 +173,7 @@ public sealed class NotificationMutations
         context.Notifications.RemoveRange(notifications);
         await context.SaveChangesAsync(cancellationToken);
 
-        await eventSender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
+        await eventSender.SendAsync<NotificationUpdate>(Constants.OnNotification(username), new(), cancellationToken);
 
         return notifications;
     }
