@@ -4,17 +4,24 @@ using HotChocolate.Subscriptions;
 
 namespace Demo.Types.Assets;
 
-[ExtendObjectType(OperationTypeNames.Subscription)]
-public sealed class AssetSubscriptions
+[SubscriptionType]
+public static class AssetSubscriptions
 {
-    public async IAsyncEnumerable<string> PriceChangeStreamAsync(
+    [Subscribe(With = nameof(CreateOnPriceChangeStreamAsync))]
+    public static async Task<AssetPrice> OnPriceChangeAsync(
+        AssetPriceBySymbolDataLoader assetPriceBySymbol,
+        [EventMessage] string symbol,
+        CancellationToken cancellationToken)
+        => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);
+
+    public static async IAsyncEnumerable<string> CreateOnPriceChangeStreamAsync(
         string[]? symbols,
         [Service] ITopicEventReceiver receiver,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         symbols ??= Array.Empty<string>();
         var symbolSet = new HashSet<string>(symbols);
-        ISourceStream stream = await receiver.SubscribeAsync<string, string>(Constants.OnPriceChange, cancellationToken);
+        ISourceStream stream = await receiver.SubscribeAsync<string>(Constants.OnPriceChange, cancellationToken);
 
         await foreach (string symbol in stream.ReadEventsAsync().WithCancellation(cancellationToken))
         {
@@ -24,12 +31,4 @@ public sealed class AssetSubscriptions
             }
         }
     }
-
-    [Subscribe(With = nameof(PriceChangeStreamAsync))]
-    public async Task<AssetPrice> OnPriceChangeAsync(
-        string[]? symbols,
-        AssetPriceBySymbolDataLoader assetPriceBySymbol,
-        [EventMessage] string symbol,
-        CancellationToken cancellationToken)
-        => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);
 }
