@@ -3,39 +3,51 @@ using System.Text.Json;
 namespace Demo.Types.Assets;
 
 [Node]
-[ExtendObjectType(typeof(AssetPrice), IgnoreProperties = new[] { nameof(AssetPrice.AssetId) })]
-public sealed class AssetPriceNode
+[ExtendObjectType<AssetPrice>]
+public static class AssetPriceNode
 {
-    public async Task<Asset> GetAssetAsync(
+    [BindMember(nameof(AssetPrice.AssetId))]
+    public static async Task<Asset> GetAssetAsync(
         [Parent] AssetPrice parent,
         AssetBySymbolDataLoader assetBySymbol,
         CancellationToken cancellationToken)
         => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
 
-    [GraphQLType(typeof(AssetPriceChangeType))]
-    public async Task<JsonElement> GetChangeAsync(
+    [GraphQLType<AssetPriceChangeType>]
+    public static async Task<JsonElement> GetChangeAsync(
         ChangeSpan span,
-        [ScopedState("span")] SetState<ChangeSpan> setSpan,
+        [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
         [Parent] AssetPrice parent,
-        [Service] IHttpClientFactory clientFactory,
+        AssetPriceChangeByKeyDataLoader assetPriceBySymbol,
         CancellationToken cancellationToken)
     {
-        setSpan(span);
-
-        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"api/asset/price/change/v2?symbols={parent.Symbol}&span={span}");
-        using var response = await client.SendAsync(request, cancellationToken);
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
-        var document = JsonDocument.Parse(content);
-        return document.RootElement.EnumerateArray().First();
+        var key = new KeyAndSpan(parent.Symbol!, span);
+        setKey(key);
+        return await assetPriceBySymbol.LoadAsync(key, cancellationToken);
     }
 
-    [NodeResolver]
-    public static Task<AssetPrice> GetByIdAsyncAsync(
-        int id,
-        AssetPriceByIdDataLoader dataLoader,
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, AssetPrice>> GetAssetPriceBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
         CancellationToken cancellationToken)
-        => dataLoader.LoadAsync(id, cancellationToken);
+        => await context.AssetPrices
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<int, AssetPrice>> GetAssetPriceByIdAsync(
+        IReadOnlyList<int> ids,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, cancellationToken);
+
+    [NodeResolver]
+    public static async Task<AssetPrice> GetAssetPriceByIdAsync(
+        int id,
+        AssetPriceByIdDataLoader assetPriceById,
+        CancellationToken cancellationToken)
+        => await assetPriceById.LoadAsync(id, cancellationToken);
 }
