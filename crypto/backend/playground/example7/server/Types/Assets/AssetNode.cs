@@ -50,7 +50,7 @@ public static class AssetNode
         return symbols.Contains(asset.Symbol!);
     }
 
-    [UsePaging]
+    [UsePaging(ConnectionName = "AssetAlertsConnection")]
     public static async Task<IEnumerable<Alert>> GetAlertsAsync(
         [Parent] Asset asset,
         AlertsByAssetIdDataLoader alertByAssetId,
@@ -60,19 +60,8 @@ public static class AssetNode
     public static async Task<bool?> HasAlertsAsync(
         [Parent] Asset asset,
         AlertExistsDataLoader alertExists,
-        AlertsByAssetIdDataLoader alertByAssetId,
-        Selection selection,
-        CancellationToken cancellationToken)
-        { 
-            if (selection.DeclaringSelectionSet.Selections.Any(
-                t => t.Field.Name.EqualsOrdinal("alerts")))
-            {
-                var result = await alertByAssetId.LoadAsync(asset.Id, cancellationToken);
-                return result.Any();
-            }
-
-            return await alertExists.LoadAsync(asset.Id, cancellationToken);
-        }
+        CancellationToken cancellationToken) 
+        => await alertExists.LoadAsync(asset.Id, cancellationToken);
 
     [DataLoader]
     internal static async Task<IReadOnlyDictionary<string, Asset>> GetAssetBySlugAsync(
