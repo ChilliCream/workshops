@@ -1,4 +1,5 @@
 using HotChocolate.Diagnostics;
+using HotChocolate.Subscriptions;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -26,7 +27,12 @@ builder.Services
     .AddSorting()
     .AddGlobalObjectIdentification()
     .AddMutationConventions()
-    .AddInMemorySubscriptions()
+    .AddInMemorySubscriptions(
+        new SubscriptionOptions
+        {
+            TopicBufferFullMode = TopicBufferFullMode.DropOldest,
+            TopicBufferCapacity = 256
+        })
     .RegisterDbContext<AssetContext>()
     .ModifyOptions(o => o.EnableDefer = true);
 

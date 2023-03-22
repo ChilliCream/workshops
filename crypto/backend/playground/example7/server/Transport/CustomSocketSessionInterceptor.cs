@@ -75,4 +75,10 @@ public sealed class CustomSocketSessionInterceptor : DefaultSocketSessionInterce
         Console.WriteLine("Closed socket");
         return base.OnCloseAsync(session, cancellationToken);
     }
+
+    public override ValueTask OnCompleteAsync(ISocketSession session, string operationSessionId, CancellationToken cancellationToken = default)
+    {
+        Console.WriteLine("Completed");
+        return base.OnCompleteAsync(session, operationSessionId, cancellationToken);
+    }
 }

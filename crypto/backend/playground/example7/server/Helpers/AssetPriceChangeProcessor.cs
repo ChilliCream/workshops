@@ -355,7 +355,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
                 // if there is an error we will retry
             }
 
-            await Task.Delay(Random.Shared.Next(10_000, 20_000), cancellationToken);
+            await Task.Delay(Random.Shared.Next(2_000, 5_000), cancellationToken);
         }
     }
 
@@ -433,7 +433,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
         if (original is null || !input.Equals(original))
         {
-            await Task.Delay(Random.Shared.Next(200, 600), cancellationToken);
+            await Task.Delay(Random.Shared.Next(50, 200), cancellationToken);
             await _sender.SendAsync(Constants.OnPriceChangeProcessing, input, cancellationToken);
             await _sender.SendAsync(Constants.OnPriceChange, input.Symbol, cancellationToken);
         }
