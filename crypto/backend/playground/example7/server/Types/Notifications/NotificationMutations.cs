@@ -1,7 +1,6 @@
 using Demo.Types.Assets;
 using Demo.Types.Errors;
 using HotChocolate.Subscriptions;
-using static Demo.Properties.Constants;
 
 namespace Demo.Types.Notifications;
 
