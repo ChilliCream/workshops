@@ -1,4 +1,7 @@
 using Demo.Types.Account;
+using Demo.Types.Notifications;
+using HotChocolate.Execution.Processing;
+using HotChocolate.Utilities;
 
 namespace Demo.Types.Assets;
 
@@ -46,6 +49,30 @@ public static class AssetNode
 
         return symbols.Contains(asset.Symbol!);
     }
+
+    [UsePaging]
+    public static async Task<IEnumerable<Alert>> GetAlertsAsync(
+        [Parent] Asset asset,
+        AlertsByAssetIdDataLoader alertByAssetId,
+        CancellationToken cancellationToken)
+        => await alertByAssetId.LoadAsync(asset.Id, cancellationToken);
+
+    public static async Task<bool?> HasAlertsAsync(
+        [Parent] Asset asset,
+        AlertExistsDataLoader alertExists,
+        AlertsByAssetIdDataLoader alertByAssetId,
+        Selection selection,
+        CancellationToken cancellationToken)
+        { 
+            if (selection.DeclaringSelectionSet.Selections.Any(
+                t => t.Field.Name.EqualsOrdinal("alerts")))
+            {
+                var result = await alertByAssetId.LoadAsync(asset.Id, cancellationToken);
+                return result.Any();
+            }
+
+            return await alertExists.LoadAsync(asset.Id, cancellationToken);
+        }
 
     [DataLoader]
     internal static async Task<IReadOnlyDictionary<string, Asset>> GetAssetBySlugAsync(
