@@ -211,7 +211,7 @@ Awesome! Cleared for takeoff. Let’s go ahead.
 [node-lts]: https://nodejs.org/en/download/
 [vscode]: https://code.visualstudio.com/
 [learn-javascript]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/A_re-introduction_to_JavaScript
-[learn-react]: https://reactjs.org/docs/getting-started.html#learn-react
+[learn-react]: https://react.dev/learn
 [learn-graphql]: https://graphql.org/learn/
 [learn-relay]: https://relay.dev/docs/getting-started/step-by-step-guide/
 [learn-next]: https://nextjs.org/learn/foundations/about-nextjs
