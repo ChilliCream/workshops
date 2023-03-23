@@ -50,7 +50,7 @@ public static class AssetNode
         return symbols.Contains(asset.Symbol!);
     }
 
-    [UsePaging(ConnectionName = "AssetAlertsConnection")]
+    [UsePaging(ConnectionName = "AssetAlerts")]
     public static async Task<IEnumerable<Alert>> GetAlertsAsync(
         [Parent] Asset asset,
         AlertsByAssetIdDataLoader alertByAssetId,
