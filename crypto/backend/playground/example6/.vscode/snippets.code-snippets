@@ -1,97 +1,124 @@
 {
-    "_query": {
-        "prefix": "_query",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "public class Query",
-            "{",
-            "    ",
-            "}"
-        ],
-        "description": "_query"
-    },
-    "_GetAssets": {
-        "prefix": "_GetAssets",
-        "body": [
-            "[UsePaging]",
-            "public IQueryable<Asset> GetAssets(AssetContext context)",
-            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
-        ],
-        "description": "_GetAssets"
-    },
-    "_GetAssetById": {
-        "prefix": "_GetAssetById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetById"
-    },
-    "_AssetNode": {
-        "prefix": "_AssetNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[ExtendObjectType<Asset>]",
-            "public class AssetNode",
-            "{",
-            "    ",
-            "}",
-            ""
-        ],
-        "description": "_AssetNode"
-    },
-    "_GetAssetPriceById": {
-        "prefix": "_GetAssetPriceById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetPriceById"
-    },
-    "_AssetPriceNode": {
-        "prefix": "_AssetPriceNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[Node]",
-            "[ExtendObjectType<AssetPrice>]",
-            "public class AssetPriceNode",
-            "{",
-            "    ",
-            "}"
-        ],
-        "description": "_AssetPriceNode"
-    },
-    "_Query_GetAssetById": {
-        "prefix": "_Query_GetAssetById",
-        "body": [
-            "public async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_Query_GetAssetById"
-    },
-    "_Query_GetAssetPriceById": {
-        "prefix": "_Query_GetAssetPriceById",
-        "body": [
-            "public async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_Query_GetAssetPriceById"
-    }
+  "_subscription": {
+    "prefix": "_assetSubscription",
+    "body": [
+      "using System.Runtime.CompilerServices;",
+      "using HotChocolate.Execution;",
+      "using HotChocolate.Subscriptions;",
+      "",
+      "namespace Demo.Types.Assets;",
+      "",
+      "[SubscriptionType]",
+      "public static class AssetSubscriptions",
+      "{",
+      "    ",
+      "}"
+    ],
+    "description": "_subscription"
+  },
+  "_createOnPriceChangeStream": {
+    "prefix": "_createOnPriceChangeStream",
+    "body": [
+      "public static async IAsyncEnumerable<string> CreateOnPriceChangeStreamAsync(",
+      "    string[]? symbols,",
+      "    [Service] ITopicEventReceiver receiver,",
+      "    [EnumeratorCancellation] CancellationToken cancellationToken)",
+      "{",
+      "    symbols ??= Array.Empty<string>();",
+      "    var symbolSet = new HashSet<string>(symbols);",
+      "    ISourceStream stream = await receiver.SubscribeAsync<string>(Constants.OnPriceChange, cancellationToken);",
+      "",
+      "    await foreach (string symbol in stream.ReadEventsAsync().WithCancellation(cancellationToken))",
+      "    {",
+      "        if (symbols.Length == 0 || symbolSet.Contains(symbol))",
+      "        {",
+      "            yield return symbol;",
+      "        }",
+      "    }",
+      "}"
+    ],
+    "description": "_createOnPriceChangeStream"
+  },
+  "_onPriceChange": {
+    "prefix": "_onPriceChange",
+    "body": [
+      "[Subscribe]",
+      "public static async Task<AssetPrice> OnPriceChangeAsync(",
+      "    AssetPriceBySymbolDataLoader assetPriceBySymbol,",
+      "    [EventMessage] string symbol,",
+      "    CancellationToken cancellationToken)",
+      "    => await assetPriceBySymbol.LoadAsync(symbol, cancellationToken);"
+    ],
+    "description": "_onPriceChange"
+  },
+  "_NotificationSubscriptions": {
+    "prefix": "_NotificationSubscriptions",
+    "body": [
+      "using HotChocolate.Subscriptions;",
+      "",
+      "namespace Demo.Types.Notifications;",
+      "",
+      "[SubscriptionType]",
+      "public static class NotificationSubscriptions",
+      "{",
+      "    [Subscribe(With = nameof(CreateOnNotificationStream))]",
+      "    public static NotificationUpdate OnNotification(",
+      "        [EventMessage] NotificationUpdate message)",
+      "        => message;",
+      "",
+      "    public static IAsyncEnumerable<NotificationUpdate> CreateOnNotificationStream(",
+      "        [GlobalState] string username,",
+      "        [Service] ITopicEventReceiver receiver,",
+      "        [Service] IServiceProvider services)",
+      "        => new OnNotificationUpdateStream(username, receiver, services);",
+      "",
+      "    private sealed class OnNotificationUpdateStream : IAsyncEnumerable<NotificationUpdate>",
+      "    {",
+      "        private readonly string _username;",
+      "        private readonly ITopicEventReceiver _receiver;",
+      "        private readonly IServiceProvider _services;",
+      "",
+      "        public OnNotificationUpdateStream(",
+      "            string username,",
+      "            ITopicEventReceiver receiver,",
+      "            IServiceProvider services)",
+      "        {",
+      "            _username = username;",
+      "            _receiver = receiver;",
+      "            _services = services;",
+      "        }",
+      "",
+      "        public async IAsyncEnumerator<NotificationUpdate> GetAsyncEnumerator(CancellationToken cancellationToken = default)",
+      "        {",
+      "            if (_username is null)",
+      "            {",
+      "                throw new GraphQLException(\"You need to be signed in for this subscription!\");",
+      "            }",
+      "",
+      "            await using (var scope = _services.CreateAsyncScope())",
+      "            {",
+      "                await using var context = scope.ServiceProvider.GetRequiredService<AssetContext>();",
+      "                {",
+      "                    if (await context.Notifications.AnyAsync(t => t.Username == _username, cancellationToken))",
+      "                    {",
+      "                        yield return new();",
+      "                    }",
+      "                }",
+      "            }",
+      "",
+      "            var stream = await _receiver.SubscribeAsync<NotificationUpdate>(",
+      "                Constants.OnNotification(_username),",
+      "                cancellationToken);",
+      "",
+      "            await foreach (NotificationUpdate message in",
+      "                stream.ReadEventsAsync().WithCancellation(cancellationToken))",
+      "            {",
+      "                yield return message;",
+      "            }",
+      "        }",
+      "    }",
+      "}"
+    ],
+    "description": "_NotificationSubscriptions"
+  }
 }
