@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HotChocolate.AspNetCore" Version="14.0.0-preview.8"/>
-    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="14.0.0-preview.8"/>
-    <PackageReference Include="HotChocolate.PersistedQueries.FileSystem" Version="14.0.0-preview.8"/>
-    <PackageReference Include="HotChocolate.Types.Json" Version="14.0.0-preview.8"/>
-    <PackageReference Include="HotChocolate.Types.Analyzers" Version="14.0.0-preview.8">
+    <PackageReference Include="HotChocolate.AspNetCore" Version="14.0.0-preview.10.8"/>
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="14.0.0-preview.10.8"/>
+    <PackageReference Include="HotChocolate.PersistedQueries.FileSystem" Version="14.0.0-preview.10.8"/>
+    <PackageReference Include="HotChocolate.Types.Json" Version="14.0.0-preview.10.8"/>
+    <PackageReference Include="HotChocolate.Types.Analyzers" Version="14.0.0-preview.10.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
