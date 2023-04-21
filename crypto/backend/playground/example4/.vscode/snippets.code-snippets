@@ -1,97 +1,133 @@
 {
-    "_query": {
-        "prefix": "_query",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "public class Query",
-            "{",
-            "    ",
-            "}"
-        ],
-        "description": "_query"
-    },
-    "_GetAssets": {
-        "prefix": "_GetAssets",
-        "body": [
-            "[UsePaging]",
-            "public IQueryable<Asset> GetAssets(AssetContext context)",
-            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
-        ],
-        "description": "_GetAssets"
-    },
-    "_GetAssetById": {
-        "prefix": "_GetAssetById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetById"
-    },
-    "_AssetNode": {
-        "prefix": "_AssetNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[ExtendObjectType<Asset>]",
-            "public class AssetNode",
-            "{",
-            "    ",
-            "}",
-            ""
-        ],
-        "description": "_AssetNode"
-    },
-    "_GetAssetPriceById": {
-        "prefix": "_GetAssetPriceById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetPriceById"
-    },
-    "_AssetPriceNode": {
-        "prefix": "_AssetPriceNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[Node]",
-            "[ExtendObjectType<AssetPrice>]",
-            "public class AssetPriceNode",
-            "{",
-            "    ",
-            "}"
-        ],
-        "description": "_AssetPriceNode"
-    },
-    "_Query_GetAssetById": {
-        "prefix": "_Query_GetAssetById",
-        "body": [
-            "public async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_Query_GetAssetById"
-    },
-    "_Query_GetAssetPriceById": {
-        "prefix": "_Query_GetAssetPriceById",
-        "body": [
-            "public async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_Query_GetAssetPriceById"
-    }
+  "_AddAssetToWatchlistMutation": {
+    "prefix": "_AddAssetToWatchlistMutation",
+    "body": [
+      "public static async Task<Watchlist> AddAssetToWatchlistAsync(",
+      "    string symbol,",
+      "    [GlobalState] string? username,",
+      "    AssetContext context,",
+      "    CancellationToken cancellationToken)",
+      "{",
+      "    ",
+      "}"
+    ],
+    "description": "_AddAssetToWatchlistMutation"
+  },
+  "_Validation1": {
+    "prefix": "_Validation1",
+    "body": [
+      "if (username is null)",
+      "{",
+      "    throw new GraphQLException(\"Not Authorized.\");",
+      "}",
+      "",
+      "if (!await context.Assets.AnyAsync(t => t.Symbol == symbol, cancellationToken))",
+      "{",
+      "    throw new GraphQLException(\"Symbol unknown.\");",
+      "}"
+    ],
+    "description": "_Validation1"
+  },
+  "_Body": {
+    "prefix": "_Body",
+    "body": [
+      "Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == username, cancellationToken);",
+      "",
+      "if (watchlist is null)",
+      "{",
+      "    watchlist = new Watchlist { User = username };",
+      "    context.Watchlists.Add(watchlist);",
+      "}",
+      "",
+      "watchlist.AddSymbols(symbol);",
+      "",
+      "await context.SaveChangesAsync(cancellationToken);",
+      "",
+      "return watchlist;"
+    ],
+    "description": "_Body"
+  },
+  "_NotAuthenticatedException": {
+    "prefix": "_NotAuthenticatedException",
+    "body": [
+      "public sealed class NotAuthenticatedException : Exception",
+      "{",
+      "    public NotAuthenticatedException(string featureName)",
+      "        : base($\"You need to be signed in to use {featureName}.\")",
+      "    {",
+      "    }",
+      "}"
+    ],
+    "description": "_NotAuthenticatedException"
+  },
+  "_UnknownAssetException": {
+    "prefix": "_UnknownAssetException",
+    "body": [
+      "public sealed class UnknownAssetException : Exception",
+      "{",
+      "    public UnknownAssetException(string symbol)",
+      "        : base($\"The asset with the symbol `{symbol}` was not found.\")",
+      "    {",
+      "        Symbols = new[] { symbol };",
+      "    }",
+      "",
+      "    public UnknownAssetException(string[] symbols)",
+      "        : base($\"One of the symbols `{string.Join(\", \", symbols)}` was not found.\")",
+      "    {",
+      "        Symbols = symbols;",
+      "    }",
+      "",
+      "    public IReadOnlyList<string> Symbols { get; }",
+      "}"
+    ],
+    "description": "_UnknownAssetException"
+  },
+  "_UnknownAssetError": {
+    "prefix": "_UnknownAssetError",
+    "body": [
+      "public class UnknownAssetError",
+      "{",
+      "    public UnknownAssetError(UnknownAssetException exception)",
+      "    {",
+      "        Message = exception.Message;",
+      "        Symbols = exception.Symbols;",
+      "    }",
+      "",
+      "    public UnknownAssetError(string symbol)",
+      "    {",
+      "        Message = $\"The asset with the symbol `{symbol}` was not found.\";",
+      "        Symbols = new List<string> { symbol };",
+      "    }",
+      "",
+      "    public string Message { get; }",
+      "",
+      "    public IReadOnlyList<string> Symbols { get; }",
+      "}"
+    ],
+    "description": "_UnknownAssetError"
+  },
+  "_NotAuthenticatedError": {
+    "prefix": "_NotAuthenticatedError",
+    "body": [
+      "public class NotAuthenticatedError",
+      "{",
+      "    public NotAuthenticatedError(NotAuthenticatedException exception)",
+      "    {",
+      "        Message = exception.Message;",
+      "    }",
+      "",
+      "    public NotAuthenticatedError(string featureName)",
+      "    {",
+      "        Message = $\"You need to be signed in to use {featureName}.\";",
+      "    }",
+      "",
+      "    public string Message { get; }",
+      "",
+      "    public string SomeMoreInfo => \"User Not Allowed\";",
+      "",
+      "    public string? CurrentUser([GlobalState] string? username) => username;",
+      "}"
+    ],
+    "description": "_NotAuthenticatedError"
+  }
 }
