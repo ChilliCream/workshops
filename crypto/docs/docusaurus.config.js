@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'workshop',
-  tagline: 'Building Modern Applications with GraphQL',
+  tagline: 'Fullstack GraphQL',
   url: 'https://crypto-workshop.chillicream.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
