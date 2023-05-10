@@ -33,9 +33,9 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 - Exposing Sorting and Filtering to the Consumer
 - Defer and Stream
 
-### 12:30 BREAK (60 minutes)
+### 12:00 BREAK (60 minutes)
 
-### 13:30 On-Demand Data 1
+### 13:00 On-Demand Data 1
 
 - Rethinking Data Fetching
   - Specifying the Data Requirements of a Component
@@ -76,9 +76,9 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 
 - Writing Subscriptions
 
-### 12:30 LUNCH
+### 12:00 LUNCH
 
-### 13:30 Add-Ons 1
+### 13:00 Add-Ons 1
 
 - Relay Developer Tools
 - Persisted Queries
