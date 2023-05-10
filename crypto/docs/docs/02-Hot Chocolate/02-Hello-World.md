@@ -163,6 +163,7 @@ OK, let's delete all the source code in this file and replace it with the source
 ```csharp title="Types/Query.cs"
 namespace BasicServer;
 
+[QueryType]
 public class Query
 {
     public string Greetings(string name = "World")
