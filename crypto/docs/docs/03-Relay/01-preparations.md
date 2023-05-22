@@ -175,6 +175,12 @@ Examples:
 
 Examples are not coupled with each other in any way. You can switch between them and the changes will stay in their respective “source” folder.
 
+:::info For Windows users
+
+This command creates symbolic links and requires either running with **admin rights** or having [Developer Mode][windows-developer-mode] enabled.
+
+:::
+
 ---
 
 ## Preflight Checklist
@@ -216,3 +222,4 @@ Awesome! Cleared for takeoff. Let’s go ahead.
 [learn-relay]: https://relay.dev/docs/getting-started/step-by-step-guide/
 [learn-next]: https://nextjs.org/learn/foundations/about-nextjs
 [learn-node]: https://nodejs.dev/learn
+[windows-developer-mode]: https://msdn.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development
