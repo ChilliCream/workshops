@@ -1,97 +1,97 @@
 {
-    "_query": {
-        "prefix": "_query",
+    "_AssetPriceChange": {
+        "prefix": "priceChange",
         "body": [
-            "namespace Demo.Types;",
-            "",
-            "public class Query",
-            "{",
-            "    ",
+            "type AssetPriceChange {",
+            "    percentageChange: Float! @fromJson",
             "}"
         ],
-        "description": "_query"
+        "description": "_AssetPriceChange"
     },
-    "_GetAssets": {
-        "prefix": "_GetAssets",
+    "_AddGraphQL": {
+        "prefix": "_AddGraphQL",
         "body": [
-            "[UsePaging]",
-            "public IQueryable<Asset> GetAssets(AssetContext context)",
-            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
+            ".AddDocumentFromFile(\"./Schema.graphql\")"
         ],
-        "description": "_GetAssets"
+        "description": "_AddGraphQL"
     },
-    "_GetAssetById": {
-        "prefix": "_GetAssetById",
+    "_GetChange_1": {
+        "prefix": "getChange",
         "body": [
-            "[NodeResolver]",
-            "public static async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
+            "[GraphQLType(\"AssetPriceChange\")]",
+            "public async Task<JsonElement> GetChangeAsync(",
+            "    ChangeSpan span,",
+            "    [Parent] AssetPrice parent,",
+            "    [Service] IHttpClientFactory clientFactory,",
             "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetById"
-    },
-    "_AssetNode": {
-        "prefix": "_AssetNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[ExtendObjectType<Asset>]",
-            "public class AssetNode",
             "{",
-            "    ",
-            "}",
-            ""
-        ],
-        "description": "_AssetNode"
-    },
-    "_GetAssetPriceById": {
-        "prefix": "_GetAssetPriceById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetPriceById"
-    },
-    "_AssetPriceNode": {
-        "prefix": "_AssetPriceNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[Node]",
-            "[ExtendObjectType<AssetPrice>]",
-            "public class AssetPriceNode",
-            "{",
-            "    ",
+            "    using HttpClient client = clientFactory.CreateClient(Constants.PriceInfoService);",
+            "    using var message = new HttpRequestMessage(",
+            "        HttpMethod.Get,",
+            "        $\"api/asset/price/change?symbol={parent.Symbol}&span={span}\");",
+            "    var response = await client.SendAsync(message, cancellationToken);",
+            "    var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);",
+            "    var document = JsonDocument.Parse(content);",
+            "    return document.RootElement;",
             "}"
         ],
-        "description": "_AssetPriceNode"
+        "description": "_GetChange_1"
     },
-    "_Query_GetAssetById": {
-        "prefix": "_Query_GetAssetById",
+    "addDoc": {
+        "prefix": "addDoc",
         "body": [
-            "public async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+            ".AddDocumentFromFile(\"./Schema.graphql\")"
         ],
-        "description": "_Query_GetAssetById"
+        "description": "addDoc"
     },
-    "_Query_GetAssetPriceById": {
-        "prefix": "_Query_GetAssetPriceById",
+    "dataLoader": {
+        "prefix": "dataLoader",
         "body": [
-            "public async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
+            "[DataLoader]",
+            "public static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKey(",
+            "    IReadOnlyList<KeyAndSpan> symbols,",
+            "    IHttpClientFactory clientFactory,",
             "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+            "{",
+            "    using var client = clientFactory.CreateClient(Constants.PriceInfoService);",
+            "    var map = new Dictionary<KeyAndSpan, JsonElement>();",
+            "",
+            "    foreach (var group in symbols.GroupBy(t => t.Span))",
+            "    {",
+            "        string symbolString = string.Join(\",\", group.Select(t => t.Symbol));",
+            "        using var request = new HttpRequestMessage(",
+            "            HttpMethod.Get,",
+            "            $\"api/asset/price/change?symbols={symbolString}&span={group.Key}\");",
+            "        using var response = await client.SendAsync(request, cancellationToken);",
+            "        response.EnsureSuccessStatusCode();",
+            "",
+            "        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);",
+            "        var document = JsonDocument.Parse(content);",
+            "        var root = document.RootElement;",
+            "",
+            "        foreach (JsonElement priceInfo in root.EnumerateArray())",
+            "        {",
+            "            string symbol = priceInfo.GetProperty(\"symbol\").GetString()!;",
+            "            map.Add(new(symbol, group.Key), priceInfo);",
+            "        }",
+            "    }",
+            "",
+            "    return map;",
+            "}"
         ],
-        "description": "_Query_GetAssetPriceById"
+        "description": "dataLoader"
+    },
+    "newGetChange": {
+        "prefix": "newGetChange",
+        "body": [
+            "[GraphQLType(\"AssetPriceChange\")]",
+            "public async Task<JsonElement> GetChangeAsync(",
+            "    ChangeSpan span,",
+            "    [Parent] AssetPrice parent,",
+            "    AssetPriceChangeByKeyDataLoader assetPriceChangeByKey,",
+            "    CancellationToken cancellationToken)",
+            "    => await assetPriceChangeByKey.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);"
+        ],
+        "description": "newGetChange"
     }
 }
