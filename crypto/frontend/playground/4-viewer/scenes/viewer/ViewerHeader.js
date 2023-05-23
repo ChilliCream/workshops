@@ -131,7 +131,7 @@ export default memo(function ViewerHeader({fragmentRef}) {
       </Stack>
       <Stack direction="row">
         <AlertCheckbox
-          checked={asset.hasAlerts}
+          checked={!!asset.hasAlerts}
           indeterminate={!asset.hasAlerts && active}
           disabled={asset.isInWatchlist === null}
           onChange={show}
