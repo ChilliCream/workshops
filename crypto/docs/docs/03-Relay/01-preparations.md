@@ -128,7 +128,7 @@ We’ll guide you _step-by-step_ and we’ll iterate several times to cover each
 
 We’ll reuse the same prebuilt utilities (e.g., components, hooks, utils) and configurations for all the examples.
 
-In order to prepare the workspace for an example we’ll link some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
+In order to prepare the workspace for an example we’ll copy some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
 
 ```sh
 # for the kick-off
@@ -173,13 +173,7 @@ Examples:
   goto --final
 ```
 
-Examples are not coupled with each other in any way. You can switch between them and the changes will stay in their respective “source” folder.
-
-:::info For Windows users
-
-This command creates symbolic links and requires either running with **admin rights** or having [Developer Mode][windows-developer-mode] enabled.
-
-:::
+The examples are completely independent and not interconnected in any way. It is important to note that any modifications made to one example will not carry over when switching to another. Additionally, please be aware that the changes are neither stored nor saved, so it is recommended to save your modifications externally if needed.
 
 ---
 

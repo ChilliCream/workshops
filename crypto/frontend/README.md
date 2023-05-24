@@ -174,7 +174,7 @@ Examples:
   goto --final
 ```
 
-Examples are not coupled with each other in any way. You can switch between them and the changes will stay in their respective “source” folder.
+The examples are completely independent and not interconnected in any way. It is important to note that any modifications made to one example will not carry over when switching to another. Additionally, please be aware that the changes are neither stored nor saved, so it is recommended to save your modifications externally if needed.
 
 ---
 
