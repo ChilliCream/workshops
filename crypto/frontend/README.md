@@ -129,7 +129,7 @@ We’ll guide you _step-by-step_ and we’ll iterate several times to cover each
 
 We’ll reuse the same prebuilt utilities (e.g., components, hooks, utils) and configurations for all the examples.
 
-In order to prepare the workspace for an example we’ll link some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
+In order to prepare the workspace for an example we’ll copy some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
 
 ```sh
 # for the kick-off
