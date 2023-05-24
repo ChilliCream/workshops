@@ -71,8 +71,8 @@ export default memo(function DashboardSpotlight({fragmentRef}) {
     <SuspenseList revealOrder="forwards" tail="collapsed">
       <Suspense fallback={false}>
         <Gainers fragmentRef={data} />
+        <Divider />
       </Suspense>
-      <Divider />
       <Suspense fallback={false}>
         <Losers fragmentRef={data} />
       </Suspense>
