@@ -4,7 +4,7 @@ The purpose of these examples is to introduce some topics and use them as a guid
 
 We’ll guide you _step-by-step_ and we’ll iterate several times to cover each topic.
 
-In order to start an example we’ll link some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
+In order to start an example we’ll copy some folders (e.g., client, generated, pages, scenes, schema) into the root using the following command:
 
 ```sh
 yarn goto playground/1-hello.1
