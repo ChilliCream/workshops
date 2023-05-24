@@ -119,7 +119,9 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
                 }
 
                 // DEMO: delay chunked responses
-                // await pause(2_000);
+                if (process.env.NEXT_PUBLIC_DEMO_SLOW_NETWORK === 'true') {
+                  await pause(3_000);
+                }
 
                 if ('data' in part.body) {
                   sink.next(part.body);
@@ -176,7 +178,9 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
               const json = await response.json();
 
               // DEMO: delay response
-              // await pause(2_000);
+              if (process.env.NEXT_PUBLIC_DEMO_SLOW_NETWORK === 'true') {
+                await pause(3_000);
+              }
 
               if ('data' in json) {
                 sink.next(json);
