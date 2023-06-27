@@ -23,7 +23,7 @@ With GraphQL, an app can specify the exact data it needs, aggregate the data fro
 
 ---
 
-## How to GraphQL
+## How to GraphQL?
 
 [Relay](https://relay.dev/) is a GraphQL client library maintained by Meta and enables rapid client-side data fetching in React applications. Relay is designed for high performance at any scale.
 
