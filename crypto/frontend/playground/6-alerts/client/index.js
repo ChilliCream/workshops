@@ -84,6 +84,9 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
       });
 
       merge(init, {
+        headers: {
+          'GraphQL-Preflight': '1',
+        },
         body: form,
       });
     } else {
