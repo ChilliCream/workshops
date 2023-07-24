@@ -26,9 +26,6 @@ type Mutation {
   removeAssetFromWatchlist(input: RemoveAssetFromWatchlistInput!): RemoveAssetFromWatchlistPayload!
   removeAssetsFromWatchlist(input: RemoveAssetsFromWatchlistInput!): RemoveAssetsFromWatchlistPayload!
   changeAssetPositionInWatchlist(input: ChangeAssetPositionInWatchlistInput!): ChangeAssetPositionInWatchlistPayload!
-  importAsset(input: ImportAssetInput!): ImportAssetPayload!
-  importAssets(input: ImportAssetsInput!): ImportAssetsPayload!
-  updateAssetPrice(input: UpdateAssetPriceInput!): UpdateAssetPricePayload!
   createAlert(input: CreateAlertInput!): CreateAlertPayload!
   deleteAlert(input: DeleteAlertInput!): DeleteAlertPayload!
   markNotificationRead(input: MarkNotificationReadInput!): MarkNotificationReadPayload!
@@ -48,11 +45,10 @@ input AssetFilterInput {
   symbol: StringOperationFilterInput
   slug: StringOperationFilterInput
   name: StringOperationFilterInput
-  description: StringOperationFilterInput
   price: AssetPriceFilterInput
 }
 
-type AssetPriceChange implements Node {
+type AssetPriceChange {
   id: ID!
   percentageChange: Float!
   history("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): HistoryConnection
@@ -96,23 +92,23 @@ input StringOperationFilterInput {
 input AssetPriceFilterInput {
   and: [AssetPriceFilterInput!]
   or: [AssetPriceFilterInput!]
-  id: ComparableInt32OperationFilterInput
+  id: IntOperationFilterInput
   symbol: StringOperationFilterInput
   currency: StringOperationFilterInput
-  lastPrice: ComparableDoubleOperationFilterInput
-  marketCap: ComparableDoubleOperationFilterInput
-  tradableMarketCapRank: ComparableDoubleOperationFilterInput
-  volume24Hour: ComparableDoubleOperationFilterInput
-  volumePercentChange24Hour: ComparableDoubleOperationFilterInput
-  circulatingSupply: ComparableDoubleOperationFilterInput
-  maxSupply: ComparableDoubleOperationFilterInput
-  high24Hour: ComparableDoubleOperationFilterInput
-  low24Hour: ComparableDoubleOperationFilterInput
-  open24Hour: ComparableDoubleOperationFilterInput
-  tradingActivity: ComparableDoubleOperationFilterInput
-  change24Hour: ComparableDoubleOperationFilterInput
-  assetId: ComparableInt32OperationFilterInput
-  modifiedAt: ComparableNullableOfDateTimeOperationFilterInput
+  lastPrice: FloatOperationFilterInput
+  marketCap: FloatOperationFilterInput
+  tradableMarketCapRank: FloatOperationFilterInput
+  volume24Hour: FloatOperationFilterInput
+  volumePercentChange24Hour: FloatOperationFilterInput
+  circulatingSupply: FloatOperationFilterInput
+  maxSupply: FloatOperationFilterInput
+  high24Hour: FloatOperationFilterInput
+  low24Hour: FloatOperationFilterInput
+  open24Hour: FloatOperationFilterInput
+  tradingActivity: FloatOperationFilterInput
+  change24Hour: FloatOperationFilterInput
+  assetId: IntOperationFilterInput
+  modifiedAt: DateTimeOperationFilterInput
   asset: AssetFilterInput
 }
 
@@ -152,11 +148,11 @@ input AssetPriceSortInput {
   asset: AssetSortInput
 }
 
-input ComparableInt32OperationFilterInput {
+input IntOperationFilterInput {
   eq: Int
   neq: Int
-  in: [Int!]
-  nin: [Int!]
+  in: [Int]
+  nin: [Int]
   gt: Int
   ngt: Int
   gte: Int
@@ -167,11 +163,11 @@ input ComparableInt32OperationFilterInput {
   nlte: Int
 }
 
-input ComparableDoubleOperationFilterInput {
+input FloatOperationFilterInput {
   eq: Float
   neq: Float
-  in: [Float!]
-  nin: [Float!]
+  in: [Float]
+  nin: [Float]
   gt: Float
   ngt: Float
   gte: Float
@@ -182,7 +178,7 @@ input ComparableDoubleOperationFilterInput {
   nlte: Float
 }
 
-input ComparableNullableOfDateTimeOperationFilterInput {
+input DateTimeOperationFilterInput {
   eq: DateTime
   neq: DateTime
   in: [DateTime]
@@ -196,6 +192,9 @@ input ComparableNullableOfDateTimeOperationFilterInput {
   lte: DateTime
   nlte: DateTime
 }
+
+"The multiplier path scalar represents a valid GraphQL multiplier path string."
+scalar MultiplierPath
 
 "Information about pagination in a connection."
 type PageInfo {
@@ -238,6 +237,7 @@ type NotificationsConnection {
   edges: [NotificationsEdge!]
   "A flattened list of the nodes."
   nodes: [Notification!]
+  "Identifies the total count of items in the connection."
   totalCount: Int!
 }
 
@@ -267,17 +267,6 @@ type AssetsConnection {
   edges: [AssetsEdge!]
   "A flattened list of the nodes."
   nodes: [Asset!]
-}
-
-"A connection to a list of items."
-type AssetAlertsConnection {
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
-  "A list of edges."
-  edges: [AssetAlertsEdge!]
-  "A flattened list of the nodes."
-  nodes: [Alert!]
-  totalCount: Int!
 }
 
 type InvalidTargetPriceError implements Error {
@@ -348,10 +337,9 @@ type Asset implements Node {
   website: String
   whitePaper: String
   price: AssetPrice!
-  alerts("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String): AssetAlertsConnection
+  alerts: [Alert!]!
   imageUrl: String
   isInWatchlist: Boolean
-  hasAlerts: Boolean!
 }
 
 "An edge in a connection."
@@ -360,14 +348,6 @@ type AssetsEdge {
   cursor: String!
   "The item at the end of the edge."
   node: Asset!
-}
-
-"An edge in a connection."
-type AssetAlertsEdge {
-  "A cursor for use in pagination."
-  cursor: String!
-  "The item at the end of the edge."
-  node: Alert!
 }
 
 input CreateAlertInput {
@@ -384,23 +364,6 @@ enum ChangeSpan {
   WEEK
   MONTH
   YEAR
-}
-
-input UpdateAssetPriceInput {
-  symbol: String!
-  currency: String!
-  lastPrice: Float!
-  marketCap: Int! = 0
-  tradableMarketCapRank: Int! = 0
-  volume24Hour: Int! = 0
-  volumePercentChange24Hour: Int! = 0
-  circulatingSupply: Int! = 0
-  maxSupply: Int! = 0
-  high24Hour: Int! = 0
-  low24Hour: Int! = 0
-  open24Hour: Int! = 0
-  tradingActivity: Int! = 0
-  change24Hour: Int! = 0
 }
 
 type AssetPrice implements Node {
@@ -420,8 +383,8 @@ type AssetPrice implements Node {
   tradingActivity: Float!
   change24Hour: Float!
   modifiedAt: DateTime
-  change(span: ChangeSpan!): AssetPriceChange
   asset: Asset!
+  change(span: ChangeSpan!): AssetPriceChange
 }
 
 type RemoveAssetsFromWatchlistPayload {
@@ -544,29 +507,6 @@ type ChangeAssetPositionInWatchlistPayload {
   errors: [ChangeAssetPositionInWatchlistError!]
 }
 
-input ImportAssetInput {
-  symbol: String!
-}
-
-type ImportAssetPayload {
-  importedAsset: Asset
-}
-
-input ImportAssetsInput {
-  symbols: [String!]!
-}
-
-type ImportAssetsPayload {
-  importedAssets: [Asset!]
-}
-
-union UpdateAssetPriceError = UnknownAssetError
-
-type UpdateAssetPricePayload {
-  updatedPrice: AssetPrice
-  errors: [UpdateAssetPriceError!]
-}
-
 union CreateAlertError = InvalidTargetPriceError | UnknownCurrencyError
 
 type CreateAlertPayload {
@@ -628,3 +568,6 @@ type DeleteNotificationsPayload {
   deletedNotifications: [Notification!]
   errors: [DeleteNotificationsError!]
 }
+
+"The cost directives is used to express the complexity of a field."
+directive @cost("Defines the complexity of the field." complexity: Int! = 1 "Defines field arguments that act as complexity multipliers." multipliers: [MultiplierPath!] defaultMultiplier: Int) on FIELD_DEFINITION

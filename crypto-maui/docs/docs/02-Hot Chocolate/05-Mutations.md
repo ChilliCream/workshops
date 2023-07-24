@@ -28,13 +28,7 @@ A mutation is specified almost as a query in the GraphQL syntax.
 
 ![GraphQL Mutation Structure](images/mutation-structure.png)
 
-The first striking difference is that a mutation starts with the keyword `mutation`. Like with the query type, we need to register a mutation type in **Hot Chocolate**.
-
-```csharp
-builder.Services
-  .AddQueryType<Query>()
-  .AddMutationType<Mutation>();
-```
+The first striking difference is that a mutation starts with the keyword `mutation`.
 
 :::note
 Only the `query` type is obligatory to have a spec-compliant schema. The `mutation` and `subscription` types are optional.
@@ -106,10 +100,10 @@ Create a new file called `WatchlistMutations.cs` located in the `Types/Account` 
 ```csharp title="/Types/Account/WatchlistMutations.cs"
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class WatchlistMutations
+[MutationType]
+public static class WatchlistMutations
 {
-    public async Task<Watchlist> AddAssetToWatchlistAsync(
+    public static async Task<Watchlist> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -148,26 +142,9 @@ We have some initial validation that ensures that we are logged in and that the 
 
 The mutation will, in the end, return the `Watchlist` type since this is the entity that we have modified.
 
-The class itself is annotated with the `ExtendObjectTypeAttribute` and extends the mutation type. This allows operation-type classes per topic that could potentially live in a separate assembly.
+The class itself is annotated with the `MutationTypeAttribute` and extends the mutation type. This allows operation-type classes per topic that could potentially live in a separate assembly.
 
-Since, we are only extending the `Mutation` type; we also need to register a mutation type in our schema that we can extend. For this head over to the `Program.cs` and add `.AddMutationType()` after `.AddQueryType()`.
-
-```csharp
-builder.Services
-    .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType() // <----
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddFiltering()
-    .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
-```
-
-`AddMutationType` with no generic type or configuration applied to it will create an empty mutation type. This would lead to an error if no extensions were adding any fields.
-
-As already explained before, our source generator will find the annotated `WatchlistMutations` class and register it with the generated `AddAssetTypes` extension.
+As already explained before, our source generator will find the annotated `WatchlistMutations` class and register it with the generated `AddTypes` extension.
 
 Let`s test what we have done before diving deeper.
 
@@ -269,15 +246,13 @@ First, head over to the `Program.cs` and register the mutation conventions with 
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions() // <-----
+    .AddTypes()
     .AddFiltering()
     .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()             // <----
+    .RegisterDbContext<AssetContext>()
+    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true);
 ```
 
 The updated `Program.cs` should now look like the following.
@@ -291,31 +266,31 @@ builder.Services
     .AddHelperServices();
 
 builder.Services
-    .AddPooledDbContextFactory<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
+    .AddHttpClient(
+        Constants.PriceInfoService, 
+        c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 
 builder.Services
-    .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
+    .AddDbContextPool<AssetContext>(o => o.UseSqlite("Data Source=assets.db"));
 
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType()
-    .AddMutationType()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .AddMutationConventions()
+    .AddTypes()
     .AddFiltering()
     .AddSorting()
-    .AddInMemorySubscriptions()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled);
+    .AddGlobalObjectIdentification()
+    .AddMutationConventions()
+    .RegisterDbContext<AssetContext>()
+    .ModifyRequestOptions(o => o.IncludeExceptionDetails = true);
 
 var app = builder.Build();
 
-app.UseWebSockets();
 app.UseCors(c => c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseStaticFiles();
 app.MapGraphQL();
 
 app.Run();
+
 ```
 
 With the **Hot Chocolate** mutation convention registered, the schema engine will rewrite all mutations into the relay mutation convention.
@@ -452,12 +427,12 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class WatchlistMutations
+[MutationType]
+public static class WatchlistMutations
 {
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<Watchlist> AddAssetToWatchlistAsync(
+    public static async Task<Watchlist> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -595,6 +570,8 @@ So we essentially want to add more fields to our payload. We can do that by usin
 For this let us create a new file called `AddAssetsToWatchlistPayload.cs` located in the `Types/Account` directory.
 
 ```csharp title="/Types/Account/AddAssetToWatchlistPayload.cs"
+using Demo.Types.Assets;
+
 namespace Demo.Types.Account;
 
 public sealed class AddAssetToWatchlistPayload
@@ -719,6 +696,8 @@ Before we can add a new mutation, we also need to add a new payload type since w
 Add the file `AddAssetsToWatchlistPayload.cs` to the `Types/Account` directory.
 
 ```csharp title="/Types/Account/AddAssetsToWatchlistPayload.cs"
+using Demo.Types.Assets;
+
 namespace Demo.Types.Account;
 
 public sealed class AddAssetsToWatchlistPayload
@@ -738,7 +717,6 @@ public sealed class AddAssetsToWatchlistPayload
         CancellationToken cancellationToken)
         => await assetBySymbol.LoadAsync(_addedSymbols, cancellationToken)!;
 }
-
 ```
 
 Next, add the following mutation to the `WatchlistMutations` class.
@@ -746,7 +724,7 @@ Next, add the following mutation to the `WatchlistMutations` class.
 ```csharp
 [Error<UnknownAssetException>]
 [Error<NotAuthenticatedException>]
-public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+public static async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
     string[] symbols,
     [GlobalState] string? username,
     AssetContext context,
@@ -784,12 +762,12 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class WatchlistMutations
+[MutationType]
+public static class WatchlistMutations
 {
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
+    public static async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -822,7 +800,7 @@ public sealed class WatchlistMutations
 
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+    public static async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
         string[] symbols,
         [GlobalState] string? username,
         AssetContext context,
@@ -985,12 +963,12 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class WatchlistMutations
+[MutationType]
+public static class WatchlistMutations
 {
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
+    public static async Task<AddAssetToWatchlistPayload> AddAssetToWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -1023,7 +1001,7 @@ public sealed class WatchlistMutations
 
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
-    public async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
+    public static async Task<AddAssetsToWatchlistPayload> AddAssetsToWatchlistAsync(
         string[] symbols,
         [GlobalState] string? username,
         AssetContext context,
@@ -1056,7 +1034,7 @@ public sealed class WatchlistMutations
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
     [UseMutationConvention]
-    public async Task<RemoveAssetFromWatchlistPayload> RemoveAssetFromWatchlistAsync(
+    public static async Task<RemoveAssetFromWatchlistPayload> RemoveAssetFromWatchlistAsync(
         string symbol,
         [GlobalState] string? username,
         AssetContext context,
@@ -1091,7 +1069,7 @@ public sealed class WatchlistMutations
     [Error<UnknownAssetException>]
     [Error<NotAuthenticatedException>]
     [UseMutationConvention(PayloadFieldName = "removedAssets")]
-    public async Task<RemoveAssetsFromWatchlistPayload> RemoveAssetsFromWatchlistAsync(
+    public static async Task<RemoveAssetsFromWatchlistPayload> RemoveAssetsFromWatchlistAsync(
         string[] symbols,
         [GlobalState] string? username,
         AssetContext context,
@@ -1127,7 +1105,7 @@ public sealed class WatchlistMutations
     [Error<NotAuthenticatedException>]
     [Error<UnknownWatchlistException>]
     [Error<IndexOutOfRangeException>]
-    public async Task<Watchlist> ChangeAssetPositionInWatchlistAsync(
+    public static async Task<Watchlist> ChangeAssetPositionInWatchlistAsync(
         string symbol,
         int index,
         [GlobalState] string? username,

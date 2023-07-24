@@ -84,6 +84,9 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
       });
 
       merge(init, {
+        headers: {
+          'GraphQL-Preflight': '1',
+        },
         body: form,
       });
     } else {
@@ -118,23 +121,24 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
                   break;
                 }
 
-                // If any exceptions occurred when processing the request,
-                // throw an error to indicate to the developer what went wrong.
-                if ('errors' in part.body) {
+                // DEMO: delay chunked responses
+                if (process.env.NEXT_PUBLIC_DEMO_SLOW_NETWORK === 'true') {
+                  await pause(3_000);
+                }
+
+                if ('data' in part.body) {
+                  sink.next(part.body);
+                } else if ('errors' in part.body) {
+                  // If any exceptions occurred when processing the request,
+                  // throw an error to indicate to the developer what went wrong.
                   sink.error(
                     new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
                       request,
                       response,
+                      errors: part.body.errors,
                     }),
                   );
                   break;
-                }
-
-                // DEMO: delay chunked responses
-                // await pause(2_000);
-
-                if ('data' in part.body) {
-                  sink.next(part.body);
                 }
 
                 if ('incremental' in part.body) {
@@ -176,20 +180,23 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
             } else {
               const json = await response.json();
 
-              // If any exceptions occurred when processing the request,
-              // throw an error to indicate to the developer what went wrong.
-              if ('errors' in json) {
+              // DEMO: delay response
+              if (process.env.NEXT_PUBLIC_DEMO_SLOW_NETWORK === 'true') {
+                await pause(3_000);
+              }
+
+              if ('data' in json) {
+                sink.next(json);
+              } else if ('errors' in json) {
+                // If any exceptions occurred when processing the request,
+                // throw an error to indicate to the developer what went wrong.
                 sink.error(
                   new NetworkError(ErrorMessages.GRAPHQL_ERRORS, {
                     request,
                     response,
+                    errors: json.errors,
                   }),
                 );
-              } else {
-                // DEMO: delay response
-                // await pause(2_000);
-
-                sink.next(json);
               }
             }
 
@@ -248,14 +255,14 @@ const subscribeFnWithSSE = (operation, variables) => {
       },
       {
         ...sink,
-        error: (err) => {
+        error(err) {
           if (Array.isArray(err)) {
-            return sink.error(
+            sink.error(
               new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
             );
+          } else {
+            sink.error(err, true);
           }
-
-          return sink.error(err, true);
         },
       },
     ),
@@ -288,20 +295,18 @@ const subscribeFnWithWS = (operation, variables) => {
       },
       {
         ...sink,
-        error: (err) => {
+        error(err) {
           if (Array.isArray(err)) {
-            return sink.error(
+            sink.error(
               new NetworkError(ErrorMessages.ERROR_FETCH, {cause: err}),
             );
-          }
-
-          if (err instanceof CloseEvent) {
-            return sink.error(
+          } else if (err instanceof CloseEvent) {
+            sink.error(
               new NetworkError(ErrorMessages.SOCKET_CLOSED, {cause: err}),
             );
+          } else {
+            sink.error(err, true);
           }
-
-          return sink.error(err, true);
         },
       },
     ),

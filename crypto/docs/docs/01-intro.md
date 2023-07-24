@@ -1,10 +1,10 @@
 # Introduction
 
-_Building Modern Applications with GraphQL_
+_Fullstack GraphQL_
 
-In this workshop, we’ll introduce you to GraphQL and the major concepts behind it. We’ll look at how to build a GraphQL server with ASP.NET core 6 and Hot Chocolate. You’ll learn how to query GraphQL and what tools are out there that can help you explore and manage large schemas. Further, we’ll dive into React and explore how to efficiently build fast and fluent web interfaces using the JavaScript client Relay.
+In this workshop, we’ll introduce you to GraphQL and the major concepts behind it. We’ll look at how to build a GraphQL server with ASP.NET Core 7 and Hot Chocolate. You’ll learn how to query GraphQL and what tools are out there that can help you explore and manage large schemas. Further, we’ll dive into React and explore how to efficiently build fast and fluent web interfaces using the JavaScript client Relay.
 
-**Technologies covered**: .NET 6, ASP.NET Core 6, TypeScript, React, GraphQL, Hot Chocolate, Relay
+**Technologies covered**: .NET 7, ASP.NET Core 7, TypeScript, React, GraphQL, Hot Chocolate, Relay
 
 ---
 
@@ -33,9 +33,9 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 - Exposing Sorting and Filtering to the Consumer
 - Defer and Stream
 
-### 12:30 BREAK (60 minutes)
+### 12:00 BREAK (60 minutes)
 
-### 13:30 On-Demand Data 1
+### 13:00 On-Demand Data 1
 
 - Rethinking Data Fetching
   - Specifying the Data Requirements of a Component
@@ -76,9 +76,9 @@ In this workshop, we’ll introduce you to GraphQL and the major concepts behind
 
 - Writing Subscriptions
 
-### 12:30 LUNCH
+### 12:00 LUNCH
 
-### 13:30 Add-Ons 1
+### 13:00 Add-Ons 1
 
 - Relay Developer Tools
 - Persisted Queries

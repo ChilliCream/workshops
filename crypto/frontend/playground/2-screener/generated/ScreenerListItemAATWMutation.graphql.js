@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<e82f9b56db852a57851f8cfa5478d2bb>>
- * @flow
+ * @generated SignedSource<<c0c0528b9e3763a404facf4e3d31e5c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type AddAssetToWatchlistInput = {|
-  symbol: string,
-|};
-export type ScreenerListItemAATWMutation$variables = {|
-  input: AddAssetToWatchlistInput,
-|};
-export type ScreenerListItemAATWMutation$data = {|
-  +addAssetToWatchlist: {|
-    +addedAsset: ?{|
-      +isInWatchlist: ?boolean,
-    |},
-  |},
-|};
-export type ScreenerListItemAATWMutation = {|
-  response: ScreenerListItemAATWMutation$data,
-  variables: ScreenerListItemAATWMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -135,9 +113,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "5cfe86951f1476f9b3d999e0e1e183ce";
+node.hash = "5cfe86951f1476f9b3d999e0e1e183ce";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  ScreenerListItemAATWMutation$variables,
-  ScreenerListItemAATWMutation$data,
->*/);
+module.exports = node;

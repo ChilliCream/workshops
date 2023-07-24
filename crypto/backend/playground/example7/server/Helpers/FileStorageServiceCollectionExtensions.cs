@@ -1,5 +1,4 @@
-using Demo.Transport;
-using HotChocolate.Subscriptions;
+using System.Net;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -11,9 +10,7 @@ public static class HelersServiceCollectionExtensions
             .AddHostedService<AssetPriceChangeProcessor>()
             .AddGraphQLServer()
             .RegisterService<IFileStorage>()
-            .RegisterService<ITopicEventSender>()
-            .RegisterService<ITopicEventReceiver>()
-            .AddHttpRequestInterceptor<CustomHttpRequestInterceptor>()
-            .AddSocketSessionInterceptor<CustomSocketSessionInterceptor>()
+            .AddHttpRequestInterceptor<Demo.Transport.CustomHttpRequestInterceptor>()
+            .AddSocketSessionInterceptor<Demo.Transport.CustomSocketSessionInterceptor>()
             .Services;
 }

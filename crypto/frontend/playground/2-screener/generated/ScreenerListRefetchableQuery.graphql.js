@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<202924b4ce7ba05d6b44edd273cde2b2>>
- * @flow
+ * @generated SignedSource<<29ec7fdf8ccb24ea76cf9b0704f36905>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,140 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-import type { ScreenerListFragment_query$fragmentType } from "./ScreenerListFragment_query.graphql";
-export type SortEnumType = "ASC" | "DESC";
-export type AssetSortInput = {|
-  name?: ?SortEnumType,
-  price?: ?AssetPriceSortInput,
-  slug?: ?SortEnumType,
-  symbol?: ?SortEnumType,
-|};
-export type AssetPriceSortInput = {|
-  asset?: ?AssetSortInput,
-  assetId?: ?SortEnumType,
-  change24Hour?: ?SortEnumType,
-  circulatingSupply?: ?SortEnumType,
-  currency?: ?SortEnumType,
-  high24Hour?: ?SortEnumType,
-  id?: ?SortEnumType,
-  lastPrice?: ?SortEnumType,
-  low24Hour?: ?SortEnumType,
-  marketCap?: ?SortEnumType,
-  maxSupply?: ?SortEnumType,
-  modifiedAt?: ?SortEnumType,
-  open24Hour?: ?SortEnumType,
-  symbol?: ?SortEnumType,
-  tradableMarketCapRank?: ?SortEnumType,
-  tradingActivity?: ?SortEnumType,
-  volume24Hour?: ?SortEnumType,
-  volumePercentChange24Hour?: ?SortEnumType,
-|};
-export type AssetFilterInput = {|
-  and?: ?$ReadOnlyArray<AssetFilterInput>,
-  description?: ?StringOperationFilterInput,
-  name?: ?StringOperationFilterInput,
-  or?: ?$ReadOnlyArray<AssetFilterInput>,
-  price?: ?AssetPriceFilterInput,
-  slug?: ?StringOperationFilterInput,
-  symbol?: ?StringOperationFilterInput,
-|};
-export type StringOperationFilterInput = {|
-  and?: ?$ReadOnlyArray<StringOperationFilterInput>,
-  contains?: ?string,
-  endsWith?: ?string,
-  eq?: ?string,
-  in?: ?$ReadOnlyArray<?string>,
-  ncontains?: ?string,
-  nendsWith?: ?string,
-  neq?: ?string,
-  nin?: ?$ReadOnlyArray<?string>,
-  nstartsWith?: ?string,
-  or?: ?$ReadOnlyArray<StringOperationFilterInput>,
-  startsWith?: ?string,
-|};
-export type AssetPriceFilterInput = {|
-  and?: ?$ReadOnlyArray<AssetPriceFilterInput>,
-  asset?: ?AssetFilterInput,
-  assetId?: ?IntOperationFilterInput,
-  change24Hour?: ?FloatOperationFilterInput,
-  circulatingSupply?: ?FloatOperationFilterInput,
-  currency?: ?StringOperationFilterInput,
-  high24Hour?: ?FloatOperationFilterInput,
-  id?: ?IntOperationFilterInput,
-  lastPrice?: ?FloatOperationFilterInput,
-  low24Hour?: ?FloatOperationFilterInput,
-  marketCap?: ?FloatOperationFilterInput,
-  maxSupply?: ?FloatOperationFilterInput,
-  modifiedAt?: ?DateTimeOperationFilterInput,
-  open24Hour?: ?FloatOperationFilterInput,
-  or?: ?$ReadOnlyArray<AssetPriceFilterInput>,
-  symbol?: ?StringOperationFilterInput,
-  tradableMarketCapRank?: ?FloatOperationFilterInput,
-  tradingActivity?: ?FloatOperationFilterInput,
-  volume24Hour?: ?FloatOperationFilterInput,
-  volumePercentChange24Hour?: ?FloatOperationFilterInput,
-|};
-export type IntOperationFilterInput = {|
-  eq?: ?number,
-  gt?: ?number,
-  gte?: ?number,
-  in?: ?$ReadOnlyArray<?number>,
-  lt?: ?number,
-  lte?: ?number,
-  neq?: ?number,
-  ngt?: ?number,
-  ngte?: ?number,
-  nin?: ?$ReadOnlyArray<?number>,
-  nlt?: ?number,
-  nlte?: ?number,
-|};
-export type FloatOperationFilterInput = {|
-  eq?: ?number,
-  gt?: ?number,
-  gte?: ?number,
-  in?: ?$ReadOnlyArray<?number>,
-  lt?: ?number,
-  lte?: ?number,
-  neq?: ?number,
-  ngt?: ?number,
-  ngte?: ?number,
-  nin?: ?$ReadOnlyArray<?number>,
-  nlt?: ?number,
-  nlte?: ?number,
-|};
-export type DateTimeOperationFilterInput = {|
-  eq?: ?string,
-  gt?: ?string,
-  gte?: ?string,
-  in?: ?$ReadOnlyArray<?string>,
-  lt?: ?string,
-  lte?: ?string,
-  neq?: ?string,
-  ngt?: ?string,
-  ngte?: ?string,
-  nin?: ?$ReadOnlyArray<?string>,
-  nlt?: ?string,
-  nlte?: ?string,
-|};
-export type ScreenerListRefetchableQuery$variables = {|
-  count?: ?number,
-  cursor?: ?string,
-  order?: ?$ReadOnlyArray<AssetSortInput>,
-  where?: ?AssetFilterInput,
-|};
-export type ScreenerListRefetchableQuery$data = {|
-  +$fragmentSpreads: ScreenerListFragment_query$fragmentType,
-|};
-export type ScreenerListRefetchableQuery = {|
-  response: ScreenerListRefetchableQuery$data,
-  variables: ScreenerListRefetchableQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": 10,
@@ -401,9 +267,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "35a34d660d7155895c77082e8a7c5436";
+node.hash = "35a34d660d7155895c77082e8a7c5436";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ScreenerListRefetchableQuery$variables,
-  ScreenerListRefetchableQuery$data,
->*/);
+module.exports = node;

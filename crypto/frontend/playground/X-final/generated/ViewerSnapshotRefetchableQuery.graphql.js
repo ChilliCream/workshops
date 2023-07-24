@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<931a287b4da9cfb84213b0b18ea0fae2>>
- * @flow
+ * @generated SignedSource<<7adfbd6414f69c39a0af15f26952bc66>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-import type { ViewerSnapshotFragment_price$fragmentType } from "./ViewerSnapshotFragment_price.graphql";
-export type ChangeSpan = "ALL" | "DAY" | "HOUR" | "MONTH" | "WEEK" | "YEAR";
-export type ViewerSnapshotRefetchableQuery$variables = {|
-  id: string,
-  span?: ?ChangeSpan,
-|};
-export type ViewerSnapshotRefetchableQuery$data = {|
-  +node: ?{|
-    +$fragmentSpreads: ViewerSnapshotFragment_price$fragmentType,
-  |},
-|};
-export type ViewerSnapshotRefetchableQuery = {|
-  response: ViewerSnapshotRefetchableQuery$data,
-  variables: ViewerSnapshotRefetchableQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -208,9 +187,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "92f04f73a86ad17b385a146cb370f432";
+node.hash = "92f04f73a86ad17b385a146cb370f432";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ViewerSnapshotRefetchableQuery$variables,
-  ViewerSnapshotRefetchableQuery$data,
->*/);
+module.exports = node;

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<b62dc0f098b2c47dea97ffb81f534015>>
- * @flow
+ * @generated SignedSource<<c252502ced35345e6f90b8011197eba4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AlertsActionsAAFragment_asset$fragmentType: FragmentType;
-export type AlertsActionsAAFragment_asset$data = {|
-  +id: string,
-  +price: {|
-    +currency: string,
-    +lastPrice: number,
-  |},
-  +symbol: string,
-  +$fragmentType: AlertsActionsAAFragment_asset$fragmentType,
-|};
-export type AlertsActionsAAFragment_asset$key = {
-  +$data?: AlertsActionsAAFragment_asset$data,
-  +$fragmentSpreads: AlertsActionsAAFragment_asset$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -79,9 +58,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "f1751ec4692158e40be5afe9bf6f514a";
+node.hash = "f1751ec4692158e40be5afe9bf6f514a";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  AlertsActionsAAFragment_asset$fragmentType,
-  AlertsActionsAAFragment_asset$data,
->*/);
+module.exports = node;

@@ -15,7 +15,7 @@ public sealed class AssetPriceChangeType : ObjectType
 
         descriptor
             .ImplementsNode()
-            .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+            .ResolveNodeWith<AssetPriceChangeType>(_ => ResolveNodeAsync(default!, default!, default!, default!));
 
         descriptor
             .Field("id")
@@ -37,37 +37,66 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
+            .Field<AssetPriceChangeType>(_ => GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
+    }
+
+    private static async Task<JsonElement?> ResolveNodeAsync(
+        string id,
+        [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+        AssetPriceChangeByKeyDataLoader dataLoader,
+        CancellationToken cancellationToken)
+    {
+        string[] parts = id.Split(':');
+        ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+        var key = new KeyAndSpan(parts[0], span);
+        setKey(key);
+        return await dataLoader.LoadAsync(key, cancellationToken);
+    }
+
+    private static async Task<Connection<JsonElement>> GetHistoryAsync(
+        [ScopedState] KeyAndSpan keyAndSpan,
+        AssetPriceHistoryByKeyDataLoader assetPriceHistoryByKey,
+        IResolverContext context,
+        CancellationToken cancellationToken)
+    {
+        JsonElement history = await assetPriceHistoryByKey.LoadAsync(keyAndSpan, cancellationToken);
+        return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
     }
 
     private static bool IsAssetPriceChangeType(IResolverContext context, object resolverResult)
         => resolverResult is JsonElement element &&
             element.TryGetProperty("percentageChange", out _);
 
-    private class Resolvers
+    [DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+    internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKey(
+        IReadOnlyList<KeyAndSpan> keys,
+        IHttpClientFactory clientFactory,
+        CancellationToken cancellationToken)
     {
-        public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] KeyAndSpan keyAndSpan,
-            AssetPriceHistoryDataLoader dataLoader,
-            IResolverContext context,
-            CancellationToken cancellationToken)
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+        var map = new Dictionary<KeyAndSpan, JsonElement>();
+
+        foreach (var group in keys.GroupBy(t => t.Span))
         {
-            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
-            return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+            string symbols = string.Join(",", group.Select(t => t.Symbol));
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/asset/price/change?symbols={symbols}&span={group.Key}");
+            using var response = await client.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            var document = JsonDocument.Parse(content);
+            var root = document.RootElement;
+
+            foreach (JsonElement priceInfo in root.EnumerateArray())
+            {
+                string symbol = priceInfo.GetProperty("symbol").GetString()!;
+                map.Add(new(symbol, group.Key), priceInfo);
+            }
         }
 
-        public async Task<JsonElement?> ResolveNodeAsync(
-            string id,
-            [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
-            AssetPriceChangeDataLoader dataLoader,
-            CancellationToken cancellationToken)
-        {
-            string[] parts = id.Split(':');
-            ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
-            var key = new KeyAndSpan(parts[0], span);
-            setKey(key);
-            return await dataLoader.LoadAsync(key, cancellationToken);
-        }
+        return map;
     }
 }

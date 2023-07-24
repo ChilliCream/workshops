@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<5c68ea727c3f36145fa0e237e8cdc896>>
- * @flow
+ * @generated SignedSource<<a4f471b09f6427feb95262f2f5f795c7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,35 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-import type { AlertsActionsDAFragment_asset$fragmentType } from "./AlertsActionsDAFragment_asset.graphql";
-export type CreateAlertInput = {|
-  currency?: ?string,
-  recurring: boolean,
-  symbol: string,
-  targetPrice: number,
-|};
-export type AlertsActionsCAMutation$variables = {|
-  input: CreateAlertInput,
-|};
-export type AlertsActionsCAMutation$data = {|
-  +createAlert: {|
-    +createdAlert: ?{|
-      +asset: {|
-        +hasAlerts: boolean,
-        +$fragmentSpreads: AlertsActionsDAFragment_asset$fragmentType,
-      |},
-    |},
-  |},
-|};
-export type AlertsActionsCAMutation = {|
-  response: AlertsActionsCAMutation$data,
-  variables: AlertsActionsCAMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -295,9 +266,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "1c14bb5368ffbed4a19dfeb3369343a5";
+node.hash = "1c14bb5368ffbed4a19dfeb3369343a5";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  AlertsActionsCAMutation$variables,
-  AlertsActionsCAMutation$data,
->*/);
+module.exports = node;

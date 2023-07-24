@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<db53c8f6e23f66e2eeebd6510840cc61>>
- * @flow
+ * @generated SignedSource<<e89c72581575523c34c0325828153a0e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,25 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { DashboardSpotlightCardFragment_asset$fragmentType } from "./DashboardSpotlightCardFragment_asset.graphql";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type DashboardSpotlightGainersFragment_query$fragmentType: FragmentType;
-export type DashboardSpotlightGainersFragment_query$data = {|
-  +gainers: ?{|
-    +$fragmentSpreads: DashboardSpotlightCardFragment_asset$fragmentType,
-  |},
-  +$fragmentType: DashboardSpotlightGainersFragment_query$fragmentType,
-|};
-export type DashboardSpotlightGainersFragment_query$key = {
-  +$data?: DashboardSpotlightGainersFragment_query$data,
-  +$fragmentSpreads: DashboardSpotlightGainersFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -80,9 +61,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "cd26250533df54389e0e78c36e15394c";
+node.hash = "cd26250533df54389e0e78c36e15394c";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  DashboardSpotlightGainersFragment_query$fragmentType,
-  DashboardSpotlightGainersFragment_query$data,
->*/);
+module.exports = node;

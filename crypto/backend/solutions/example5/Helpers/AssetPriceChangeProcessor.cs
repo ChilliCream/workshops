@@ -1,19 +1,12 @@
-using System.Globalization;
-using System.Security.Claims;
 using System.Text.Json;
-using Demo.Types.Notifications;
-using HotChocolate.Subscriptions;
 
 namespace Demo.Helpers;
 
-public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposable
+public sealed class AssetPriceChangeProcessor : IHostedService, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
+    private readonly IServiceProvider _services;
     private readonly IFileStorage _fileStorage;
-    private readonly ITopicEventSender _sender;
-    private readonly ITopicEventReceiver _receiver;
-    private readonly CultureInfo _culture;
     private bool _disposed;
 
     private readonly string[] _symbols = new[]
@@ -187,29 +180,24 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         "SYN"
     };
 
-    public AssetPriceChangeProcessor(
-        IDbContextFactory<AssetContext> contextFactory,
-        IFileStorage fileStorage,
-        ITopicEventSender sender,
-        ITopicEventReceiver receiver)
+    public AssetPriceChangeProcessor(IServiceProvider services, IFileStorage fileStorage)
     {
-        _contextFactory = contextFactory;
+        _services = services;
         _fileStorage = fileStorage;
-        _sender = sender;
-        _receiver = receiver;
-
-        _culture = CultureInfo.GetCultureInfo("en-US", predefinedOnly: true) ??
-            CultureInfo.InvariantCulture;
     }
 
     public async Task StartAsync(CancellationToken stoppingToken)
     {
-        using AssetContext context = await _contextFactory.CreateDbContextAsync(stoppingToken);
-        await context.Database.EnsureCreatedAsync(stoppingToken);
-
+        await CreateDatabaseAsync(stoppingToken);
         await SeedAssetsAsync(stoppingToken);
         BeginUpdatePrices();
-        BeginProcessEvents();
+    }
+
+    private async Task CreateDatabaseAsync(CancellationToken ct)
+    {
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
+        await context.Database.EnsureCreatedAsync(ct);
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
@@ -231,7 +219,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
     private async Task SeedAssetsAsync(CancellationToken cancellationToken)
     {
-        using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
         var storedSymbols = _symbols.Except(await context.Assets.Select(t => t.Symbol!).ToListAsync(cancellationToken)).ToArray();
         if (storedSymbols.Length == 0)
@@ -240,12 +229,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         }
 
         var map = await LoadAssetsAsync(storedSymbols, cancellationToken);
-
-        foreach (Asset asset in map.Values)
-        {
-            context.Assets.Add(asset);
-        }
-
+        context.Assets.AddRange(map.Values);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -257,7 +241,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
         try
         {
-            using var client = CreateClient();
+            using var client = new HttpClient();
             client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
 
             using var assetRequest = new HttpRequestMessage(HttpMethod.Get, $"api/asset?symbols={string.Join(",", symbols)}");
@@ -298,7 +282,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     {
         try
         {
-            using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            await using var scope = _services.CreateAsyncScope();
+            await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
             var assets = await context.Assets.ToListAsync(cancellationToken);
 
             foreach (var asset in assets)
@@ -323,8 +308,9 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         {
             try
             {
-                using var client = CreateClient();
-                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                using var client = new HttpClient();
+                await using var scope = _services.CreateAsyncScope();
+                await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
                 client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
 
@@ -389,15 +375,13 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         return list;
     }
 
-    private async Task UpdateAssetPriceAsync(
+    private static async Task UpdateAssetPriceAsync(
         AssetPrice? price,
         UpdateAssetPriceDto input,
         int assetId,
         AssetContext context,
         CancellationToken cancellationToken)
     {
-        UpdateAssetPriceDto? original = ToUpdateAssetPriceInput(price);
-
         if (price is null)
         {
             price = new AssetPrice { AssetId = assetId };
@@ -421,13 +405,6 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         price.ModifiedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync(cancellationToken);
-
-        if (original is null || !input.Equals(original))
-        {
-            await Task.Delay(Random.Shared.Next(200, 600), cancellationToken);
-            await _sender.SendAsync(Constants.OnPriceChangeProcessing, input, cancellationToken);
-            await _sender.SendAsync(Constants.OnPriceChange, input.Symbol, cancellationToken);
-        }
     }
 
     private static UpdateAssetPriceDto ToUpdateAssetPriceInput(JsonElement price, JsonElement priceChange)
@@ -451,75 +428,11 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         IFileStorage storage,
         CancellationToken cancellationToken)
     {
-        using var client = CreateClient();
+        using var client = new HttpClient();
         using var request = new HttpRequestMessage(HttpMethod.Get, imageUrl);
         using var response = await client.SendAsync(request, cancellationToken);
         await using var stream = response.Content.ReadAsStream(cancellationToken);
         return await storage.UploadAsync(stream, cancellationToken);
-    }
-
-    private void BeginProcessEvents()
-        => Task.Factory.StartNew(
-            () => ProcessEventsAsync(_cts.Token),
-            _cts.Token,
-            TaskCreationOptions.LongRunning,
-            TaskScheduler.Default);
-
-    private async Task ProcessEventsAsync(CancellationToken cancellationToken)
-    {
-        var sourceStream = await _receiver.SubscribeAsync<string, UpdateAssetPriceDto>(Constants.OnPriceChangeProcessing, cancellationToken);
-
-        await foreach (UpdateAssetPriceDto price in sourceStream.ReadEventsAsync().WithCancellation(cancellationToken))
-        {
-            try
-            {
-                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-                foreach (Alert alert in await context.Alerts.Where(t => t.Asset!.Symbol == price.Symbol).ToListAsync(cancellationToken))
-                {
-                    if ((alert.PercentageChange > 0 && alert.TargetPrice <= price.LastPrice) ||
-                        (alert.PercentageChange < 0 && alert.TargetPrice >= price.LastPrice))
-                    {
-                        await SendNotificationAsync(price, alert, context, cancellationToken);
-                    }
-                }
-            }
-            catch
-            {
-                // if there is an error we will retry
-            }
-        }
-    }
-
-    private async Task SendNotificationAsync(
-        UpdateAssetPriceDto price,
-        Alert alert,
-        AssetContext context,
-        CancellationToken cancellationToken)
-    {
-        if (alert.Recurring)
-        {
-            alert.TargetPrice = (price.LastPrice * alert.PercentageChange) + price.LastPrice;
-        }
-        else
-        {
-            context.Alerts.Remove(alert);
-        }
-
-        var notification = new Notification
-        {
-            Message = string.Format(
-                _culture,
-                "{0} hit your target price of {1:c}.",
-                price.Symbol,
-                price.LastPrice),
-            Symbol = price.Symbol,
-            Username = alert.Username
-        };
-
-        context.Notifications.Add(notification);
-
-        await context.SaveChangesAsync(cancellationToken);
-        await _sender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(alert.Username!), new(notification.Id), cancellationToken);
     }
 
     public void Dispose()
@@ -534,24 +447,6 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
             _disposed = true;
         }
     }
-
-    private static UpdateAssetPriceDto? ToUpdateAssetPriceInput(AssetPrice? price)
-        => price is null
-            ? null
-            : new(price.Symbol!,
-                price.Currency!,
-                price.LastPrice,
-                price.MarketCap,
-                price.TradableMarketCapRank,
-                price.Volume24Hour,
-                price.VolumePercentChange24Hour,
-                price.CirculatingSupply,
-                price.MaxSupply,
-                price.High24Hour,
-                price.Low24Hour,
-                price.Open24Hour,
-                price.TradingActivity,
-                price.Change24Hour);
 
     private sealed record UpdateAssetPriceDto(
         string Symbol,

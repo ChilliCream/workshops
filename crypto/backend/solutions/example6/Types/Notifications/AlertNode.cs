@@ -1,3 +1,5 @@
+using Demo.Types.Assets;
+
 namespace Demo.Types.Notifications;
 
 [Node]

@@ -114,7 +114,7 @@ const run = async () => {
         const to = path.join(target, item.name);
 
         await fs.rm(to, {recursive: true, force: true});
-        await fs.symlink(from, to, item.isDirectory() ? 'dir' : 'file');
+        await fs.cp(from, to, {recursive: true, force: true});
       }
     }
 

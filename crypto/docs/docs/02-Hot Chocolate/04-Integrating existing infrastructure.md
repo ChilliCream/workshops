@@ -164,50 +164,7 @@ The above type class defines the `AssetPriceChange` type. We also added a method
 
 With the type in place, we can start with fetching the data. Since we have a batching endpoint that allows us to fetch multiple price changes simultaneously, we can use the batch **DataLoader**.
 
-Because we have more than one REST service, let us introduce a base class to have less code duplication.
-
-Create a new file `HttpBatchDataLoader` in the `DataLoader` directory and copy the following code into that file.
-
-```csharp title="/DataLoader/HttpBatchDataLoader.cs"
-using System.Text.Json;
-
-namespace Demo.DataLoader;
-
-public abstract class HttpBatchDataLoader<TKey>
-    : BatchDataLoader<TKey, JsonElement>
-    where TKey : notnull
-{
-    protected HttpBatchDataLoader(
-        IHttpClientFactory clientFactory,
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions? options = null)
-        : base(batchScheduler, options)
-    {
-        ClientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-    }
-
-    public IHttpClientFactory ClientFactory { get; }
-
-    protected sealed override async Task<IReadOnlyDictionary<TKey, JsonElement>> LoadBatchAsync(
-        IReadOnlyList<TKey> keys,
-        CancellationToken cancellationToken)
-    {
-        using var client = ClientFactory.CreateClient(Constants.PriceInfoService);
-        return await LoadBatchAsync(keys, client, cancellationToken);
-    }
-
-    protected abstract Task<IReadOnlyDictionary<TKey, JsonElement>> LoadBatchAsync(
-        IReadOnlyList<TKey> keys,
-        HttpClient client,
-        CancellationToken cancellationToken);
-}
-```
-
-Our base class will just have some convenience added sp that we do not need to create the actual HTTP client every time. Moreover, we fixed the result type to a `JsonElement`.
-
-With this in place, we need to define the actual **DataLoader**. As we have learned in the previous chapter, a **DataLoader** is a straightforward utility that will fetch an entity for a key.
-
-Still, in this case, we need to pass along two pieces of information to our **DataLoader**: the `span` and the `symbol`. We could approach this from different angles. One solution would be to have a **DataLoader** per span, but thinking about this already tells us that this would not scale very well. What we will do for our service is to introduce a new struct called `KeyAndSpan`, which holds both information and represents our composite key.
+In this case, we need to pass along two pieces of information to our **DataLoader**: the `span` and the `symbol`. We could approach this from different angles. One solution would be to have a **DataLoader** per span, but thinking about this already tells us that this would not scale very well. What we will do for our service is to introduce a new struct called `KeyAndSpan`, which holds both information and represents our **composite key**.
 
 Let us first create an enum representing the `span`. For this, create a new class called `ChangeSpan` in the `Types/Assets` directory and copy the code below.
 
@@ -229,35 +186,81 @@ Next, we will introduce our `KeyAndSpan` struct. Since we need proper equivalenc
 
 Create a `KeyAndSpan.cs` file in the `Types/Assets` directory and copy the code below.
 
-```csharp title="/Types/Assets/HttpBatchDataLoader.cs"
+```csharp title="/Types/Assets/KeyAndSpan.cs"
 namespace Demo.Types.Assets;
 
 public readonly record struct KeyAndSpan(string Symbol, ChangeSpan Span);
 ```
 
-Finally, we have everything in place to create our `AssetPriceChangeDataLoader`, which we will add to the `DataLoader` directory.
+Finally, we have everything in place to create our `GetAssetPriceChangeByKey` **DataLoader** method, which we will add to the `AssetPriceChangeType` class.
+
+```csharp
+[DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKeyAsync(
+    IReadOnlyList<KeyAndSpan> keys,
+    IHttpClientFactory clientFactory,
+    CancellationToken cancellationToken)
+{
+    using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+    var map = new Dictionary<KeyAndSpan, JsonElement>();
+
+    foreach (var group in keys.GroupBy(t => t.Span))
+    {
+        string symbols = string.Join(",", group.Select(t => t.Symbol));
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            $"api/asset/price/change?symbols={symbols}&span={group.Key}");
+        using var response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        var document = JsonDocument.Parse(content);
+        var root = document.RootElement;
+
+        foreach (JsonElement priceInfo in root.EnumerateArray())
+        {
+            string symbol = priceInfo.GetProperty("symbol").GetString()!;
+            map.Add(new(symbol, group.Key), priceInfo);
+        }
+    }
+
+    return map;
+}
+```
+
+The class should now look like the following:
 
 ```csharp title="/DataLoader/AssetPriceChangeDataLoader.cs"
 using System.Text.Json;
-using Demo.Types.Assets;
+using HotChocolate.Resolvers;
 
-namespace Demo.DataLoader;
+namespace Demo.Types.Assets;
 
-public sealed class AssetPriceChangeDataLoader : HttpBatchDataLoader<KeyAndSpan>
+public sealed class AssetPriceChangeType : ObjectType
 {
-    public AssetPriceChangeDataLoader(
-        IHttpClientFactory clientFactory,
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions? options = null)
-        : base(clientFactory, batchScheduler, options)
+    protected override void Configure(IObjectTypeDescriptor descriptor)
     {
+        descriptor
+            .Name("AssetPriceChange")
+            .IsOfType(IsAssetPriceChangeType);
+
+        descriptor
+            .Field("percentageChange")
+            .Type<NonNullType<FloatType>>()
+            .FromJson();
     }
 
-    protected override async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> LoadBatchAsync(
+    private static bool IsAssetPriceChangeType(IResolverContext context, object resolverResult)
+        => resolverResult is JsonElement element &&
+            element.TryGetProperty("percentageChange", out _);
+
+    [DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+    internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKeyAsync(
         IReadOnlyList<KeyAndSpan> keys,
-        HttpClient client,
+        IHttpClientFactory clientFactory,
         CancellationToken cancellationToken)
     {
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
         var map = new Dictionary<KeyAndSpan, JsonElement>();
 
         foreach (var group in keys.GroupBy(t => t.Span))
@@ -285,20 +288,18 @@ public sealed class AssetPriceChangeDataLoader : HttpBatchDataLoader<KeyAndSpan>
 }
 ```
 
-Our `AssetPriceChangeDataLoader` will essentially fetch a batch of price changes from our REST endpoint and then decompose the received JSON list into a JSON object representing the price change objects.
+Our `AssetPriceChangeByKeyDataLoader` will essentially fetch a batch of price changes from our REST endpoint and then decompose the received JSON list into a JSON object representing the price change objects.
 
 Let's integrate our new type into the existing `AssetPrice`. For this, head over to the `AssetPriceNode` class and add the following resolver to it.
 
 ```csharp
-[GraphQLType(typeof(AssetPriceChangeType))]
-public async Task<JsonElement> GetChangeAsync(
+[GraphQLType<AssetPriceChangeType>]
+public static async Task<JsonElement> GetChangeAsync(
     ChangeSpan span,
     [Parent] AssetPrice parent,
-    AssetPriceChangeDataLoader assetPriceBySymbol,
+    AssetPriceChangeByKeyDataLoader assetPriceChangeByKey,
     CancellationToken cancellationToken)
-{
-    return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
-}
+    => await assetPriceChangeByKey.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
 ```
 
 The above resolver would translate to a field like the following if we expressed it in GraphQL SDL.
@@ -319,31 +320,41 @@ using System.Text.Json;
 namespace Demo.Types.Assets;
 
 [Node]
-[ExtendObjectType(typeof(AssetPrice), IgnoreProperties = new[] { nameof(AssetPrice.AssetId) })]
-public sealed class AssetPriceNode
+[ExtendObjectType<AssetPrice>]
+public static class AssetPriceNode
 {
-    public async Task<Asset> GetAssetAsync(
-        [Parent] AssetPrice parent,
-        AssetBySymbolDataLoader assetBySymbol,
-        CancellationToken cancellationToken)
-        => await assetBySymbol.LoadAsync(parent.Symbol!, cancellationToken);
-
-    [GraphQLType(typeof(AssetPriceChangeType))]
-    public async Task<JsonElement> GetChangeAsync(
+    [GraphQLType<AssetPriceChangeType>]
+    public static async Task<JsonElement> GetChangeAsync(
         ChangeSpan span,
         [Parent] AssetPrice parent,
-        AssetPriceChangeDataLoader assetPriceBySymbol,
+        AssetPriceChangeByKeyDataLoader assetPriceChangeByKey,
         CancellationToken cancellationToken)
-    {
-        return await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
-    }
+        => await assetPriceChangeByKey.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<string, AssetPrice>> GetAssetPriceBySymbolAsync(
+        IReadOnlyList<string> symbols,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => symbols.Contains(t.Symbol))
+            .ToDictionaryAsync(t => t.Symbol!, cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlyDictionary<int, AssetPrice>> GetAssetPriceByIdAsync(
+        IReadOnlyList<int> ids,
+        AssetContext context,
+        CancellationToken cancellationToken)
+        => await context.AssetPrices
+            .Where(t => ids.Contains(t.Id))
+            .ToDictionaryAsync(t => t.Id, cancellationToken);
 
     [NodeResolver]
-    public static Task<AssetPrice> GetByIdAsyncAsync(
+    public static async Task<AssetPrice> GetAssetPriceByIdAsync(
         int id,
-        AssetPriceByIdDataLoader dataLoader,
+        AssetPriceByIdDataLoader assetPriceById,
         CancellationToken cancellationToken)
-        => dataLoader.LoadAsync(id, cancellationToken);
+        => await assetPriceById.LoadAsync(id, cancellationToken);
 }
 ```
 
@@ -353,7 +364,9 @@ Head over to the `Program.cs` and add the following service registration.
 
 ```csharp
 builder.Services
-    .AddHttpClient(Constants.PriceInfoService, c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
+    .AddHttpClient(
+        Constants.PriceInfoService, 
+        c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 ```
 
 Now, let's test if we can query the price change.
@@ -428,29 +441,74 @@ type AssetPriceHistory {
 Next, as before, we will use a **DataLoader** to fetch the data from the external service.
 The **DataLoader** will reuse the `KeyAndSpan` struct as the key type.
 
-Create a new file `AssetPriceHistoryDataLoader.cs` in the `DataLoader` directory and copy the code below.
+Create a new method `GetAssetPriceHistoryByKey` in the `AssetPriceHistoryType` class and copy the code below.
 
-```csharp title="/DataLoader/AssetPriceHistoryDataLoader.cs"
-using System.Text.Json;
-using Demo.Types.Assets;
-
-namespace Demo.DataLoader;
-
-public sealed class AssetPriceHistoryDataLoader : HttpBatchDataLoader<KeyAndSpan>
+```csharp
+[DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceHistoryByKey(
+    IReadOnlyList<KeyAndSpan> keys,
+    IHttpClientFactory clientFactory,
+    CancellationToken cancellationToken)
 {
-    public AssetPriceHistoryDataLoader(
-        IHttpClientFactory clientFactory,
-        IBatchScheduler batchScheduler,
-        DataLoaderOptions? options = null)
-        : base(clientFactory, batchScheduler, options)
+    using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+    var map = new Dictionary<KeyAndSpan, JsonElement>();
+
+    foreach (var group in keys.GroupBy(t => t.Span))
     {
+        string symbols = string.Join(",", group.Select(t => t.Symbol));
+        using var request = new HttpRequestMessage(
+            HttpMethod.Get,
+            $"api/asset/price/history?symbols={symbols}&span={group.Key}");
+        using var response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        var document = JsonDocument.Parse(content);
+        var root = document.RootElement;
+
+        foreach (JsonElement priceInfo in root.EnumerateArray())
+        {
+            string symbol = priceInfo.GetProperty("symbol").GetString()!;
+            map.Add(new(symbol, group.Key), priceInfo);
+        }
     }
 
-    protected override async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> LoadBatchAsync(
+    return map;
+}
+```
+
+The completed `AssetPriceHistoryType` class should look like the following:
+
+```csharp title="/Types/AssetPriceHistoryType.cs"
+using System.Text.Json;
+
+namespace Demo.Types.Assets;
+
+public sealed class AssetPriceHistoryType : ObjectType
+{
+    protected override void Configure(IObjectTypeDescriptor descriptor)
+    {
+        descriptor
+            .Name("AssetPriceHistory");
+
+        descriptor
+            .Field("epoch")
+            .Type<NonNullType<IntType>>()
+            .FromJson();
+
+        descriptor
+            .Field("price")
+            .Type<NonNullType<FloatType>>()
+            .FromJson();
+    }
+
+    [DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+    internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceHistoryByKey(
         IReadOnlyList<KeyAndSpan> keys,
-        HttpClient client,
+        IHttpClientFactory clientFactory,
         CancellationToken cancellationToken)
     {
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
         var map = new Dictionary<KeyAndSpan, JsonElement>();
 
         foreach (var group in keys.GroupBy(t => t.Span))
@@ -500,12 +558,12 @@ For our problem at hand, we want to push the `keyAndSpan` we create in the `GetC
 First, head over to the `AssetPriceNode` class and locate the `GetChangeAsync` resolver. Replace the current implementation with the code below.
 
 ```csharp
-[GraphQLType(typeof(AssetPriceChangeType))]
-public async Task<JsonElement> GetChangeAsync(
+[GraphQLType<AssetPriceChangeType>]
+public static async Task<JsonElement> GetChangeAsync(
     ChangeSpan span,
     [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
     [Parent] AssetPrice parent,
-    AssetPriceChangeDataLoader assetPriceBySymbol,
+    AssetPriceChangeByKeyDataLoader assetPriceBySymbol,
     CancellationToken cancellationToken)
 {
     var key = new KeyAndSpan(parent.Symbol!, span);
@@ -516,20 +574,17 @@ public async Task<JsonElement> GetChangeAsync(
 
 We added a new `SetState<KeyAndSpan>` parameter to our resolver, a delegate that allows us to set a `KeyAndSpan` on our scoped execution state. This state will be available to all resolvers in our subtree.
 
-Next, head over to the `AssetPriceChangeType` and add a nested class `Resolvers`. You can copy & paste the code below for this.
+Next, head over to the `AssetPriceChangeType` and add a resolver to fetch the historic data.. You can copy & paste the code below for this.
 
 ```csharp
-private class Resolvers
+private static async Task<Connection<JsonElement>> GetHistoryAsync(
+    [ScopedState] KeyAndSpan keyAndSpan,
+    AssetPriceHistoryByKeyDataLoader assetPriceHistoryByKey,
+    IResolverContext context,
+    CancellationToken cancellationToken)
 {
-    public async Task<Connection<JsonElement>> GetHistoryAsync(
-        [ScopedState] KeyAndSpan keyAndSpan,
-        AssetPriceHistoryDataLoader dataLoader,
-        IResolverContext context,
-        CancellationToken cancellationToken)
-    {
-        JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
-        return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
-    }
+    JsonElement history = await assetPriceHistoryByKey.LoadAsync(keyAndSpan, cancellationToken);
+    return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
 }
 ```
 
@@ -539,7 +594,7 @@ With our resolver in place, we must register a field in our `AssetPriceChangeTyp
 
 ```csharp
 descriptor
-    .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
+    .Field<AssetPriceChangeType>(_ => GetHistoryAsync(default, default!, default!, default))
     .UsePaging<AssetPriceHistoryType>();
 ```
 
@@ -549,7 +604,6 @@ The completed `AssetPriceChangeType` should now look like the following.
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
-using HotChocolate.Types.Pagination.Extensions;
 
 namespace Demo.Types.Assets;
 
@@ -567,25 +621,54 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
+            .Field<AssetPriceChangeType>(_ => GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
+    }
+
+    private static async Task<Connection<JsonElement>> GetHistoryAsync(
+        [ScopedState] KeyAndSpan keyAndSpan,
+        AssetPriceHistoryByKeyDataLoader assetPriceHistoryByKey,
+        IResolverContext context,
+        CancellationToken cancellationToken)
+    {
+        JsonElement history = await assetPriceHistoryByKey.LoadAsync(keyAndSpan, cancellationToken);
+        return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
     }
 
     private static bool IsAssetPriceChangeType(IResolverContext context, object resolverResult)
         => resolverResult is JsonElement element &&
             element.TryGetProperty("percentageChange", out _);
 
-    private class Resolvers
+    [DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+    internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKey(
+        IReadOnlyList<KeyAndSpan> keys,
+        IHttpClientFactory clientFactory,
+        CancellationToken cancellationToken)
     {
-        public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] KeyAndSpan keyAndSpan,
-            AssetPriceHistoryDataLoader dataLoader,
-            IResolverContext context,
-            CancellationToken cancellationToken)
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+        var map = new Dictionary<KeyAndSpan, JsonElement>();
+
+        foreach (var group in keys.GroupBy(t => t.Span))
         {
-            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
-            return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+            string symbols = string.Join(",", group.Select(t => t.Symbol));
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/asset/price/change?symbols={symbols}&span={group.Key}");
+            using var response = await client.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            var document = JsonDocument.Parse(content);
+            var root = document.RootElement;
+
+            foreach (JsonElement priceInfo in root.EnumerateArray())
+            {
+                string symbol = priceInfo.GetProperty("symbol").GetString()!;
+                map.Add(new(symbol, group.Key), priceInfo);
+            }
         }
+
+        return map;
     }
 }
 ```
@@ -627,13 +710,13 @@ For this, we need to implement the node interface with the `AssetPriceChange` ty
 
 Let's head over to the `AssetPriceChangeType.cs` file again and change the configuration.
 
-First, we need to introduce a node resolver to our nested `Resolvers` class.
+First, we need to introduce a node resolver to our type.
 
 ```csharp
-public async Task<JsonElement?> ResolveNodeAsync(
+private static async Task<JsonElement?> ResolveNodeAsync(
     string id,
     [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
-    AssetPriceChangeDataLoader dataLoader,
+    AssetPriceChangeByKeyDataLoader dataLoader,
     CancellationToken cancellationToken)
 {
     string[] parts = id.Split(':');
@@ -669,7 +752,7 @@ Lastly, we will introduce some type configuration that implements the node inter
 ```csharp
 descriptor
     .ImplementsNode()
-    .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+    .ResolveNodeWith<AssetPriceChangeType>(_ => ResolveNodeAsync(default!, default!, default!, default!));
 ```
 
 The completed `AssetPriceChangeType` should look like the following.
@@ -678,7 +761,6 @@ The completed `AssetPriceChangeType` should look like the following.
 using System.Text.Json;
 using HotChocolate.Resolvers;
 using HotChocolate.Types.Pagination;
-using HotChocolate.Types.Pagination.Extensions;
 
 namespace Demo.Types.Assets;
 
@@ -692,7 +774,7 @@ public sealed class AssetPriceChangeType : ObjectType
 
         descriptor
             .ImplementsNode()
-            .ResolveNodeWith<Resolvers>(t => t.ResolveNodeAsync(default!, default!, default!, default!));
+            .ResolveNodeWith<AssetPriceChangeType>(_ => ResolveNodeAsync(default!, default!, default!, default!));
 
         descriptor
             .Field("id")
@@ -714,38 +796,67 @@ public sealed class AssetPriceChangeType : ObjectType
             .FromJson();
 
         descriptor
-            .Field<Resolvers>(t => t.GetHistoryAsync(default, default!, default!, default))
+            .Field<AssetPriceChangeType>(_ => GetHistoryAsync(default, default!, default!, default))
             .UsePaging<AssetPriceHistoryType>();
+    }
+
+    private static async Task<JsonElement?> ResolveNodeAsync(
+        string id,
+        [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
+        AssetPriceChangeByKeyDataLoader dataLoader,
+        CancellationToken cancellationToken)
+    {
+        string[] parts = id.Split(':');
+        ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
+        var key = new KeyAndSpan(parts[0], span);
+        setKey(key);
+        return await dataLoader.LoadAsync(key, cancellationToken);
+    }
+
+    private static async Task<Connection<JsonElement>> GetHistoryAsync(
+        [ScopedState] KeyAndSpan keyAndSpan,
+        AssetPriceHistoryByKeyDataLoader assetPriceHistoryByKey,
+        IResolverContext context,
+        CancellationToken cancellationToken)
+    {
+        JsonElement history = await assetPriceHistoryByKey.LoadAsync(keyAndSpan, cancellationToken);
+        return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
     }
 
     private static bool IsAssetPriceChangeType(IResolverContext context, object resolverResult)
         => resolverResult is JsonElement element &&
             element.TryGetProperty("percentageChange", out _);
 
-    private class Resolvers
+    [DataLoader(ServiceScope = DataLoaderServiceScope.OriginalScope)]
+    internal static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKey(
+        IReadOnlyList<KeyAndSpan> keys,
+        IHttpClientFactory clientFactory,
+        CancellationToken cancellationToken)
     {
-        public async Task<Connection<JsonElement>> GetHistoryAsync(
-            [ScopedState] KeyAndSpan keyAndSpan,
-            AssetPriceHistoryDataLoader dataLoader,
-            IResolverContext context,
-            CancellationToken cancellationToken)
+        using var client = clientFactory.CreateClient(Constants.PriceInfoService);
+        var map = new Dictionary<KeyAndSpan, JsonElement>();
+
+        foreach (var group in keys.GroupBy(t => t.Span))
         {
-            JsonElement history = await dataLoader.LoadAsync(keyAndSpan, cancellationToken);
-            return await history.GetProperty("entries").EnumerateArray().ToArray().ApplyCursorPaginationAsync(context, cancellationToken: cancellationToken);
+            string symbols = string.Join(",", group.Select(t => t.Symbol));
+            using var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/asset/price/change?symbols={symbols}&span={group.Key}");
+            using var response = await client.SendAsync(request, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            var document = JsonDocument.Parse(content);
+            var root = document.RootElement;
+
+            foreach (JsonElement priceInfo in root.EnumerateArray())
+            {
+                string symbol = priceInfo.GetProperty("symbol").GetString()!;
+                map.Add(new(symbol, group.Key), priceInfo);
+            }
         }
 
-        public async Task<JsonElement?> ResolveNodeAsync(
-            string id,
-            [ScopedState("keyAndSpan")] SetState<KeyAndSpan> setKey,
-            AssetPriceChangeDataLoader dataLoader,
-            CancellationToken cancellationToken)
-        {
-            string[] parts = id.Split(':');
-            ChangeSpan span = Enum.Parse<ChangeSpan>(parts[1]);
-            var key = new KeyAndSpan(parts[0], span);
-            setKey(key);
-            return await dataLoader.LoadAsync(key, cancellationToken);
-        }
+        return map;
     }
 }
 ```
@@ -789,4 +900,4 @@ query RefetchData {
 
 ## Summary
 
-In this chapter, we modify our backend to cater to the new use-cases that we face for our price charts, we have learned how to integrate data from different services. When you start with GraphQL, you will not have the luxury to start fresh; often, we have an existing infrastructure. With **HotChocolate**, it is simple to integrate JSON data by just typing it. Whether you prefer to use the GraphQL SDL or the fluent type API is up to you. Further, we have leveraged **DataLoader** to interact with our REST services more efficiently. Last but not least, we introduced refetchability to external data through the node interface.
+In this chapter, we modify our backend to cater to the new use-cases that we face for our price charts, we have learned how to integrate data from different services. When you start with GraphQL, you will not have the luxury to start fresh; often, we have an existing infrastructure. With **HotChocolate**,za it is simple to integrate JSON data by just typing it. Whether you prefer to use the GraphQL SDL or the fluent type API is up to you. Further, we have leveraged **DataLoader** to interact with our REST services more efficiently. Last but not least, we introduced refetchability to external data through the node interface.

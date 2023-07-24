@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<69fabee4bcf3af5d6c737a203ef0e743>>
- * @flow
+ * @generated SignedSource<<ec4586395b58d64e98ab694071dd8320>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type NotificationsManagerSubscription$variables = {||};
-export type NotificationsManagerSubscription$data = {|
-  +onNotification: {|
-    +notification: ?{|
-      +asset: {|
-        +hasAlerts: boolean,
-      |},
-    |},
-    +unreadNotifications: number,
-  |},
-|};
-export type NotificationsManagerSubscription = {|
-  response: NotificationsManagerSubscription$data,
-  variables: NotificationsManagerSubscription$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "alias": null,
   "args": null,
@@ -152,9 +132,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "e5f9bc0ec2a9ba35976a7b025d0a4de8";
+node.hash = "e5f9bc0ec2a9ba35976a7b025d0a4de8";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  NotificationsManagerSubscription$variables,
-  NotificationsManagerSubscription$data,
->*/);
+module.exports = node;

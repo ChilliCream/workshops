@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<25b1d4f1cec82550dd4b0edd0af495f4>>
- * @flow
+ * @generated SignedSource<<02e5749f342cb947407f2c28bccfd9c0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,36 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-import type { WatchlistListItemFragment_asset$fragmentType } from "./WatchlistListItemFragment_asset.graphql";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type WatchlistListFragment_query$fragmentType: FragmentType;
-import type { WatchlistListRefetchableQuery$variables } from "./WatchlistListRefetchableQuery.graphql";
-export type WatchlistListFragment_query$data = {|
-  +me: ?{|
-    +watchlist: ?{|
-      +assets: ?{|
-        +edges: ?$ReadOnlyArray<{|
-          +node: {|
-            +id: string,
-            +symbol: string,
-            +$fragmentSpreads: WatchlistListItemFragment_asset$fragmentType,
-          |},
-        |}>,
-      |},
-    |},
-  |},
-  +$fragmentType: WatchlistListFragment_query$fragmentType,
-|};
-export type WatchlistListFragment_query$key = {
-  +$data?: WatchlistListFragment_query$data,
-  +$fragmentSpreads: WatchlistListFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = (function(){
+var node = (function(){
 var v0 = [
   "me",
   "watchlist",
@@ -201,10 +171,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "92a1da49000d451e714153140b694013";
+node.hash = "92a1da49000d451e714153140b694013";
 
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  WatchlistListFragment_query$fragmentType,
-  WatchlistListFragment_query$data,
-  WatchlistListRefetchableQuery$variables,
->*/);
+module.exports = node;

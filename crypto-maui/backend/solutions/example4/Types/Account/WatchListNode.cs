@@ -1,11 +1,9 @@
-using Demo.Data;
-using Demo.DataLoader;
-using Microsoft.EntityFrameworkCore;
+using Demo.Types.Assets;
 
 namespace Demo.Types.Account;
 
 [Node]
-[ExtendObjectType(typeof(Watchlist))]
+[ExtendObjectType<Watchlist>]
 public sealed class WatchlistNode
 {
     [BindMember(nameof(Watchlist.User))]
@@ -22,6 +20,22 @@ public sealed class WatchlistNode
         AssetBySymbolDataLoader assetBySymbol,
         CancellationToken cancellationToken)
         => await assetBySymbol.LoadAsync(watchlist.GetSymbols(), cancellationToken);
+
+    [DataLoader]
+    internal static async Task<IReadOnlySet<string>?> GetWatchlistByUserAsync(
+        string userName,
+        AssetContext context,
+        CancellationToken cancellationToken)
+    {
+        Watchlist? watchlist = await context.Watchlists.FirstOrDefaultAsync(t => t.User == userName, cancellationToken: cancellationToken);
+
+        if (watchlist is null)
+        {
+            return null;
+        }
+
+        return watchlist.GetSymbols().ToHashSet();
+    }
 
     [NodeResolver]
     public static Task<Watchlist?> GetById(
