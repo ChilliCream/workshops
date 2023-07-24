@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<10ce95010e1b6bfe43f0f7e12c174bc8>>
- * @flow
+ * @generated SignedSource<<65dffff4369a0c10c4ef38c2ed139bfa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-import type { NotificationsListItemFragment_notification$fragmentType } from "./NotificationsListItemFragment_notification.graphql";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type NotificationsListFragment_query$fragmentType: FragmentType;
-import type { NotificationsListRefetchableQuery$variables } from "./NotificationsListRefetchableQuery.graphql";
-export type NotificationsListFragment_query$data = {|
-  +me: ?{|
-    +notifications: ?{|
-      +edges: ?$ReadOnlyArray<{|
-        +node: {|
-          +id: string,
-          +read: boolean,
-          +$fragmentSpreads: NotificationsListItemFragment_notification$fragmentType,
-        |},
-      |}>,
-    |},
-  |},
-  +$fragmentType: NotificationsListFragment_query$fragmentType,
-|};
-export type NotificationsListFragment_query$key = {
-  +$data?: NotificationsListFragment_query$data,
-  +$fragmentSpreads: NotificationsListFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = (function(){
+var node = (function(){
 var v0 = [
   "me",
   "notifications"
@@ -193,10 +165,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "0e5e27789efaf889e60a6859c7c162b3";
+node.hash = "0e5e27789efaf889e60a6859c7c162b3";
 
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  NotificationsListFragment_query$fragmentType,
-  NotificationsListFragment_query$data,
-  NotificationsListRefetchableQuery$variables,
->*/);
+module.exports = node;

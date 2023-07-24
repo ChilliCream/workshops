@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<0e18dda168480cf0047482cb19ca34b7>>
- * @flow
+ * @generated SignedSource<<aa89c522d7ca4ac30666f61894a9fe03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,24 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-import type { WatchlistListFragment_query$fragmentType } from "./WatchlistListFragment_query.graphql";
-export type WatchlistListRefetchableQuery$variables = {|
-  count?: ?number,
-  cursor?: ?string,
-|};
-export type WatchlistListRefetchableQuery$data = {|
-  +$fragmentSpreads: WatchlistListFragment_query$fragmentType,
-|};
-export type WatchlistListRefetchableQuery = {|
-  response: WatchlistListRefetchableQuery$data,
-  variables: WatchlistListRefetchableQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": 10,
@@ -278,9 +260,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "92a1da49000d451e714153140b694013";
+node.hash = "92a1da49000d451e714153140b694013";
 
-module.exports = ((node/*: any*/)/*: Query<
-  WatchlistListRefetchableQuery$variables,
-  WatchlistListRefetchableQuery$data,
->*/);
+module.exports = node;

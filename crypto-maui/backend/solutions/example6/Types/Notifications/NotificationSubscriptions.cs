@@ -2,15 +2,15 @@ using HotChocolate.Subscriptions;
 
 namespace Demo.Types.Notifications;
 
-[ExtendObjectType(OperationTypeNames.Subscription)]
-public sealed class NotificationSubscriptions
+[SubscriptionType]
+public static class NotificationSubscriptions
 {
-    [Subscribe(With = nameof(CreateOnNotificationUpdateStream))]
-    public NotificationUpdate OnNotification(
+    [Subscribe(With = nameof(CreateOnNotificationStream))]
+    public static NotificationUpdate OnNotification(
         [EventMessage] NotificationUpdate message)
         => message;
 
-    public IAsyncEnumerable<NotificationUpdate> CreateOnNotificationUpdateStream(
+    public static IAsyncEnumerable<NotificationUpdate> CreateOnNotificationStream(
         [GlobalState] string username,
         [Service] ITopicEventReceiver receiver,
         [Service] IDbContextFactory<AssetContext> contextFactory)
@@ -47,11 +47,11 @@ public sealed class NotificationSubscriptions
                 }
             }
 
-            var stream = await _receiver.SubscribeAsync<string, NotificationUpdate>(
+            var stream = await _receiver.SubscribeAsync<NotificationUpdate>(
                 Constants.OnNotification(_username),
                 cancellationToken);
 
-            await foreach (NotificationUpdate message in 
+            await foreach (NotificationUpdate message in
                 stream.ReadEventsAsync().WithCancellation(cancellationToken))
             {
                 yield return message;

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<c6116d42c93a9941d601f2807a6a3652>>
- * @flow
+ * @generated SignedSource<<b5c9e201c9240f9b5b68ece93a72015b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,20 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { ScreenerListFragment_query$fragmentType } from "./ScreenerListFragment_query.graphql";
-export type ScreenerContainerQuery$variables = {||};
-export type ScreenerContainerQuery$data = {|
-  +$fragmentSpreads: ScreenerListFragment_query$fragmentType,
-|};
-export type ScreenerContainerQuery = {|
-  response: ScreenerContainerQuery$data,
-  variables: ScreenerContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "kind": "Literal",
@@ -234,9 +220,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "c90dc624939d180141b397f1a9deeb85";
+node.hash = "c90dc624939d180141b397f1a9deeb85";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ScreenerContainerQuery$variables,
-  ScreenerContainerQuery$data,
->*/);
+module.exports = node;

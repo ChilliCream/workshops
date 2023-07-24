@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<902d7c868f6599a4a9a6ddab1f037612>>
- * @flow
+ * @generated SignedSource<<ba72df0908b62e3250f7fcb24452bea9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-import type { AlertsActionsDAFragment_asset$fragmentType } from "./AlertsActionsDAFragment_asset.graphql";
-export type AlertsActionRefetchableField$variables = {|
-  count?: ?number,
-  cursor?: ?string,
-  id: string,
-|};
-export type AlertsActionRefetchableField$data = {|
-  +node: ?{|
-    +$fragmentSpreads: AlertsActionsDAFragment_asset$fragmentType,
-  |},
-|};
-export type AlertsActionRefetchableField = {|
-  response: AlertsActionRefetchableField$data,
-  variables: AlertsActionRefetchableField$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": 5,
@@ -268,9 +247,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "eeec6c3f051685710bfb7c6fe8035155";
+node.hash = "eeec6c3f051685710bfb7c6fe8035155";
 
-module.exports = ((node/*: any*/)/*: Query<
-  AlertsActionRefetchableField$variables,
-  AlertsActionRefetchableField$data,
->*/);
+module.exports = node;

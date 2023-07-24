@@ -16,6 +16,7 @@ interface Node {
 type AddAssetToWatchlistPayload {
   addedAsset: Asset
   watchlist: Watchlist
+  errors: [AddAssetToWatchlistError!]
 }
 
 type AddAssetsToWatchlistPayload {
@@ -30,6 +31,7 @@ type AddAssetsToWatchlistPayload {
     before: String
   ): AddedAssetsConnection
   watchlist: Watchlist
+  errors: [AddAssetsToWatchlistError!]
 }
 
 "A connection to a list of items."
@@ -82,7 +84,7 @@ type Asset implements Node {
   ): AssetAlertsConnection
   imageUrl: String
   isInWatchlist: Boolean
-  hasAlerts: Boolean!
+  hasAlerts: Boolean
 }
 
 "A connection to a list of items."
@@ -93,8 +95,6 @@ type AssetAlertsConnection {
   edges: [AssetAlertsEdge!]
   "A flattened list of the nodes."
   nodes: [Alert!]
-  "Identifies the total count of items in the connection."
-  totalCount: Int!
 }
 
 "An edge in a connection."
@@ -122,8 +122,8 @@ type AssetPrice implements Node {
   tradingActivity: Float!
   change24Hour: Float!
   modifiedAt: DateTime
-  change(span: ChangeSpan!): AssetPriceChange
   asset: Asset!
+  change(span: ChangeSpan!): AssetPriceChange
 }
 
 type AssetPriceChange implements Node {
@@ -212,14 +212,6 @@ type HistoryEdge {
   node: AssetPriceHistory
 }
 
-type ImportAssetPayload {
-  importedAsset: Asset
-}
-
-type ImportAssetsPayload {
-  importedAssets: [Asset!]
-}
-
 type IndexOutOfRangeError implements Error {
   message: String!
 }
@@ -240,7 +232,20 @@ type MarkNotificationsReadPayload {
 }
 
 type Mutation {
-  updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfilePayload!
+  createAlert(input: CreateAlertInput!): CreateAlertPayload!
+  deleteAlert(input: DeleteAlertInput!): DeleteAlertPayload!
+  markNotificationRead(
+    input: MarkNotificationReadInput!
+  ): MarkNotificationReadPayload!
+  markNotificationsRead(
+    input: MarkNotificationsReadInput!
+  ): MarkNotificationsReadPayload!
+  deleteNotification(
+    input: DeleteNotificationInput!
+  ): DeleteNotificationPayload!
+  deleteNotifications(
+    input: DeleteNotificationsInput!
+  ): DeleteNotificationsPayload!
   addAssetToWatchlist(
     input: AddAssetToWatchlistInput!
   ): AddAssetToWatchlistPayload!
@@ -256,23 +261,7 @@ type Mutation {
   changeAssetPositionInWatchlist(
     input: ChangeAssetPositionInWatchlistInput!
   ): ChangeAssetPositionInWatchlistPayload!
-  importAsset(input: ImportAssetInput!): ImportAssetPayload!
-  importAssets(input: ImportAssetsInput!): ImportAssetsPayload!
-  updateAssetPrice(input: UpdateAssetPriceInput!): UpdateAssetPricePayload!
-  createAlert(input: CreateAlertInput!): CreateAlertPayload!
-  deleteAlert(input: DeleteAlertInput!): DeleteAlertPayload!
-  markNotificationRead(
-    input: MarkNotificationReadInput!
-  ): MarkNotificationReadPayload!
-  markNotificationsRead(
-    input: MarkNotificationsReadInput!
-  ): MarkNotificationsReadPayload!
-  deleteNotification(
-    input: DeleteNotificationInput!
-  ): DeleteNotificationPayload!
-  deleteNotifications(
-    input: DeleteNotificationsInput!
-  ): DeleteNotificationsPayload!
+  updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfilePayload!
 }
 
 type NotAuthenticatedError implements Error {
@@ -329,7 +318,6 @@ type Query {
   node("ID of the object." id: ID!): Node
   "Lookup nodes by a list of IDs."
   nodes("The list of node IDs." ids: [ID!]!): [Node]!
-  me: User
   assets(
     "Returns the first _n_ elements from the list."
     first: Int
@@ -342,17 +330,19 @@ type Query {
     where: AssetFilterInput
     order: [AssetSortInput!]
   ): AssetsConnection
-  assetBySlug(slug: String!): Asset
-  assetsBySlug(slugs: [String!]!): [Asset]!
-  assetBySymbol(symbol: String!): Asset
-  assetsBySymbol(symbols: [String!]!): [Asset]!
   assetById(id: ID!): Asset
   assetsById(ids: [ID!]!): [Asset]!
+  assetBySymbol(symbol: String!): Asset
+  assetsBySymbol(symbols: [String!]!): [Asset]!
+  assetBySlug(slug: String!): Asset
+  assetsBySlug(slugs: [String!]!): [Asset]!
+  me: User
 }
 
 type RemoveAssetFromWatchlistPayload {
   removedAsset: Asset
   watchlist: Watchlist
+  errors: [RemoveAssetFromWatchlistError!]
 }
 
 type RemoveAssetsFromWatchlistPayload {
@@ -367,6 +357,7 @@ type RemoveAssetsFromWatchlistPayload {
     before: String
   ): RemovedAssetsConnection
   watchlist: Watchlist
+  errors: [RemoveAssetsFromWatchlistError!]
 }
 
 "A connection to a list of items."
@@ -388,8 +379,8 @@ type RemovedAssetsEdge {
 }
 
 type Subscription {
-  onPriceChange(symbols: [String!]): AssetPrice!
   onNotification: NotificationUpdate!
+  onPriceChange(symbols: [String!]): AssetPrice!
 }
 
 type UnknownAssetError implements Error {
@@ -412,13 +403,9 @@ type UnknownWatchlistError implements Error {
   username: String!
 }
 
-type UpdateAssetPricePayload {
-  updatedPrice: AssetPrice
-  errors: [UpdateAssetPriceError!]
-}
-
 type UpdateUserProfilePayload {
   updatedUser: User
+  errors: [UpdateUserProfileError!]
 }
 
 type User {
@@ -483,6 +470,10 @@ type Watchlist implements Node {
   ): AssetsConnection
 }
 
+union AddAssetToWatchlistError = UnknownAssetError | NotAuthenticatedError
+
+union AddAssetsToWatchlistError = UnknownAssetError | NotAuthenticatedError
+
 union ChangeAssetPositionInWatchlistError =
     UnknownAssetError
   | NotAuthenticatedError
@@ -501,7 +492,11 @@ union MarkNotificationReadError = UnknownNotificationError
 
 union MarkNotificationsReadError = UnknownNotificationError
 
-union UpdateAssetPriceError = UnknownAssetError
+union RemoveAssetFromWatchlistError = UnknownAssetError | NotAuthenticatedError
+
+union RemoveAssetsFromWatchlistError = UnknownAssetError | NotAuthenticatedError
+
+union UpdateUserProfileError = NotAuthenticatedError
 
 input AddAssetToWatchlistInput {
   symbol: String!
@@ -517,7 +512,6 @@ input AssetFilterInput {
   symbol: StringOperationFilterInput
   slug: StringOperationFilterInput
   name: StringOperationFilterInput
-  description: StringOperationFilterInput
   price: AssetPriceFilterInput
 }
 
@@ -626,14 +620,6 @@ input FloatOperationFilterInput {
   nlte: Float
 }
 
-input ImportAssetInput {
-  symbol: String!
-}
-
-input ImportAssetsInput {
-  symbols: [String!]!
-}
-
 input IntOperationFilterInput {
   eq: Int
   neq: Int
@@ -680,23 +666,6 @@ input StringOperationFilterInput {
   nendsWith: String
 }
 
-input UpdateAssetPriceInput {
-  symbol: String!
-  currency: String!
-  lastPrice: Float!
-  marketCap: Int! = 0
-  tradableMarketCapRank: Int! = 0
-  volume24Hour: Int! = 0
-  volumePercentChange24Hour: Int! = 0
-  circulatingSupply: Int! = 0
-  maxSupply: Int! = 0
-  high24Hour: Int! = 0
-  low24Hour: Int! = 0
-  open24Hour: Int! = 0
-  tradingActivity: Int! = 0
-  change24Hour: Int! = 0
-}
-
 input UpdateUserProfileInput {
   displayName: String
   image: Upload
@@ -735,16 +704,6 @@ directive @specifiedBy(
   "The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types."
   url: String!
 ) on SCALAR
-
-"The `@stream` directive may be provided for a field of `List` type so that the backend can leverage technology such as asynchronous iterators to provide a partial list in the initial response, and additional list items in subsequent responses. `@include` and `@skip` take precedence over `@stream`."
-directive @stream(
-  "If this argument label has a value other than null, it will be passed on to the result of this stream directive. This label is intended to give client applications a way to identify to which fragment a streamed result belongs to."
-  label: String
-  "The initial elements that shall be send down to the consumer."
-  initialCount: Int! = 0
-  "Streamed when true."
-  if: Boolean
-) on FIELD
 
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")

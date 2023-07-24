@@ -6,14 +6,14 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'workshop',
+  title: 'Fullstack GraphQL Workshop',
   tagline: 'Building Modern Applications with GraphQL',
   url: 'https://crypto-workshop.chillicream.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: 'ChilliCream',
+  organizationName: 'ChilliCream Solutions LLC',
   projectName: 'crypto-workshop',
 
   presets: [
@@ -98,7 +98,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} crypto - workshop.`,
+        copyright: `Copyright © ${new Date().getFullYear()} ChilliCream Solutions LLC.`,
       },
       prism: {
         theme: lightCodeTheme,

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<500cecee489f3eccbd03bdd6a09783e2>>
- * @flow
+ * @generated SignedSource<<7dd8094608aaadaad726c2fbf800bcbe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,30 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type DeleteAlertInput = {|
-  alertId: string,
-|};
-export type AlertsActionsDAMutation$variables = {|
-  input: DeleteAlertInput,
-|};
-export type AlertsActionsDAMutation$data = {|
-  +deleteAlert: {|
-    +deletedAlert: ?{|
-      +asset: {|
-        +hasAlerts: boolean,
-      |},
-    |},
-  |},
-|};
-export type AlertsActionsDAMutation = {|
-  response: AlertsActionsDAMutation$data,
-  variables: AlertsActionsDAMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -161,9 +137,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "1bf7b69dbf1752922396c043ca33941c";
+node.hash = "1bf7b69dbf1752922396c043ca33941c";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  AlertsActionsDAMutation$variables,
-  AlertsActionsDAMutation$data,
->*/);
+module.exports = node;

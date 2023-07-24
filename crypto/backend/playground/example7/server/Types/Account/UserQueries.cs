@@ -1,9 +1,9 @@
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Query)]
-public sealed class UserQueries
+[QueryType]
+public static class UserQueries
 {
-    public async Task<User?> GetMeAsync(
+    public static async Task<User?> GetMeAsync(
         [GlobalState] string? username,
         AssetContext context,
         CancellationToken cancellationToken)

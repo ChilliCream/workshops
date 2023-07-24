@@ -10,19 +10,18 @@ module.exports = {
   },
   eagerEsModules: false,
   noFutureProofEnums: true,
-  // @see https://github.com/vercel/next.js/discussions/35904
-  language: 'flow',
+  language: 'javascript',
 
   // @see https://relay.dev/docs/guides/type-emission/#single-artifact-directory
   artifactDirectory: 'generated',
 
   // @see https://relay.dev/docs/guides/persisted-queries/
   // persistConfig: {
-  //   // Remote Persisting
-  //   url: 'http://localhost:4000/persist',
-  //   params: {},
-  //   concurrency: 10,
-  //
+  //   //   // Remote Persisting
+  //   //   url: 'http://localhost:4000/persist',
+  //   //   params: {},
+  //   //   concurrency: 10,
+  //   //
   //   // Local Persisting
   //   file: './persisted.json',
   // },

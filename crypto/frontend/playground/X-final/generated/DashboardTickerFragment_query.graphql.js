@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<7bb83e098f896a607ff0baa76e48f0a7>>
- * @flow
+ * @generated SignedSource<<5311b35faadbf4df14e76ee555781e96>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,29 +8,7 @@
 
 'use strict';
 
-/*::
-import type { Fragment, ReaderFragment } from 'relay-runtime';
-import type { DashboardTickerItemFragment_asset$fragmentType } from "./DashboardTickerItemFragment_asset.graphql";
-import type { FragmentType } from "relay-runtime";
-declare export opaque type DashboardTickerFragment_query$fragmentType: FragmentType;
-export type DashboardTickerFragment_query$data = {|
-  +ticker: ?{|
-    +nodes: ?$ReadOnlyArray<{|
-      +id: string,
-      +symbol: string,
-      +$fragmentSpreads: DashboardTickerItemFragment_asset$fragmentType,
-    |}>,
-  |},
-  +$fragmentType: DashboardTickerFragment_query$fragmentType,
-|};
-export type DashboardTickerFragment_query$key = {
-  +$data?: DashboardTickerFragment_query$data,
-  +$fragmentSpreads: DashboardTickerFragment_query$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = {
+var node = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -98,9 +75,6 @@ var node/*: ReaderFragment*/ = {
   "abstractKey": null
 };
 
-(node/*: any*/).hash = "f988bbb911699808bfa7e12b800dedf3";
+node.hash = "f988bbb911699808bfa7e12b800dedf3";
 
-module.exports = ((node/*: any*/)/*: Fragment<
-  DashboardTickerFragment_query$fragmentType,
-  DashboardTickerFragment_query$data,
->*/);
+module.exports = node;

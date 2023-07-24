@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<86eb433abef0d7acf2afbde5f9d07924>>
- * @flow
+ * @generated SignedSource<<1286fd5aab101f8913bf3eaf97e55e7c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { ViewerHeaderFragment_asset$fragmentType } from "./ViewerHeaderFragment_asset.graphql";
-import type { ViewerOverviewFragment_asset$fragmentType } from "./ViewerOverviewFragment_asset.graphql";
-import type { ViewerResourcesFragment_asset$fragmentType } from "./ViewerResourcesFragment_asset.graphql";
-import type { ViewerSnapshotFragment_asset$fragmentType } from "./ViewerSnapshotFragment_asset.graphql";
-import type { ViewerStatsFragment_asset$fragmentType } from "./ViewerStatsFragment_asset.graphql";
-export type ViewerContainerQuery$variables = {|
-  symbol: string,
-|};
-export type ViewerContainerQuery$data = {|
-  +assetBySymbol: ?{|
-    +$fragmentSpreads: ViewerHeaderFragment_asset$fragmentType & ViewerOverviewFragment_asset$fragmentType & ViewerResourcesFragment_asset$fragmentType & ViewerSnapshotFragment_asset$fragmentType & ViewerStatsFragment_asset$fragmentType,
-  |},
-|};
-export type ViewerContainerQuery = {|
-  response: ViewerContainerQuery$data,
-  variables: ViewerContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -329,9 +307,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "c51a6066c025de0209dec5f13da460ef";
+node.hash = "c51a6066c025de0209dec5f13da460ef";
 
-module.exports = ((node/*: any*/)/*: Query<
-  ViewerContainerQuery$variables,
-  ViewerContainerQuery$data,
->*/);
+module.exports = node;

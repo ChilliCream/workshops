@@ -1,25 +1,12 @@
 {
     "_AssetPriceChange": {
-        "prefix": "_AssetPriceChange",
+        "prefix": "priceChange",
         "body": [
             "type AssetPriceChange {",
             "    percentageChange: Float! @fromJson",
             "}"
         ],
         "description": "_AssetPriceChange"
-    },
-    "_GetChange_2": {
-        "prefix": "_GetChange_2",
-        "body": [
-            "[GraphQLType(\"AssetPriceChange\")]",
-            "public async Task<JsonElement> GetChangeAsync(",
-            "    ChangeSpan span,",
-            "    [Parent] AssetPrice parent,",
-            "    AssetPriceChangeDataLoader assetPriceBySymbol,",
-            "    CancellationToken cancellationToken)",
-            "    => await assetPriceBySymbol.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);"
-        ],
-        "description": "_GetChange_2"
     },
     "_AddGraphQL": {
         "prefix": "_AddGraphQL",
@@ -29,7 +16,7 @@
         "description": "_AddGraphQL"
     },
     "_GetChange_1": {
-        "prefix": "_GetChange_1",
+        "prefix": "getChange",
         "body": [
             "[GraphQLType(\"AssetPriceChange\")]",
             "public async Task<JsonElement> GetChangeAsync(",
@@ -49,5 +36,62 @@
             "}"
         ],
         "description": "_GetChange_1"
+    },
+    "addDoc": {
+        "prefix": "addDoc",
+        "body": [
+            ".AddDocumentFromFile(\"./Schema.graphql\")"
+        ],
+        "description": "addDoc"
+    },
+    "dataLoader": {
+        "prefix": "dataLoader",
+        "body": [
+            "[DataLoader]",
+            "public static async Task<IReadOnlyDictionary<KeyAndSpan, JsonElement>> GetAssetPriceChangeByKey(",
+            "    IReadOnlyList<KeyAndSpan> symbols,",
+            "    IHttpClientFactory clientFactory,",
+            "    CancellationToken cancellationToken)",
+            "{",
+            "    using var client = clientFactory.CreateClient(Constants.PriceInfoService);",
+            "    var map = new Dictionary<KeyAndSpan, JsonElement>();",
+            "",
+            "    foreach (var group in symbols.GroupBy(t => t.Span))",
+            "    {",
+            "        string symbolString = string.Join(\",\", group.Select(t => t.Symbol));",
+            "        using var request = new HttpRequestMessage(",
+            "            HttpMethod.Get,",
+            "            $\"api/asset/price/change?symbols={symbolString}&span={group.Key}\");",
+            "        using var response = await client.SendAsync(request, cancellationToken);",
+            "        response.EnsureSuccessStatusCode();",
+            "",
+            "        var content = await response.Content.ReadAsByteArrayAsync(cancellationToken);",
+            "        var document = JsonDocument.Parse(content);",
+            "        var root = document.RootElement;",
+            "",
+            "        foreach (JsonElement priceInfo in root.EnumerateArray())",
+            "        {",
+            "            string symbol = priceInfo.GetProperty(\"symbol\").GetString()!;",
+            "            map.Add(new(symbol, group.Key), priceInfo);",
+            "        }",
+            "    }",
+            "",
+            "    return map;",
+            "}"
+        ],
+        "description": "dataLoader"
+    },
+    "newGetChange": {
+        "prefix": "newGetChange",
+        "body": [
+            "[GraphQLType(\"AssetPriceChange\")]",
+            "public async Task<JsonElement> GetChangeAsync(",
+            "    ChangeSpan span,",
+            "    [Parent] AssetPrice parent,",
+            "    AssetPriceChangeByKeyDataLoader assetPriceChangeByKey,",
+            "    CancellationToken cancellationToken)",
+            "    => await assetPriceChangeByKey.LoadAsync(new KeyAndSpan(parent.Symbol!, span), cancellationToken);"
+        ],
+        "description": "newGetChange"
     }
 }

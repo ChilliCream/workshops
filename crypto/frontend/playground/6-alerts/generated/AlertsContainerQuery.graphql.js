@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<2abf460ab6b2436a3505d47f799b4dcf>>
- * @flow
+ * @generated SignedSource<<08f16bc89f8046fda8dddfeec7ddb3e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-import type { AlertsActionsAAFragment_asset$fragmentType } from "./AlertsActionsAAFragment_asset.graphql";
-import type { AlertsActionsDAFragment_asset$fragmentType } from "./AlertsActionsDAFragment_asset.graphql";
-export type AlertsContainerQuery$variables = {|
-  symbol: string,
-|};
-export type AlertsContainerQuery$data = {|
-  +assetBySymbol: ?{|
-    +hasAlerts: boolean,
-    +$fragmentSpreads: AlertsActionsAAFragment_asset$fragmentType & AlertsActionsDAFragment_asset$fragmentType,
-  |},
-|};
-export type AlertsContainerQuery = {|
-  response: AlertsContainerQuery$data,
-  variables: AlertsContainerQuery$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -267,9 +247,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "b9ccf4c28f97c4e9a3020898675bd2b0";
+node.hash = "b9ccf4c28f97c4e9a3020898675bd2b0";
 
-module.exports = ((node/*: any*/)/*: Query<
-  AlertsContainerQuery$variables,
-  AlertsContainerQuery$data,
->*/);
+module.exports = node;

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<b471a2dd319af2db0d5a2e13be0d8508>>
- * @flow
+ * @generated SignedSource<<ca5895bb3a627326d8758e5ccff9bd28>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,29 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type ChangeSpan = "ALL" | "DAY" | "HOUR" | "MONTH" | "WEEK" | "YEAR";
-export type ViewerSnapshotSubscription$variables = {|
-  span: ChangeSpan,
-  symbol: string,
-|};
-export type ViewerSnapshotSubscription$data = {|
-  +onPriceChange: {|
-    +change: ?{|
-      +percentageChange: number,
-    |},
-    +currency: string,
-    +lastPrice: number,
-  |},
-|};
-export type ViewerSnapshotSubscription = {|
-  response: ViewerSnapshotSubscription$data,
-  variables: ViewerSnapshotSubscription$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -178,9 +155,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "834a951b4510bf6b46af90f6d9493f34";
+node.hash = "834a951b4510bf6b46af90f6d9493f34";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  ViewerSnapshotSubscription$variables,
-  ViewerSnapshotSubscription$data,
->*/);
+module.exports = node;

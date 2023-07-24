@@ -2,11 +2,12 @@ using Demo.Types.Errors;
 
 namespace Demo.Types.Account;
 
-[ExtendObjectType(OperationTypeNames.Mutation)]
-public sealed class UserMutations
+[MutationType]
+public static class UserMutations
 {
+    [Error<NotAuthenticatedException>]
     [UseMutationConvention(PayloadFieldName = "updatedUser")]
-    public async Task<User?> UpdateUserProfile(
+    public static async Task<User?> UpdateUserProfile(
         [GlobalState] string username,
         UpdateUserProfileInput input,
         IFileStorage storage,
@@ -33,7 +34,6 @@ public sealed class UserMutations
         await context.SaveChangesAsync(cancellationToken);
         return user;
     }
-
     private static async Task<string?> TryStoreImage(
         IFile image,
         IFileStorage storage,

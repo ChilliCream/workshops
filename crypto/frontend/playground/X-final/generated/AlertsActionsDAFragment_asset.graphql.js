@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f6e951db134ffe8de227d0a57b2c9753>>
- * @flow
+ * @generated SignedSource<<ad8fa3b36559aa3085d418aadfd675e7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,35 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ReaderFragment, RefetchableFragment } from 'relay-runtime';
-import type { FragmentType } from "relay-runtime";
-declare export opaque type AlertsActionsDAFragment_asset$fragmentType: FragmentType;
-import type { AlertsActionRefetchableField$variables } from "./AlertsActionRefetchableField.graphql";
-export type AlertsActionsDAFragment_asset$data = {|
-  +alerts: ?{|
-    +edges: ?$ReadOnlyArray<{|
-      +node: {|
-        +currency: string,
-        +id: string,
-        +percentageChange: number,
-        +recurring: boolean,
-        +targetPrice: number,
-      |},
-    |}>,
-  |},
-  +id: string,
-  +symbol: string,
-  +$fragmentType: AlertsActionsDAFragment_asset$fragmentType,
-|};
-export type AlertsActionsDAFragment_asset$key = {
-  +$data?: AlertsActionsDAFragment_asset$data,
-  +$fragmentSpreads: AlertsActionsDAFragment_asset$fragmentType,
-  ...
-};
-*/
-
-var node/*: ReaderFragment*/ = (function(){
+var node = (function(){
 var v0 = [
   "alerts"
 ],
@@ -204,10 +175,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "eeec6c3f051685710bfb7c6fe8035155";
+node.hash = "eeec6c3f051685710bfb7c6fe8035155";
 
-module.exports = ((node/*: any*/)/*: RefetchableFragment<
-  AlertsActionsDAFragment_asset$fragmentType,
-  AlertsActionsDAFragment_asset$data,
-  AlertsActionRefetchableField$variables,
->*/);
+module.exports = node;

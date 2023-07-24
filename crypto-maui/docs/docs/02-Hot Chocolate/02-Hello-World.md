@@ -30,7 +30,7 @@ Ensure that version 7.0.100 or above is being used. The `global.json` file shoul
 Before generating our server project, we need to install the **Hot Chocolate** templates.
 
 ```bash
-dotnet new install HotChocolate.Templates::13.0.0-preview.80
+dotnet new install HotChocolate.Templates::13.3.0-preview.8
 ```
 
 Now that we have everything in place, we can generate the actual server project.
@@ -117,7 +117,7 @@ code .
 
 ![Visual Studio Code ](images/code-1.png)
 
-Our GraphQL server has 2 code files `Program.cs` and `Query.cs`. Head over to the `Program.cs` first.
+Our GraphQL server has 2 important code files `Program.cs` and `Types/Query.cs`. Head over to the `Program.cs` first.
 
 ![Visual Studio Code - Program.cs](images/code-2.png)
 
@@ -126,13 +126,13 @@ The `Program.cs` contains the server configuration.
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
+    .AddTypes();
 ```
 
 We have two important things here:
 
 1. `AddGraphQLServer` registers a GraphQL server as a service with the .NET core dependency injection and returns a GraphQL configuration builder that allows us to chain in configurations.
-2. `AddQueryType<Query>` specifies that the class `Query` represents our query operation type in GraphQL. It is mandatory to provide a query operation type.
+2. `AddTypes` is a source generated GraphQL type module that registers all the GraphQL related code we are writing.
 
 :::note
 
@@ -141,16 +141,16 @@ You can host multiple GraphQL servers by naming them.
 ```csharp
 builder.Services
     .AddGraphQLServer("Schema1")
-    .AddQueryType<Query>()
+    .AddTypes();
 
 builder.Services
     .AddGraphQLServer("Schema2")
-    .AddQueryType<Query>()
+    .AddTypes();
 ```
 
 :::
 
-Let's head over to our `Query.cs` and explore it.
+Let's head over to our `Types/Query.cs` and explore it.
 
 ![Visual Studio Code - Query.cs](images/code-3.png)
 
@@ -160,7 +160,7 @@ The current class `Query` has a single resolver `GetBook` which returns a book o
 
 OK, let's delete all the source code in this file and replace it with the source code below.
 
-```csharp title="/Query.cs"
+```csharp title="Types/Query.cs"
 namespace BasicServer;
 
 public class Query

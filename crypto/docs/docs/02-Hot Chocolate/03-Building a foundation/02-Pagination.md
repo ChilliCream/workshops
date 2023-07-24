@@ -26,10 +26,8 @@ If needed, you can specify paging settings on the `UsePagingAttribute` for a spe
 ```csharp
 builder.Services
     .AddGraphQLServer()
-    .AddQueryType<Query>()
-    .AddAssetTypes()
-    .AddGlobalObjectIdentification()
-    .RegisterDbContext<AssetContext>(DbContextKind.Pooled)
+    .AddTypes()
+    .RegisterDbContext<AssetContext>()
     .SetPagingOptions(new PagingOptions
     {
         DefaultPageSize = 5,

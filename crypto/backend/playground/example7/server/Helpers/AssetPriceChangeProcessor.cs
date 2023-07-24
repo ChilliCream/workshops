@@ -9,7 +9,7 @@ namespace Demo.Helpers;
 public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
-    private readonly IDbContextFactory<AssetContext> _contextFactory;
+    private readonly IServiceProvider _services;
     private readonly IFileStorage _fileStorage;
     private readonly ITopicEventSender _sender;
     private readonly ITopicEventReceiver _receiver;
@@ -188,12 +188,12 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     };
 
     public AssetPriceChangeProcessor(
-        IDbContextFactory<AssetContext> contextFactory,
+        IServiceProvider services,
         IFileStorage fileStorage,
         ITopicEventSender sender,
         ITopicEventReceiver receiver)
     {
-        _contextFactory = contextFactory;
+        _services = services;
         _fileStorage = fileStorage;
         _sender = sender;
         _receiver = receiver;
@@ -204,10 +204,9 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
     public async Task StartAsync(CancellationToken stoppingToken)
     {
-        using AssetContext context = await _contextFactory.CreateDbContextAsync(stoppingToken);
-        await context.Database.EnsureCreatedAsync(stoppingToken);
-
+        await CreateDatabaseAsync(stoppingToken);
         await SeedAssetsAsync(stoppingToken);
+
         BeginUpdatePrices();
         BeginProcessEvents();
     }
@@ -216,6 +215,13 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     {
         _cts.Cancel();
         return Task.CompletedTask;
+    }
+
+    private async Task CreateDatabaseAsync(CancellationToken ct)
+    {
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
+        await context.Database.EnsureCreatedAsync(ct);
     }
 
     private void BeginUpdatePrices()
@@ -231,7 +237,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
     private async Task SeedAssetsAsync(CancellationToken cancellationToken)
     {
-        using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var scope = _services.CreateAsyncScope();
+        await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
         var storedSymbols = _symbols.Except(await context.Assets.Select(t => t.Symbol!).ToListAsync(cancellationToken)).ToArray();
         if (storedSymbols.Length == 0)
@@ -298,7 +305,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
     {
         try
         {
-            using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            await using var scope = _services.CreateAsyncScope();
+            await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
             var assets = await context.Assets.ToListAsync(cancellationToken);
 
             foreach (var asset in assets)
@@ -324,7 +332,8 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
             try
             {
                 using var client = CreateClient();
-                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                await using var scope = _services.CreateAsyncScope();
+                await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
 
                 client.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net");
 
@@ -346,7 +355,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
                 // if there is an error we will retry
             }
 
-            await Task.Delay(Random.Shared.Next(10_000, 20_000), cancellationToken);
+            await Task.Delay(Random.Shared.Next(2_000, 5_000), cancellationToken);
         }
     }
 
@@ -424,7 +433,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
         if (original is null || !input.Equals(original))
         {
-            await Task.Delay(Random.Shared.Next(200, 600), cancellationToken);
+            await Task.Delay(Random.Shared.Next(50, 200), cancellationToken);
             await _sender.SendAsync(Constants.OnPriceChangeProcessing, input, cancellationToken);
             await _sender.SendAsync(Constants.OnPriceChange, input.Symbol, cancellationToken);
         }
@@ -467,13 +476,14 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
 
     private async Task ProcessEventsAsync(CancellationToken cancellationToken)
     {
-        var sourceStream = await _receiver.SubscribeAsync<string, UpdateAssetPriceDto>(Constants.OnPriceChangeProcessing, cancellationToken);
+        var sourceStream = await _receiver.SubscribeAsync<UpdateAssetPriceDto>(Constants.OnPriceChangeProcessing, cancellationToken);
 
         await foreach (UpdateAssetPriceDto price in sourceStream.ReadEventsAsync().WithCancellation(cancellationToken))
         {
             try
             {
-                using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+                await using var scope = _services.CreateAsyncScope();
+                await using AssetContext context = scope.ServiceProvider.GetRequiredService<AssetContext>();
                 foreach (Alert alert in await context.Alerts.Where(t => t.Asset!.Symbol == price.Symbol).ToListAsync(cancellationToken))
                 {
                     if ((alert.PercentageChange > 0 && alert.TargetPrice <= price.LastPrice) ||
@@ -519,7 +529,7 @@ public sealed partial class AssetPriceChangeProcessor : IHostedService, IDisposa
         context.Notifications.Add(notification);
 
         await context.SaveChangesAsync(cancellationToken);
-        await _sender.SendAsync<string, NotificationUpdate>(Constants.OnNotification(alert.Username!), new(notification.Id), cancellationToken);
+        await _sender.SendAsync<NotificationUpdate>(Constants.OnNotification(alert.Username!), new(notification.Id), cancellationToken);
     }
 
     public void Dispose()

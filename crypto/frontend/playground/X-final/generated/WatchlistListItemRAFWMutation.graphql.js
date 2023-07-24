@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<4059fd88477334c0dd55c39d519425c3>>
- * @flow
+ * @generated SignedSource<<004b94a550ed7f20bfa14c8393925b5c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,28 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Mutation } from 'relay-runtime';
-export type RemoveAssetFromWatchlistInput = {|
-  symbol: string,
-|};
-export type WatchlistListItemRAFWMutation$variables = {|
-  input: RemoveAssetFromWatchlistInput,
-|};
-export type WatchlistListItemRAFWMutation$data = {|
-  +removeAssetFromWatchlist: {|
-    +removedAsset: ?{|
-      +isInWatchlist: ?boolean,
-    |},
-  |},
-|};
-export type WatchlistListItemRAFWMutation = {|
-  response: WatchlistListItemRAFWMutation$data,
-  variables: WatchlistListItemRAFWMutation$variables,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -135,9 +113,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "0d0063e59a05958a587181c2e464cc86";
+node.hash = "0d0063e59a05958a587181c2e464cc86";
 
-module.exports = ((node/*: any*/)/*: Mutation<
-  WatchlistListItemRAFWMutation$variables,
-  WatchlistListItemRAFWMutation$data,
->*/);
+module.exports = node;
