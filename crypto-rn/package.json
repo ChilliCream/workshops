@@ -9,7 +9,7 @@
     "native"
   ],
   "engines": {
-    "node": ">=16.1.0"
+    "node": ">=18"
   },
   "packageManager": "yarn@3.3.1",
   "workspaces": [
@@ -22,12 +22,12 @@
     "@emotion/react": "latest",
     "@react-navigation/native": "latest",
     "@react-navigation/native-stack": "latest",
-    "d3-array": "^3.1.1",
+    "d3-array": "^3.2.4",
     "d3-ease": "^3.0.1",
-    "d3-interpolate-path": "^2.2.3",
+    "d3-interpolate-path": "^2.3.0",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
-    "d3-shape": "^3.1.0",
+    "d3-shape": "^3.2.0",
     "d3-transition": "^3.0.1",
     "extract-files": "latest",
     "fast-text-encoding": "^1.0.6",
@@ -37,9 +37,9 @@
     "i18next": "latest",
     "lodash": "latest",
     "meros": "^1.2.1",
-    "react": "experimental",
+    "react": "canary",
     "react-i18next": "latest",
-    "react-native": "^0.70.6",
+    "react-native": "^0.72.3",
     "react-native-fetch-api": "^3.0.0",
     "react-native-gesture-handler": "latest",
     "react-native-polyfill-globals": "^3.1.0",
@@ -59,8 +59,8 @@
     "@emotion/babel-plugin": "latest",
     "@emotion/jest": "latest",
     "@react-native-community/eslint-config": "latest",
+    "@react-native/metro-config": "latest",
     "@rnx-kit/metro-config": "latest",
-    "@rnx-kit/metro-resolver-symlinks": "latest",
     "@testing-library/jest-native": "latest",
     "@testing-library/react-hooks": "latest",
     "@testing-library/react-native": "latest",

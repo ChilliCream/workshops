@@ -62,7 +62,7 @@ export const Graph = memo<GraphProps>(function Graph({
 
   return line ? (
     <Svg width={width} height={height}>
-      <Path d={line} stroke={color} strokeWidth={2} />
+      <Path d={line} stroke={color} fill="transparent" strokeWidth={2} />
     </Svg>
   ) : null;
 });
