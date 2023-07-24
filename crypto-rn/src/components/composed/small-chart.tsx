@@ -1,6 +1,5 @@
-import styled from '@emotion/native';
 import {memo} from 'react';
-import {Dimensions, View} from 'react-native';
+import {Dimensions} from 'react-native';
 
 import type {homeFeaturedCardFragment_asset$data} from '@/__generated__/homeFeaturedCardFragment_asset.graphql';
 

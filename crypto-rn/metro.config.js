@@ -1,35 +1,21 @@
 /**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
  *
- * @format
+ * @type {import('metro-config').MetroConfig}
  */
 'use strict';
 
-const {getDefaultConfig} = require('metro-config');
 const {makeMetroConfig} = require('@rnx-kit/metro-config');
-const MetroSymlinksResolver = require('@rnx-kit/metro-resolver-symlinks');
+const {assetExts, sourceExts} = require('metro-config/src/defaults/defaults');
 
-module.exports = (async () => {
-  const {
-    resolver: {sourceExts, assetExts},
-  } = await getDefaultConfig();
-
-  return makeMetroConfig({
-    resolver: {
-      assetExts: assetExts.filter((ext) => ext !== 'svg'),
-      sourceExts: [...sourceExts, 'svg'],
-      resolveRequest: MetroSymlinksResolver(),
-    },
-    transformer: {
-      getTransformOptions: async () => ({
-        transform: {
-          experimentalImportSupport: false,
-          inlineRequires: false,
-          enableBabelRuntime: true,
-        },
-      }),
-      babelTransformerPath: require.resolve('react-native-svg-transformer'),
-    },
-  });
-})();
+module.exports = makeMetroConfig({
+  transformer: {
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
+  },
+  resolver: {
+    assetExts: assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...sourceExts, 'svg'],
+    unstable_enableSymlinks: true,
+  },
+});
