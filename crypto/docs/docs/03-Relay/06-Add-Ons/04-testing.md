@@ -29,7 +29,7 @@ import {
   createMockEnvironment,
 } from 'relay-test-utils';
 
-import Greetings from './Greetings';
+import {Greetings} from './Greetings';
 
 describe('<Greetings />', () => {
   const errorSpy = jest.spyOn(console, 'error').mockImplementation();
