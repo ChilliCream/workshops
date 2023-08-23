@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e951dd9c60cc4e67e82a0674321c5dc4>>
+ * @generated SignedSource<<0b9d1a29a20db6ae165922369b97fe60>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,7 +24,10 @@ var node = {
         "node"
       ],
       "operation": require('./ViewerSnapshotRefetchableQuery.graphql'),
-      "identifierField": "id"
+      "identifierInfo": {
+        "identifierField": "id",
+        "identifierQueryVariableName": "id"
+      }
     }
   },
   "name": "ViewerSnapshotFragment_price",

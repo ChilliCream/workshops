@@ -24,5 +24,8 @@ module.exports = {
       },
     ],
   },
-  transformIgnorePatterns: ['<rootDir>/node_modules/(?!d3-.*)/'],
+  transformIgnorePatterns: [
+    '<rootDir>/node_modules/(?!d3-.*)/',
+    '<rootDir>/node_modules/jest-runner/',
+  ],
 };

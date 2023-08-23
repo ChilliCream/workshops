@@ -13,6 +13,7 @@ export const Alerts = ({symbol}) => {
       anchor="bottom"
       open={active}
       PaperProps={{sx: {height: 400}}}
+      ModalProps={{keepMounted: false}}
       onClose={hide}
     >
       <ErrorBoundaryWithRetry>
