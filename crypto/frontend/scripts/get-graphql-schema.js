@@ -54,7 +54,7 @@ const prettifyFile = async (filePath) => {
     const source = fs.readFileSync(filePath, 'utf8');
     const options = await prettier.resolveConfig(filePath);
 
-    const formatted = prettier.format(
+    const formatted = await prettier.format(
       stripBOM(source),
       Object.assign(options, {parser: 'graphql'}),
     );
