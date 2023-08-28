@@ -30,7 +30,7 @@ Ensure that version 7.0.100 or above is being used. The `global.json` file shoul
 Before generating our server project, we need to install the **Hot Chocolate** templates.
 
 ```bash
-dotnet new install HotChocolate.Templates::13.3.0-preview.8
+dotnet new install HotChocolate.Templates::13.5.1
 ```
 
 Now that we have everything in place, we can generate the actual server project.
