@@ -28,4 +28,5 @@ module.exports = {
     '<rootDir>/node_modules/(?!d3-.*)/',
     '<rootDir>/node_modules/jest-runner/',
   ],
+  testPathIgnorePatterns: ['/node_modules/', '/playground/'],
 };
