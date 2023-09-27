@@ -16,6 +16,7 @@ export const Notifications = () => {
         anchor="top"
         open={active}
         PaperProps={{sx: {minHeight: 100}}}
+        ModalProps={{keepMounted: false}}
         onClose={hide}
       >
         <ErrorBoundaryWithRetry>

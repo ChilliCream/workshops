@@ -1,5 +1,5 @@
 import {Divider} from '@mui/material';
-import {Suspense, SuspenseList, memo} from 'react';
+import {Suspense, unstable_SuspenseList as SuspenseList, memo} from 'react';
 import {graphql, useFragment} from 'react-relay';
 
 import {BearishIcon, BullishIcon} from '@/icons';

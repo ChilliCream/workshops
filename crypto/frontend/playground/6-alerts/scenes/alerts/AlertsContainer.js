@@ -19,7 +19,7 @@ export default memo(function AlertsContainer({symbol, cacheBuster}) {
     {symbol},
     {
       fetchKey: cacheBuster,
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'network-only',
     },
   );
   const hasAlerts = !!data.assetBySymbol?.hasAlerts;
