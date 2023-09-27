@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad8fa3b36559aa3085d418aadfd675e7>>
+ * @generated SignedSource<<a68e51c4ce974bcfa368925a62f23894>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,10 @@ return {
         "node"
       ],
       "operation": require('./AlertsActionRefetchableField.graphql'),
-      "identifierField": "id"
+      "identifierInfo": {
+        "identifierField": "id",
+        "identifierQueryVariableName": "id"
+      }
     }
   },
   "name": "AlertsActionsDAFragment_asset",

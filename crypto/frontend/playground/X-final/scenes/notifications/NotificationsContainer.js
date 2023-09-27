@@ -12,7 +12,10 @@ export default memo(function NotificationsContainer({cacheBuster}) {
       }
     `,
     {},
-    {fetchKey: cacheBuster},
+    {
+      fetchKey: cacheBuster,
+      fetchPolicy: 'network-only',
+    },
   );
 
   return (
