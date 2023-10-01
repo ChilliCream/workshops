@@ -315,8 +315,8 @@ const subscribeFnWithWS = (operation, variables) => {
 };
 
 // DEMO: choose one of the implementations
-const subscribeFn = subscribeFnWithSSE;
-// const subscribeFn = subscribeFnWithWS;
+// const subscribeFn = subscribeFnWithSSE;
+const subscribeFn = subscribeFnWithWS;
 
 const createEnvironment = (initialRecords) => {
   const source = new RecordSource(initialRecords);

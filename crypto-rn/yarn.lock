@@ -1406,6 +1406,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@formatjs/ecma402-abstract@npm:1.17.2":
+  version: 1.17.2
+  resolution: "@formatjs/ecma402-abstract@npm:1.17.2"
+  dependencies:
+    "@formatjs/intl-localematcher": 0.4.2
+    tslib: ^2.4.0
+  checksum: 026382b1fb295cef4387b2f2a34dace107b12fb7607793093b26595b0d639a30e5f4539665730897eb77eefabee2bb35c156896c63925b0ec03b746751e3fb00
+  languageName: node
+  linkType: hard
+
+"@formatjs/intl-localematcher@npm:0.4.2":
+  version: 0.4.2
+  resolution: "@formatjs/intl-localematcher@npm:0.4.2"
+  dependencies:
+    tslib: ^2.4.0
+  checksum: df579d8c453a11eed1ec55604f8dda121d728fc5109ed885892347a126089caef95a0edf71f1f6db3134bb9e73787062995baf7746a2577e8ca2980dcd6590cb
+  languageName: node
+  linkType: hard
+
+"@formatjs/intl-numberformat@npm:^8.7.2":
+  version: 8.7.2
+  resolution: "@formatjs/intl-numberformat@npm:8.7.2"
+  dependencies:
+    "@formatjs/ecma402-abstract": 1.17.2
+    "@formatjs/intl-localematcher": 0.4.2
+    tslib: ^2.4.0
+  checksum: 5d2247ebc4e64cf57feb510674874acefd171459e314345e3b1b00c4f74dbe7b15572b57419905964000093460f04f5611ad2550cac5250d8958dbd1e7dbab1d
+  languageName: node
+  linkType: hard
+
 "@hapi/hoek@npm:^9.0.0":
   version: 9.3.0
   resolution: "@hapi/hoek@npm:9.3.0"
@@ -4485,6 +4515,7 @@ __metadata:
     "@emotion/jest": latest
     "@emotion/native": latest
     "@emotion/react": latest
+    "@formatjs/intl-numberformat": ^8.7.2
     "@react-native-community/eslint-config": latest
     "@react-native/metro-config": latest
     "@react-navigation/native": latest
@@ -4536,7 +4567,7 @@ __metadata:
     metro-react-native-babel-preset: latest
     node-notifier: latest
     prettier: latest
-    react: canary
+    react: experimental
     react-i18next: latest
     react-native: ^0.72.3
     react-native-fetch-api: ^3.0.0
@@ -10041,12 +10072,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:canary":
-  version: 18.3.0-canary-587ae49d7-20230720
-  resolution: "react@npm:18.3.0-canary-587ae49d7-20230720"
+"react@npm:experimental":
+  version: 0.0.0-experimental-d900fadbf-20230929
+  resolution: "react@npm:0.0.0-experimental-d900fadbf-20230929"
   dependencies:
     loose-envify: ^1.1.0
-  checksum: 2403b53b86b0adeb4f38834a7928c8ea428d7a48072b87cb2086794c7e77cc72559e49958fec46775937645aa4efc6d40a9dc8cc5a2aa6c8525cb9a3ea75b076
+  checksum: 3361edf0f37c3b0f19203378db1a38965705b7bf93c57c94b656c9c1947a7cb6f0f37edaff4a5683a3bbab318899b570a9bee55b5e231e410faeea6ea20d0ea3
   languageName: node
   linkType: hard
 
@@ -11290,6 +11321,13 @@ __metadata:
   version: 2.6.0
   resolution: "tslib@npm:2.6.0"
   checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.4.0":
+  version: 2.6.2
+  resolution: "tslib@npm:2.6.2"
+  checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
   languageName: node
   linkType: hard
 

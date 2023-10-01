@@ -72,7 +72,7 @@ export const formatCurrencyUsingCompactNotation = (
   locales = 'en',
 ) =>
   new Intl.NumberFormat(locales, {
-    style: 'currency',
+    style: 'currency', // THIS MIGHT NOT WORK ON ANDROID...
     notation: 'compact',
     compactDisplay: 'short',
     maximumFractionDigits: 1,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<681f26ae7641d64464c81e6bbba6fb8b>>
+ * @generated SignedSource<<3ee847daf8688895e65631bdbb58d2ea>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -46,7 +46,10 @@ const node: ReaderFragment = {
         "node"
       ],
       "operation": require('./ViewerSnapshotRefetchableQuery.graphql'),
-      "identifierField": "id"
+      "identifierInfo": {
+        "identifierField": "id",
+        "identifierQueryVariableName": "id"
+      }
     }
   },
   "name": "viewerSnapshotFragment_price",
