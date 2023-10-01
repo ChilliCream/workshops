@@ -69,6 +69,7 @@ const Stack = styled(View)<{
   space?: {top?: number; right?: number; bottom?: number; left?: number};
 }>`
   flex-direction: ${({layout}) => layout};
+  align-items: center;
 
   ${({space}) =>
     !!space &&

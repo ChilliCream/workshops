@@ -37,7 +37,7 @@
     "i18next": "latest",
     "lodash": "latest",
     "meros": "^1.2.1",
-    "react": "canary",
+    "react": "experimental",
     "react-i18next": "latest",
     "react-native": "^0.72.3",
     "react-native-fetch-api": "^3.0.0",

@@ -55,7 +55,7 @@ export const Home: React.FC<StackScreenProps<'Home'>> = () => {
         <HomeFeatured fragmentRef={data} />
         <Divider />
         {/* TODO: Check React SuspenseList, why is crashing... */}
-        {/* <HomeSpotlight fragmentRef={data} /> */}
+        <HomeSpotlight fragmentRef={data} />
       </Stack>
     </Root>
   );

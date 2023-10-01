@@ -1,11 +1,12 @@
 import styled from '@emotion/native';
-import {Link, useLinkProps, useLinkTo} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React, {memo} from 'react';
-import {View} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
 import type {screenerListItemFragment_asset$key} from '@/__generated__/screenerListItemFragment_asset.graphql';
 import {Change, Currency, Price} from '@/components';
+import {StackNavigationProps} from '@/root';
 
 type ScreenerListItemDataProp = screenerListItemFragment_asset$key;
 
@@ -17,10 +18,12 @@ const Stack = styled(View)`
   width: 100%;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `;
 
-const Root = styled(View)`
+const Root = styled(Pressable)`
   width: 100%;
+  padding: 8px;
 `;
 
 const $Currency = styled(Currency)`
@@ -57,37 +60,34 @@ export const ScreenerListItem = memo<ScreenerListItemProps>(
       `,
       fragmentRef,
     );
+    const {navigate} = useNavigation<StackNavigationProps<'Screener'>>();
+
     const {price} = asset;
 
     // const {onPress} = useLinkProps({to: {screen: 'Viewer', params: {symbol: asset.symbol}}});
 
     return (
-      <Link
-        to={{screen: 'Viewer', params: {symbol: asset.symbol}}}
-        style={{marginBottom: 8, marginTop: 16}}
-      >
-        <Root>
-          <Stack>
-            <$Currency
-              symbol={asset.symbol}
-              name={asset.name}
-              imageUrl={asset.imageUrl}
+      <Root onPress={() => navigate('Viewer', {symbol: asset.symbol})}>
+        <Stack>
+          <$Currency
+            symbol={asset.symbol}
+            name={asset.name}
+            imageUrl={asset.imageUrl}
+          />
+
+          <Values>
+            <Price
+              value={price.lastPrice}
+              options={{currency: price.currency}}
+              typographyVariant="caption"
             />
 
-            <Values>
-              <Price
-                value={price.lastPrice}
-                options={{currency: price.currency}}
-                typographyVariant="caption"
-              />
+            <Gap />
 
-              <Gap />
-
-              <Change value={price.change24Hour} typographyVariant="caption" />
-            </Values>
-          </Stack>
-        </Root>
-      </Link>
+            <Change value={price.change24Hour} typographyVariant="caption" />
+          </Values>
+        </Stack>
+      </Root>
     );
   },
 );

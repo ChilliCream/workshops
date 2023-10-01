@@ -1,5 +1,9 @@
 import styled from '@emotion/native';
-import React, {Suspense, SuspenseList, memo} from 'react';
+import React, {
+  Suspense,
+  unstable_SuspenseList as SuspenseList,
+  memo,
+} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 

@@ -1,11 +1,12 @@
 import styled from '@emotion/native';
-import {Link} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {View} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
 import {homeSpotlightItemFragment_asset$key} from '@/__generated__/homeSpotlightItemFragment_asset.graphql';
 import {Change, Currency, Price} from '@/components';
+import {type StackNavigationProps} from '@/root';
 
 export type HomeSpotlightItemView = 'price' | 'change';
 type HomeSpotlightItemDataProp = homeSpotlightItemFragment_asset$key;
@@ -24,20 +25,14 @@ const Stack = styled(View)`
   justify-content: space-between;
 `;
 
-const Root = styled(View)`
+const Root = styled(Pressable)`
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: 100%;
   padding: 8px;
 `;
 
-const $Currency = styled(Currency)`
-  flex: 1;
-  align-self: flex-start;
-  margin-right: auto;
-`;
-
 const Value = styled(View)`
-  flex-basis: 20%;
-  width: 20%;
-  align-items: flex-end;
   justify-content: center;
 `;
 
@@ -62,33 +57,32 @@ export const HomeSpotlightItem: React.FC<HomeSpotlightItemProps> = ({
     `,
     fragmentRef,
   );
+  const {navigate} = useNavigation<StackNavigationProps<'Viewer'>>();
 
   const {price} = asset;
 
   return (
-    <Link to={{screen: 'Viewer', params: {symbol: asset.symbol}}}>
-      <Root>
-        <Stack>
-          <$Currency
-            symbol={asset.symbol}
-            name={asset.name}
-            imageUrl={asset.imageUrl}
-          />
+    <Root onPress={() => navigate('Viewer', {symbol: asset.symbol})}>
+      <Stack>
+        <Currency
+          symbol={asset.symbol}
+          name={asset.name}
+          imageUrl={asset.imageUrl}
+        />
 
-          <Value>
-            {price && view === 'price' && (
-              <Price
-                value={price.lastPrice}
-                options={{currency: price.currency}}
-                typographyVariant="caption"
-              />
-            )}
-            {price && view === 'change' && (
-              <Change value={price.change24Hour} typographyVariant="caption" />
-            )}
-          </Value>
-        </Stack>
-      </Root>
-    </Link>
+        <Value>
+          {price && view === 'price' && (
+            <Price
+              value={price.lastPrice}
+              options={{currency: price.currency}}
+              typographyVariant="caption"
+            />
+          )}
+          {price && view === 'change' && (
+            <Change value={price.change24Hour} typographyVariant="caption" />
+          )}
+        </Value>
+      </Stack>
+    </Root>
   );
 };
