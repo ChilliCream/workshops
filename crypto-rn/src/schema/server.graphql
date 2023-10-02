@@ -1,0 +1,834 @@
+"""
+The `@defer` directive may be provided for fragment spreads and inline fragments
+to inform the executor to delay the execution of the current fragment to
+indicate deprioritization of the current fragment. A query with `@defer`
+directive will cause the request to potentially return multiple responses, where
+non-deferred data is delivered in the initial response and data deferred is
+delivered in a subsequent response. `@include` and `@skip` take precedence over `@defer`.
+"""
+directive @defer(
+  """
+  If this argument label has a value other than null, it will be passed on to
+  the result of this defer directive. This label is intended to give client
+  applications a way to identify to which fragment a deferred result belongs to.
+  """
+  label: String
+
+  """Deferred when true."""
+  if: Boolean
+) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""
+The `@stream` directive may be provided for a field of `List` type so that the
+backend can leverage technology such as asynchronous iterators to provide a
+partial list in the initial response, and additional list items in subsequent
+responses. `@include` and `@skip` take precedence over `@stream`.
+"""
+directive @stream(
+  """
+  If this argument label has a value other than null, it will be passed on to
+  the result of this stream directive. This label is intended to give client
+  applications a way to identify to which fragment a streamed result belongs to.
+  """
+  label: String
+
+  """The initial elements that shall be send down to the consumer."""
+  initialCount: Int! = 0
+
+  """Streamed when true."""
+  if: Boolean
+) on FIELD
+
+"""
+The `@specifiedBy` directive is used within the type system definition language
+to provide a URL for specifying the behavior of custom scalar definitions.
+"""
+directive @specifiedBy(
+  """
+  The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types.
+  """
+  url: String!
+) on SCALAR
+
+input AddAssetsToWatchlistInput {
+  symbols: [String!]!
+}
+
+type AddAssetsToWatchlistPayload {
+  addedAssets(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): AddedAssetsConnection
+  watchlist: Watchlist
+}
+
+input AddAssetToWatchlistInput {
+  symbol: String!
+}
+
+type AddAssetToWatchlistPayload {
+  addedAsset: Asset
+  watchlist: Watchlist
+}
+
+"""A connection to a list of items."""
+type AddedAssetsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AddedAssetsEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Asset!]
+}
+
+"""An edge in a connection."""
+type AddedAssetsEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Asset!
+}
+
+type Alert implements Node {
+  id: ID!
+  username: String!
+  percentageChange: Float!
+  currency: String!
+  targetPrice: Float!
+  recurring: Boolean!
+  asset: Asset!
+}
+
+type Asset implements Node {
+  id: ID!
+  symbol: String!
+  name: String!
+  slug: String!
+  description: String
+  color: String!
+  website: String
+  whitePaper: String
+  price: AssetPrice!
+  alerts(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): AssetAlertsConnection
+  imageUrl: String
+  isInWatchlist: Boolean
+  hasAlerts: Boolean!
+}
+
+"""A connection to a list of items."""
+type AssetAlertsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AssetAlertsEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Alert!]
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""An edge in a connection."""
+type AssetAlertsEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Alert!
+}
+
+input AssetFilterInput {
+  and: [AssetFilterInput!]
+  or: [AssetFilterInput!]
+  symbol: StringOperationFilterInput
+  slug: StringOperationFilterInput
+  name: StringOperationFilterInput
+  description: StringOperationFilterInput
+  price: AssetPriceFilterInput
+}
+
+type AssetPrice implements Node {
+  id: ID!
+  symbol: String!
+  currency: String!
+  lastPrice: Float!
+  marketCap: Float!
+  tradableMarketCapRank: Float!
+  volume24Hour: Float!
+  volumePercentChange24Hour: Float!
+  circulatingSupply: Float!
+  maxSupply: Float!
+  high24Hour: Float!
+  low24Hour: Float!
+  open24Hour: Float!
+  tradingActivity: Float!
+  change24Hour: Float!
+  modifiedAt: DateTime
+  change(span: ChangeSpan!): AssetPriceChange
+  asset: Asset!
+}
+
+type AssetPriceChange implements Node {
+  id: ID!
+  percentageChange: Float!
+  history(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): HistoryConnection
+}
+
+input AssetPriceFilterInput {
+  and: [AssetPriceFilterInput!]
+  or: [AssetPriceFilterInput!]
+  id: IntOperationFilterInput
+  symbol: StringOperationFilterInput
+  currency: StringOperationFilterInput
+  lastPrice: FloatOperationFilterInput
+  marketCap: FloatOperationFilterInput
+  tradableMarketCapRank: FloatOperationFilterInput
+  volume24Hour: FloatOperationFilterInput
+  volumePercentChange24Hour: FloatOperationFilterInput
+  circulatingSupply: FloatOperationFilterInput
+  maxSupply: FloatOperationFilterInput
+  high24Hour: FloatOperationFilterInput
+  low24Hour: FloatOperationFilterInput
+  open24Hour: FloatOperationFilterInput
+  tradingActivity: FloatOperationFilterInput
+  change24Hour: FloatOperationFilterInput
+  assetId: IntOperationFilterInput
+  modifiedAt: DateTimeOperationFilterInput
+  asset: AssetFilterInput
+}
+
+type AssetPriceHistory {
+  epoch: Int!
+  price: Float!
+}
+
+input AssetPriceSortInput {
+  id: SortEnumType
+  symbol: SortEnumType
+  currency: SortEnumType
+  lastPrice: SortEnumType
+  marketCap: SortEnumType
+  tradableMarketCapRank: SortEnumType
+  volume24Hour: SortEnumType
+  volumePercentChange24Hour: SortEnumType
+  circulatingSupply: SortEnumType
+  maxSupply: SortEnumType
+  high24Hour: SortEnumType
+  low24Hour: SortEnumType
+  open24Hour: SortEnumType
+  tradingActivity: SortEnumType
+  change24Hour: SortEnumType
+  assetId: SortEnumType
+  modifiedAt: SortEnumType
+  asset: AssetSortInput
+}
+
+"""A connection to a list of items."""
+type AssetsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AssetsEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Asset!]
+}
+
+"""An edge in a connection."""
+type AssetsEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Asset!
+}
+
+input AssetSortInput {
+  symbol: SortEnumType
+  slug: SortEnumType
+  name: SortEnumType
+  price: AssetPriceSortInput
+}
+
+union ChangeAssetPositionInWatchlistError = UnknownAssetError | NotAuthenticatedError | UnknownWatchlistError | IndexOutOfRangeError
+
+input ChangeAssetPositionInWatchlistInput {
+  symbol: String!
+  index: Int!
+}
+
+type ChangeAssetPositionInWatchlistPayload {
+  watchlist: Watchlist
+  errors: [ChangeAssetPositionInWatchlistError!]
+}
+
+enum ChangeSpan {
+  ALL
+  HOUR
+  DAY
+  WEEK
+  MONTH
+  YEAR
+}
+
+union CreateAlertError = InvalidTargetPriceError | UnknownCurrencyError
+
+input CreateAlertInput {
+  symbol: String!
+  targetPrice: Float!
+  currency: String = "USD"
+  recurring: Boolean! = false
+}
+
+type CreateAlertPayload {
+  createdAlert: Alert
+  errors: [CreateAlertError!]
+}
+
+"""The `DateTime` scalar represents an ISO-8601 compliant date time type."""
+scalar DateTime
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+union DeleteAlertError = EntityNotFoundError
+
+input DeleteAlertInput {
+  alertId: ID!
+}
+
+type DeleteAlertPayload {
+  deletedAlert: Alert
+  errors: [DeleteAlertError!]
+}
+
+union DeleteNotificationError = UnknownNotificationError
+
+input DeleteNotificationInput {
+  notificationId: ID!
+}
+
+type DeleteNotificationPayload {
+  deletedNotification: Notification
+  errors: [DeleteNotificationError!]
+}
+
+union DeleteNotificationsError = UnknownNotificationError
+
+input DeleteNotificationsInput {
+  notificationIds: [ID!]!
+}
+
+type DeleteNotificationsPayload {
+  deletedNotifications: [Notification!]
+  errors: [DeleteNotificationsError!]
+}
+
+type EntityNotFoundError implements Error {
+  message: String!
+  id: Int!
+}
+
+interface Error {
+  message: String!
+}
+
+input FloatOperationFilterInput {
+  eq: Float
+  neq: Float
+  in: [Float]
+  nin: [Float]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+"""A connection to a list of items."""
+type HistoryConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [HistoryEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [AssetPriceHistory]
+}
+
+"""An edge in a connection."""
+type HistoryEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: AssetPriceHistory
+}
+
+input ImportAssetInput {
+  symbol: String!
+}
+
+type ImportAssetPayload {
+  importedAsset: Asset
+}
+
+input ImportAssetsInput {
+  symbols: [String!]!
+}
+
+type ImportAssetsPayload {
+  importedAssets: [Asset!]
+}
+
+type IndexOutOfRangeError implements Error {
+  message: String!
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+type InvalidTargetPriceError implements Error {
+  message: String!
+  targetPrice: Float!
+}
+
+union MarkNotificationReadError = UnknownNotificationError
+
+input MarkNotificationReadInput {
+  notificationId: ID!
+}
+
+type MarkNotificationReadPayload {
+  readNotification: Notification
+  errors: [MarkNotificationReadError!]
+}
+
+union MarkNotificationsReadError = UnknownNotificationError
+
+input MarkNotificationsReadInput {
+  notificationIds: [ID!]!
+}
+
+type MarkNotificationsReadPayload {
+  readNotifications: [Notification!]
+  errors: [MarkNotificationsReadError!]
+}
+
+type Mutation {
+  updateUserProfile(input: UpdateUserProfileInput!): UpdateUserProfilePayload!
+  addAssetToWatchlist(input: AddAssetToWatchlistInput!): AddAssetToWatchlistPayload!
+  addAssetsToWatchlist(input: AddAssetsToWatchlistInput!): AddAssetsToWatchlistPayload!
+  removeAssetFromWatchlist(input: RemoveAssetFromWatchlistInput!): RemoveAssetFromWatchlistPayload!
+  removeAssetsFromWatchlist(input: RemoveAssetsFromWatchlistInput!): RemoveAssetsFromWatchlistPayload!
+  changeAssetPositionInWatchlist(input: ChangeAssetPositionInWatchlistInput!): ChangeAssetPositionInWatchlistPayload!
+  importAsset(input: ImportAssetInput!): ImportAssetPayload!
+  importAssets(input: ImportAssetsInput!): ImportAssetsPayload!
+  updateAssetPrice(input: UpdateAssetPriceInput!): UpdateAssetPricePayload!
+  createAlert(input: CreateAlertInput!): CreateAlertPayload!
+  deleteAlert(input: DeleteAlertInput!): DeleteAlertPayload!
+  markNotificationRead(input: MarkNotificationReadInput!): MarkNotificationReadPayload!
+  markNotificationsRead(input: MarkNotificationsReadInput!): MarkNotificationsReadPayload!
+  deleteNotification(input: DeleteNotificationInput!): DeleteNotificationPayload!
+  deleteNotifications(input: DeleteNotificationsInput!): DeleteNotificationsPayload!
+}
+
+"""
+The node interface is implemented by entities that have a global unique identifier.
+"""
+interface Node {
+  id: ID!
+}
+
+type NotAuthenticatedError implements Error {
+  message: String!
+}
+
+type Notification implements Node {
+  id: ID!
+  username: String!
+  message: String
+  read: Boolean!
+  asset: Asset!
+}
+
+"""A connection to a list of items."""
+type NotificationsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [NotificationsEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Notification!]
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+"""An edge in a connection."""
+type NotificationsEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Notification!
+}
+
+type NotificationUpdate {
+  notification: Notification
+  unreadNotifications: Int!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """
+  Indicates whether more edges exist following the set defined by the clients arguments.
+  """
+  hasNextPage: Boolean!
+
+  """
+  Indicates whether more edges exist prior the set defined by the clients arguments.
+  """
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  """Fetches an object given its ID."""
+  node(
+    """ID of the object."""
+    id: ID!
+  ): Node
+
+  """Lookup nodes by a list of IDs."""
+  nodes(
+    """The list of node IDs."""
+    ids: [ID!]!
+  ): [Node]!
+  me: User
+  assets(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    where: AssetFilterInput
+    order: [AssetSortInput!]
+  ): AssetsConnection
+  assetBySlug(slug: String!): Asset
+  assetsBySlug(slugs: [String!]!): [Asset]!
+  assetBySymbol(symbol: String!): Asset
+  assetsBySymbol(symbols: [String!]!): [Asset]!
+  assetById(id: ID!): Asset
+  assetsById(ids: [ID!]!): [Asset]!
+}
+
+enum ReadStatus {
+  ALL
+  READ
+  UNREAD
+}
+
+input RemoveAssetFromWatchlistInput {
+  symbol: String!
+}
+
+type RemoveAssetFromWatchlistPayload {
+  removedAsset: Asset
+  watchlist: Watchlist
+}
+
+input RemoveAssetsFromWatchlistInput {
+  symbols: [String!]!
+}
+
+type RemoveAssetsFromWatchlistPayload {
+  removedAssets(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): RemovedAssetsConnection
+  watchlist: Watchlist
+}
+
+"""A connection to a list of items."""
+type RemovedAssetsConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [RemovedAssetsEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Asset!]
+}
+
+"""An edge in a connection."""
+type RemovedAssetsEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Asset!
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+type Subscription {
+  onPriceChange(symbols: [String!]): AssetPrice!
+  onNotification: NotificationUpdate!
+}
+
+type UnknownAssetError implements Error {
+  message: String!
+  symbols: [String!]!
+}
+
+type UnknownCurrencyError implements Error {
+  message: String!
+  currency: String!
+}
+
+type UnknownNotificationError implements Error {
+  message: String!
+  notificationIds: [Int!]!
+}
+
+type UnknownWatchlistError implements Error {
+  message: String!
+  username: String!
+}
+
+union UpdateAssetPriceError = UnknownAssetError
+
+input UpdateAssetPriceInput {
+  symbol: String!
+  currency: String!
+  lastPrice: Float!
+  marketCap: Int! = 0
+  tradableMarketCapRank: Int! = 0
+  volume24Hour: Int! = 0
+  volumePercentChange24Hour: Int! = 0
+  circulatingSupply: Int! = 0
+  maxSupply: Int! = 0
+  high24Hour: Int! = 0
+  low24Hour: Int! = 0
+  open24Hour: Int! = 0
+  tradingActivity: Int! = 0
+  change24Hour: Int! = 0
+}
+
+type UpdateAssetPricePayload {
+  updatedPrice: AssetPrice
+  errors: [UpdateAssetPriceError!]
+}
+
+input UpdateUserProfileInput {
+  displayName: String
+  image: Upload
+}
+
+type UpdateUserProfilePayload {
+  updatedUser: User
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+type User {
+  name: String!
+  displayName: String
+  id: ID!
+  watchlist: Watchlist
+  alerts(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): UserAlertConnection
+  notifications(
+    status: ReadStatus! = ALL
+
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): NotificationsConnection
+  imageUrl: String
+}
+
+"""A connection to a list of items."""
+type UserAlertConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserAlertEdge!]
+
+  """A flattened list of the nodes."""
+  nodes: [Alert!]
+}
+
+"""An edge in a connection."""
+type UserAlertEdge {
+  """A cursor for use in pagination."""
+  cursor: String!
+
+  """The item at the end of the edge."""
+  node: Alert!
+}
+
+type Watchlist implements Node {
+  id: ID!
+  user: User!
+  assets(
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+  ): AssetsConnection
+}
+

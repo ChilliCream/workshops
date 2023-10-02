@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Paths should keep shape 1`] = `
+{
+  "Home": "Home",
+}
+`;
