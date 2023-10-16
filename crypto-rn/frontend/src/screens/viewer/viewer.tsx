@@ -35,7 +35,6 @@ export const Viewer = memo<StackScreenProps<'Viewer'>>(function Viewer({
           ...viewerSnapshotFragment_asset
           ...viewerStatsFragment_asset
           ...viewerOverviewFragment_asset
-          # ...ViewerResourcesFragment_asset
         }
       }
     `,

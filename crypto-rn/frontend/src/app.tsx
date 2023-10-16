@@ -16,9 +16,9 @@ import {i18n, I18nextProvider} from './translations';
 const relayEnv = initEnvironment(undefined);
 
 export const App: React.FC<any> = () => {
-  useEffect(() => {
+  const handleReady = () => {
     SplashScreen.hide();
-  }, []);
+  };
 
   return (
     <ErrorBoundary>
@@ -28,7 +28,7 @@ export const App: React.FC<any> = () => {
             <Suspense fallback={<Text>Loading ...</Text>}>
               <I18nextProvider i18n={i18n}>
                 <ThemeProvider theme={defaultTheme}>
-                  <NavigationContainer>
+                  <NavigationContainer onReady={handleReady}>
                     <Root />
                   </NavigationContainer>
                 </ThemeProvider>

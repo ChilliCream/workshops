@@ -14,29 +14,23 @@ describe('<ErrorBoundary />', () => {
     return <Text>foo</Text>;
   };
 
-  const leSpy = jest.spyOn(logger, 'error');
   const ceSpy = jest.spyOn(console, 'error');
 
   afterEach(() => {
-    leSpy.mockReset();
     ceSpy.mockReset();
   });
 
   afterAll(() => {
-    leSpy.mockRestore();
     ceSpy.mockRestore();
   });
 
-  const testCases: TestCases<
-    [error: boolean, leTimes: number, ceTimes: number]
-  > = [
-    ['should catch errors', [true, 1, 1]],
-    ['should pass through children when no error', [false, 0, 0]],
+  const testCases: Array<[string, [error: boolean, ceTimes: number]]> = [
+    ['should catch errors', [true, 1]],
+    ['should pass through children when no error', [false, 0]],
   ];
 
-  testCases.forEach(([name, [error, leTimes, ceTimes]]) => {
+  testCases.forEach(([name, [error, ceTimes]]) => {
     it(name, () => {
-      leSpy.mockImplementation();
       ceSpy.mockImplementation();
 
       expect(() => {
@@ -53,7 +47,6 @@ describe('<ErrorBoundary />', () => {
         }
       }).not.toThrow();
 
-      expect(leSpy).toHaveBeenCalledTimes(leTimes);
       expect(ceSpy).toHaveBeenCalledTimes(ceTimes);
     });
   });

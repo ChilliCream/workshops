@@ -14,7 +14,6 @@ import {
   Store,
 } from 'relay-runtime';
 
-// import {Config} from '@/config';
 import {isAsyncIterable, merge} from '@/utils';
 
 let relayEnvironment;

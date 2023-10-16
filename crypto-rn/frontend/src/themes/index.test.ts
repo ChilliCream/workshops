@@ -1,7 +1,7 @@
-import * as Themes from './index';
+import * as Index from './index';
 
-describe('Themes', () => {
+describe('index', () => {
   it('should keep shape', () => {
-    expect(Themes).toMatchSnapshot();
+    expect(Index).toMatchSnapshot();
   });
 });

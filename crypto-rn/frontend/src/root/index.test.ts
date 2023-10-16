@@ -1,7 +1,7 @@
-import * as Root from './index';
+import * as Index from './index';
 
-describe('Root', () => {
+describe('index', () => {
   it('should keep shape', () => {
-    expect(Root).toMatchSnapshot();
+    expect(Index).toMatchSnapshot();
   });
 });

@@ -64,10 +64,12 @@ export const ScreenerListItem = memo<ScreenerListItemProps>(
 
     const {price} = asset;
 
-    // const {onPress} = useLinkProps({to: {screen: 'Viewer', params: {symbol: asset.symbol}}});
+    const handlePress = () => {
+      navigate('Viewer', {symbol: asset.symbol});
+    };
 
     return (
-      <Root onPress={() => navigate('Viewer', {symbol: asset.symbol})}>
+      <Root onPress={handlePress}>
         <Stack>
           <$Currency
             symbol={asset.symbol}
