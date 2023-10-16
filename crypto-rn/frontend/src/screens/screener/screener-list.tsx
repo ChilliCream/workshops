@@ -170,22 +170,6 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
 
         refetch(Object.assign({}, filterVars, orderVars));
       });
-
-      // startTransition(() => {
-      //   const variables = deferredQ
-      //     ? {
-      //         where: {
-      //           or: [
-      //             {symbol: {contains: deferredQ}},
-      //             {name: {contains: deferredQ}},
-      //             {slug: {contains: deferredQ}},
-      //           ],
-      //         },
-      //       }
-      //     : {};
-
-      //   refetch(variables);
-      // });
     }
   }, [deferredQ, order]);
 
@@ -212,11 +196,6 @@ export const ScreenerList = memo<ScreenerListProps>(function ScreenerList({
         renderItem={renderItem}
         keyExtractor={(item) => item.node.id}
         showsVerticalScrollIndicator={false}
-        // onEndReached={() => {
-        //   if (!busy && hasNext) {
-        //     loadNext(10);
-        //   }
-        // }}
         ItemSeparatorComponent={() => <Divider />}
         ListEmptyComponent={() => (
           <Typography variant="body">Hmm, we can't find that asset.</Typography>

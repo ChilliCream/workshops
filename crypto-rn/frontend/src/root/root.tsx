@@ -40,13 +40,6 @@ export const Root: React.FC = () => {
           </Suspense>
         )}
       </Screen>
-      {/* <Screen name={Paths.Screener} options={{headerShown: false}}>
-        {(props) => (
-          <Suspense>
-            <Screener {...props} />
-          </Suspense>
-        )}
-      </Screen> */}
       <Screen
         name={Paths.Screener}
         component={Screener}

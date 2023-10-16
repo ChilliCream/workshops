@@ -105,12 +105,6 @@ export const HomeSpotlightCard: React.FC<HomeSpotlightCardProps> = ({
         )}
         ItemSeparatorComponent={() => <Divider />}
       />
-
-      {/* <Stack layout="column">
-        {assets?.map((node) => (
-          <HomeSpotlightItem key={node.id} fragmentRef={node} view={view} />
-        ))}
-      </Stack> */}
     </Root>
   );
 };

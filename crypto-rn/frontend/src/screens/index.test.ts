@@ -1,7 +1,7 @@
-import * as Screens from './index';
+import * as Index from './index';
 
-describe('Screens', () => {
+describe('index', () => {
   it('should keep shape', () => {
-    expect(Screens).toMatchSnapshot();
+    expect(Index).toMatchSnapshot();
   });
 });
