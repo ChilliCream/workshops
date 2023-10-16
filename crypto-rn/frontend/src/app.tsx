@@ -7,7 +7,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 import {RelayEnvironmentProvider} from 'react-relay';
 
-import {initEnvironment} from '@/config/relay';
+import {initEnvironment} from '@/client';
 
 import {ErrorBoundary, Root} from './root';
 import {defaultTheme} from './themes';
