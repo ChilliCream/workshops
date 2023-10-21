@@ -258,7 +258,7 @@ public sealed class AssetFilterInputType : FilterInputType<Asset>
 
 :::info
 
-The `AssetFilterInputType` class is automatic registered with the Hot Chocolate source generator and also is applied to all filters of `Asset`. If you have the need of different filter types for a type you can use the filter attribute to specify which one it should pick for the annotated field. 
+The `AssetFilterInputType` class is automatic registered with the Hot Chocolate source generator and also is applied to all filters of `Asset`. If you have the need of different filter types for a type you can use the filter attribute to specify which one it should pick for the annotated field.
 
 ```csharp
 [UseFiltering<AssetFilterInputType>]

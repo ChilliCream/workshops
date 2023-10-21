@@ -266,7 +266,7 @@ builder.Services
 
 builder.Services
     .AddHttpClient(
-        Constants.PriceInfoService, 
+        Constants.PriceInfoService,
         c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 
 builder.Services

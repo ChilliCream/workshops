@@ -365,7 +365,7 @@ Head over to the `Program.cs` and add the following service registration.
 ```csharp
 builder.Services
     .AddHttpClient(
-        Constants.PriceInfoService, 
+        Constants.PriceInfoService,
         c => c.BaseAddress = new("https://ccc-workshop-eu-functions.azurewebsites.net"));
 ```
 

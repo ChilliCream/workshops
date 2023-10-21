@@ -56,20 +56,20 @@ var node = (function () {
     ];
   return {
     fragment: {
-      argumentDefinitions: (v0 /*: any*/),
+      argumentDefinitions: v0 /*: any*/,
       kind: 'Fragment',
       metadata: null,
       name: 'GreetingsQuery',
-      selections: (v1 /*: any*/),
+      selections: v1 /*: any*/,
       type: 'Query',
       abstractKey: null,
     },
     kind: 'Request',
     operation: {
-      argumentDefinitions: (v0 /*: any*/),
+      argumentDefinitions: v0 /*: any*/,
       kind: 'Operation',
       name: 'GreetingsQuery',
-      selections: (v1 /*: any*/),
+      selections: v1 /*: any*/,
     },
     params: {
       cacheID: 'df17284c16608f10e79c40f215176912',
@@ -128,20 +128,20 @@ var node = (function () {
     ];
   return {
     fragment: {
-      argumentDefinitions: (v0 /*: any*/),
+      argumentDefinitions: v0 /*: any*/,
       kind: 'Fragment',
       metadata: null,
       name: 'GreetingsQuery',
-      selections: (v1 /*: any*/),
+      selections: v1 /*: any*/,
       type: 'Query',
       abstractKey: null,
     },
     kind: 'Request',
     operation: {
-      argumentDefinitions: (v0 /*: any*/),
+      argumentDefinitions: v0 /*: any*/,
       kind: 'Operation',
       name: 'GreetingsQuery',
-      selections: (v1 /*: any*/),
+      selections: v1 /*: any*/,
     },
     params: {
       id: '38c438dbaa37d7ed988b5a1262576bd4d226d998',
