@@ -66,6 +66,7 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Run the Blank App
 
 **10:45 - 11:00 BREAK**
+
 - 15 Minute Break
 
 **11:00 - 13:00**
@@ -76,17 +77,21 @@ In this workshop, we will introduce you to GraphQL and the major concepts behind
 - Update ScreenerPage to Use Real Data
 
 **13:00 - 14:00 LUNCH**
+
 - 1-Hour Lunch
 
 **14:00 - 15:00**
+
 - Get Price History
 - Subscribe to OnPriceChanged
 - Strawberry Shake Setup
 
 **15:30 - 15:45 BREAK**
+
 - 15 Minute Break
 
 **15:45 - 17:00**
+
 - The future of GraphQL
 - Questions and Answers
 - Feedback
