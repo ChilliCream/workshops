@@ -34,7 +34,14 @@ export default memo(function ViewerResources({fragmentRef}) {
       <Typography variant="h3" gutterBottom>
         Resources
       </Typography>
-      <Box sx={{display: 'flex', flexDirection: 'column', py: 1, px: 2}}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          py: 1,
+          px: 2,
+        }}
+      >
         {asset.whitePaper && (
           <$Link
             href={asset.whitePaper}

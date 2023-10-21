@@ -1,6 +1,5 @@
 import React from 'react';
-import Svg, {Path} from 'react-native-svg';
-import type {SvgProps} from 'react-native-svg';
+import Svg, {Path, type SvgProps} from 'react-native-svg';
 
 export const SearchIcon: React.FC<SvgProps> = (props) => {
   return (

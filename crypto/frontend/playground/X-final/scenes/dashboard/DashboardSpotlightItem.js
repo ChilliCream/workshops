@@ -132,7 +132,9 @@ export default function DashboardSpotlightItem({fragmentRef, view}) {
         {price && view === 'price' && (
           <Price
             value={price.lastPrice}
-            options={{currency: price.currency}}
+            options={{
+              currency: price.currency,
+            }}
             size="small"
           />
         )}

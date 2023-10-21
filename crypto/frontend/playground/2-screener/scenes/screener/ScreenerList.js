@@ -106,13 +106,27 @@ export default memo(function ScreenerList({fragmentRef}) {
           !!deferredQ && {
             where: {
               or: [
-                {symbol: {contains: deferredQ}},
-                {name: {contains: deferredQ}},
-                {slug: {contains: deferredQ}},
+                {
+                  symbol: {
+                    contains: deferredQ,
+                  },
+                },
+                {
+                  name: {
+                    contains: deferredQ,
+                  },
+                },
+                {
+                  slug: {
+                    contains: deferredQ,
+                  },
+                },
               ],
             },
           },
-          !!order && {order: Order[order].expression},
+          !!order && {
+            order: Order[order].expression,
+          },
         );
 
         refetch(variables);

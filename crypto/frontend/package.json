@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=16.1.0"
   },
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@4.0.0-rc.53",
   "workspaces": [
     ".proactive/*"
   ],
@@ -60,7 +60,7 @@
     "get-schema": "node scripts/get-graphql-schema.js",
     "goto": "node scripts/goto.js",
     "lint": "next lint",
-    "prettify": "prettier . --write --ignore-unknown",
+    "prettify": "prettier . --write --ignore-unknown --ignore-path=.prettierignore",
     "relay": "relay-compiler",
     "start": "next start"
   }

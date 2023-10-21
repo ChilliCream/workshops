@@ -47,7 +47,14 @@ const useCreateAlert = () => {
   const execute = useCallback(
     ({id, symbol}, {currency, targetPrice, recurring}) => {
       commit({
-        variables: {input: {symbol, currency, targetPrice, recurring}},
+        variables: {
+          input: {
+            symbol,
+            currency,
+            targetPrice,
+            recurring,
+          },
+        },
         optimisticUpdater(store) {
           store.get(id)?.setValue(true, 'hasAlerts');
         },
@@ -114,7 +121,10 @@ export const AddAlert = ({fragmentRef}) => {
         }));
         break;
       case 'recurring':
-        setState((prev) => ({...prev, recurring: checked}));
+        setState((prev) => ({
+          ...prev,
+          recurring: checked,
+        }));
         break;
     }
   }, []);
@@ -276,16 +286,26 @@ export const DeleteAlert = ({fragmentRef}) => {
             <TableCell align="right" sx={{width: 'auto'}}>
               <Price
                 value={node.targetPrice}
-                options={{currency: node.currency}}
+                options={{
+                  currency: node.currency,
+                }}
                 size="small"
               />
             </TableCell>
-            <TableCell align="right" sx={{width: 46, paddingLeft: 0}}>
+            <TableCell
+              align="right"
+              sx={{
+                width: 46,
+                paddingLeft: 0,
+              }}
+            >
               <IconButton
                 size="small"
                 aria-label="remove alert"
                 onClick={() => {
-                  deleteAlert(data, {id: node.id});
+                  deleteAlert(data, {
+                    id: node.id,
+                  });
                 }}
               >
                 <CancelIcon />

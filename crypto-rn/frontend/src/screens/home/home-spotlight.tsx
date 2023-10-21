@@ -1,8 +1,8 @@
 import styled from '@emotion/native';
 import React, {
+  memo,
   Suspense,
   unstable_SuspenseList as SuspenseList,
-  memo,
 } from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';

@@ -18,7 +18,9 @@ module.exports = {
         plugins: [
           [
             'babel-plugin-relay',
-            {artifactDirectory: path.resolve('generated')},
+            {
+              artifactDirectory: path.resolve('generated'),
+            },
           ],
         ],
       },

@@ -35,7 +35,9 @@ export default memo(function DashboardTicker({fragmentRef}) {
             }
           }
         `,
-        variables: {symbols: assets?.map(({symbol}) => symbol) ?? []},
+        variables: {
+          symbols: assets?.map(({symbol}) => symbol) ?? [],
+        },
       }),
       [assets],
     ),

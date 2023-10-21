@@ -26,7 +26,9 @@ export const SortButton = ({options, disabled, active, onChange}) => {
         id="sort-menu"
         anchorEl={anchorRef.current}
         open={open}
-        MenuListProps={{'aria-labelledby': 'sort-button'}}
+        MenuListProps={{
+          'aria-labelledby': 'sort-button',
+        }}
         onClose={toggle}
       >
         {options.map(({title}, index) => (

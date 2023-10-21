@@ -36,7 +36,12 @@ export default memo(function DashboardTickerItem({fragmentRef}) {
       <Link underline="none">
         <Stack direction="column" spacing={1} minWidth={100}>
           <Symbol value={asset.symbol} color={asset.color} size="tiny" />
-          <Price value={price.lastPrice} options={{currency: price.currency}} />
+          <Price
+            value={price.lastPrice}
+            options={{
+              currency: price.currency,
+            }}
+          />
           <Change value={price.change24Hour} size="tiny" />
         </Stack>
       </Link>

@@ -1,5 +1,4 @@
-import {memo} from 'react';
-import {useState} from 'react';
+import {memo, useState} from 'react';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
 import SettingsCredentials from './SettingsCredentials';

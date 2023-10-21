@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=16.14.0"
   },
-  "packageManager": "yarn@3.6.4",
+  "packageManager": "yarn@4.0.0-rc.53",
   "browserslist": {
     "production": [
       ">0.5%",
@@ -41,6 +41,6 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "prettify": "prettier . --write --ignore-unknown"
+    "prettify": "prettier . --write --ignore-unknown --ignore-path=.prettierignore"
   }
 }

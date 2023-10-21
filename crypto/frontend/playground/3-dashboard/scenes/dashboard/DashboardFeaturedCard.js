@@ -44,7 +44,9 @@ export default memo(function DashboardFeaturedCard({fragmentRef}) {
               <Symbol value={asset.symbol} color={asset.color} />
               <Price
                 value={price.lastPrice}
-                options={{currency: price.currency}}
+                options={{
+                  currency: price.currency,
+                }}
               />
               <Change value={price.change24Hour} />
             </Stack>

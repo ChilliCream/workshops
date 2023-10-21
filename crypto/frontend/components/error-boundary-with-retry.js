@@ -92,10 +92,18 @@ export const ErrorBoundaryWithRetry = ({children}) => {
         <ErrorBoundary
           key={token3}
           fallback={({error}) => (
-            <Fallback {...{error, dismiss: toggle, retry}} />
+            <Fallback
+              {...{
+                error,
+                dismiss: toggle,
+                retry,
+              }}
+            />
           )}
         >
-          {children({cacheBuster: `${token1}|${token2}|${token3}`})}
+          {children({
+            cacheBuster: `${token1}|${token2}|${token3}`,
+          })}
         </ErrorBoundary>
       )}
       <Commands {...{active, toggle, refetch, rerender}} />

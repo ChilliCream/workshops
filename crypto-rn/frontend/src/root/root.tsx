@@ -1,7 +1,7 @@
 import {
+  createNativeStackNavigator,
   NativeStackNavigationProp,
   NativeStackScreenProps,
-  createNativeStackNavigator,
 } from '@react-navigation/native-stack';
 import React, {Suspense} from 'react';
 import {Text} from 'react-native';

@@ -14,12 +14,12 @@ import {
   useSubscription,
 } from 'react-relay';
 
+import type {viewerSnapshotFragment_asset$key} from '@/__generated__/viewerSnapshotFragment_asset.graphql';
+import type {viewerSnapshotFragment_price$key} from '@/__generated__/viewerSnapshotFragment_price.graphql';
 import type {
   ChangeSpan,
   ViewerSnapshotRefetchableQuery,
 } from '@/__generated__/ViewerSnapshotRefetchableQuery.graphql';
-import type {viewerSnapshotFragment_asset$key} from '@/__generated__/viewerSnapshotFragment_asset.graphql';
-import type {viewerSnapshotFragment_price$key} from '@/__generated__/viewerSnapshotFragment_price.graphql';
 import {BigChart, Typography} from '@/components';
 import {SpanSelector} from '@/components/core/span-selector';
 import {formatPercent} from '@/utils';

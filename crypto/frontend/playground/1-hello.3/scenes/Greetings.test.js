@@ -2,9 +2,9 @@ import {act, render, waitFor} from '@testing-library/react';
 import {Component, Suspense} from 'react';
 import {RelayEnvironmentProvider} from 'react-relay';
 import {
+  createMockEnvironment,
   MockPayloadGenerator,
   RelayMockEnvironment,
-  createMockEnvironment,
 } from 'relay-test-utils';
 
 import {Greetings} from './Greetings';

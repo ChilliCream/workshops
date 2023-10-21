@@ -93,7 +93,9 @@ export default memo(function NotificationsList({fragmentRef}) {
   const [markNotifications] = useMarkNotificationsRead();
 
   const handleRead = () => {
-    markNotifications({ids: notifications.map(({node}) => node.id)});
+    markNotifications({
+      ids: notifications.map(({node}) => node.id),
+    });
   };
 
   return (
@@ -106,7 +108,9 @@ export default memo(function NotificationsList({fragmentRef}) {
                 variant="text"
                 size="small"
                 endIcon={<ReadIcon />}
-                sx={{marginRight: 2}}
+                sx={{
+                  marginRight: 2,
+                }}
                 onClick={handleRead}
               >
                 read all
@@ -119,7 +123,9 @@ export default memo(function NotificationsList({fragmentRef}) {
               <ListSubheader
                 disableGutters
                 disableSticky
-                sx={{textAlign: 'center'}}
+                sx={{
+                  textAlign: 'center',
+                }}
               >
                 <LoadMoreButton busy={isLoadingNext} onClick={loadNext} />
               </ListSubheader>

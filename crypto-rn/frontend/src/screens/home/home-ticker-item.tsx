@@ -2,8 +2,7 @@ import styled from '@emotion/native';
 import {Link} from '@react-navigation/native';
 import React, {memo} from 'react';
 import {View} from 'react-native';
-import {graphql, useFragment} from 'react-relay';
-import type {FragmentRef} from 'react-relay';
+import {graphql, useFragment, type FragmentRef} from 'react-relay';
 
 import type {homeTickerItemFragment_asset$key} from '@/__generated__/homeTickerItemFragment_asset.graphql';
 import {Change, Price, Symbol} from '@/components';
