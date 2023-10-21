@@ -32,7 +32,8 @@ const FeatureList = [
     ),
     description: (
       <>
-        Microsoft's Maui and Strawberry Shake allow for building rich data-driven mobile applications that run everywhere.
+        Microsoft's Maui and Strawberry Shake allow for building rich
+        data-driven mobile applications that run everywhere.
       </>
     ),
   },

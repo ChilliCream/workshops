@@ -9,45 +9,45 @@ Let's first see how **StrawberryShake** automatically generates C# code based on
 1. In **Visual Studio**, open **Services/GraphQL/Operations/GetAssestsQuery.graphql**
 2. Here's a breakdown of how **Strawberry Shake** turns this GraphQL query into C# code:
 
-    | GetAssestsQuery.graphql | Strawberry Shake |
-    | ----------------------  | ---------------- |
-    | `query GetAssestsQuery($after: String)`| Generates a Method, `GetAssestsQuery.ExecuteAsync(string? after, CancellationToken token)` |
-    | `assets` | Generates an interface, `interface IGetAssestsQuery_Assets` |
-    | `nodes` | Generates an interface, `interface IGetAssestsQuery_Assets_Nodes` |
-    | `price` | Generates an interface, `interface IGetAssestsQuery_Assets_Nodes_Price` |
-    | `pageInfo` | Generates an interface, `interface IGetAssestsQuery_Assets_PageInfo` |
+   | GetAssestsQuery.graphql                 | Strawberry Shake                                                                           |
+   | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+   | `query GetAssestsQuery($after: String)` | Generates a Method, `GetAssestsQuery.ExecuteAsync(string? after, CancellationToken token)` |
+   | `assets`                                | Generates an interface, `interface IGetAssestsQuery_Assets`                                |
+   | `nodes`                                 | Generates an interface, `interface IGetAssestsQuery_Assets_Nodes`                          |
+   | `price`                                 | Generates an interface, `interface IGetAssestsQuery_Assets_Nodes_Price`                    |
+   | `pageInfo`                              | Generates an interface, `interface IGetAssestsQuery_Assets_PageInfo`                       |
 
 ## 2. Add GetAssestsQuery Logic
 
 1. In **Visual Studio**, open **Services/GraphQL/CryptoGraphQLService.cs**
 2. In **CryptoGraphQLService**, update the `GetAssestsQuery` method with the following code:
 
-    ```cs
-	public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes?> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
-	{
-		string? endCursor = null;
-		IGetAssestsQueryResult? queryResult;
+   ```cs
+   public async IAsyncEnumerable<IGetAssestsQuery_Assets_Nodes?> GetAssestsQuery([EnumeratorCancellation] CancellationToken token)
+   {
+   	string? endCursor = null;
+   	IGetAssestsQueryResult? queryResult;
 
-		do
-		{
-			var result = await _cryptoClient.GetAssestsQuery.ExecuteAsync(endCursor, token).ConfigureAwait(false); // Executes the GetAssestsQuery
-			result.EnsureNoErrors(); // Throws a GraphQLClientException if the GraphQL Server returns an error
+   	do
+   	{
+   		var result = await _cryptoClient.GetAssestsQuery.ExecuteAsync(endCursor, token).ConfigureAwait(false); // Executes the GetAssestsQuery
+   		result.EnsureNoErrors(); // Throws a GraphQLClientException if the GraphQL Server returns an error
 
-			queryResult = result.Data;
+   		queryResult = result.Data;
 
-			if (queryResult?.Assets?.Nodes is not null)
-			{
-				foreach (var node in queryResult.Assets.Nodes)
-				{
-					yield return node;
-				}
-			}
+   		if (queryResult?.Assets?.Nodes is not null)
+   		{
+   			foreach (var node in queryResult.Assets.Nodes)
+   			{
+   				yield return node;
+   			}
+   		}
 
-			endCursor = queryResult?.Assets?.PageInfo?.EndCursor; // Upates the endCursor (used for pagination)
+   		endCursor = queryResult?.Assets?.PageInfo?.EndCursor; // Upates the endCursor (used for pagination)
 
-		} while (queryResult?.Assets?.PageInfo?.HasNextPage is true); // Continues pagination until HasNextPage is false
-	}
-    ```
+   	} while (queryResult?.Assets?.PageInfo?.HasNextPage is true); // Continues pagination until HasNextPage is false
+   }
+   ```
 
 ## 3. Run the App + Verify Data
 

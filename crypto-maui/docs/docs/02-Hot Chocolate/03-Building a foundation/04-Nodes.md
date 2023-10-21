@@ -6,7 +6,7 @@ Further, we want to introduce a concept for refetching data from any node in our
 
 ## Fetch single Asset
 
-Let's first start with fetching a single node, in this case we want to be able to fetch the `Asset`  by it's `id`. Fetching something by it's key can be efficiently done by a **DataLoader** as we learned in the previous chapter.
+Let's first start with fetching a single node, in this case we want to be able to fetch the `Asset` by it's `id`. Fetching something by it's key can be efficiently done by a **DataLoader** as we learned in the previous chapter.
 
 We also outlined that it's great to colocate the **DataLoader** code with the GraphQL type it is concerning.
 
