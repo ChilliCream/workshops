@@ -110,7 +110,9 @@ export default memo(function WatchlistListItem({fragmentRef, extended}) {
         {price && (
           <Price
             value={price.lastPrice}
-            options={{currency: price.currency}}
+            options={{
+              currency: price.currency,
+            }}
             size="small"
           />
         )}
@@ -123,7 +125,9 @@ export default memo(function WatchlistListItem({fragmentRef, extended}) {
           {price && (
             <MarketCap
               value={price.marketCap}
-              options={{currency: price.currency}}
+              options={{
+                currency: price.currency,
+              }}
               size="small"
             />
           )}

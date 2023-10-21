@@ -3,8 +3,7 @@ import {memo} from 'react';
 
 import {direction, formatPercent} from '@/utils';
 
-import {Typography} from '../core';
-import type {TypographyVariant} from '../core';
+import {Typography, type TypographyVariant} from '../core';
 
 export interface ChangeProps {
   value: number;

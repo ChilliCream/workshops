@@ -60,7 +60,10 @@ export default memo(function SettingsLinks({active, onChange}) {
           </Stack>
         </AccordionDetails>
         <AccordionActions
-          sx={{flexDirection: 'row-reverse', justifyContent: 'flex-start'}}
+          sx={{
+            flexDirection: 'row-reverse',
+            justifyContent: 'flex-start',
+          }}
         >
           <Button type="submit" color="primary">
             Save

@@ -1,6 +1,5 @@
 import React from 'react';
-import Svg, {G, Path} from 'react-native-svg';
-import type {SvgProps} from 'react-native-svg';
+import Svg, {G, Path, type SvgProps} from 'react-native-svg';
 
 export const BullishIcon: React.FC<SvgProps> = (props) => (
   <Svg viewBox="0 0 48 48" {...props}>

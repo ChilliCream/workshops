@@ -11,5 +11,8 @@ module.exports = {
   bracketSpacing: false,
   bracketSameLine: false,
   arrowParens: 'always',
-  plugins: [require.resolve('@proactive/prettier-plugin-sort-imports')],
+  plugins: [require.resolve('@ianvs/prettier-plugin-sort-imports')],
+  importOrder: ['', '', '^@/(.*)$', '', '^[./]'],
+  importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy'],
+  importOrderTypeScriptVersion: '5.0.0',
 };

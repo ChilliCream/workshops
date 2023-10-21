@@ -45,9 +45,10 @@ export const formatCurrency = (value, options = {}, locales = 'en') =>
  *                                                     ]
  */
 export const formatCurrencyToParts = (value, options = {}, locales = 'en') =>
-  Intl.NumberFormat(locales, {style: 'currency', ...options}).formatToParts(
-    value,
-  );
+  Intl.NumberFormat(locales, {
+    style: 'currency',
+    ...options,
+  }).formatToParts(value);
 
 /**
  * Used for monetary values, it returns a formatted string using compact notation according to the locale and currency formatting options.

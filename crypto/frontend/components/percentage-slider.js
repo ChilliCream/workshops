@@ -50,8 +50,12 @@ export const PercentageSlider = (props) => {
       }}
       sx={[
         (theme) => ({
-          '.MuiSlider-thumb': {color: theme.palette.trend[trend]},
-          '.MuiSlider-valueLabel': {textAlign: 'center'},
+          '.MuiSlider-thumb': {
+            color: theme.palette.trend[trend],
+          },
+          '.MuiSlider-valueLabel': {
+            textAlign: 'center',
+          },
         }),
         props.sx,
       ]}

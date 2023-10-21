@@ -28,11 +28,11 @@ tmp/
 .next/
 
 # demo
-/client
-/generated
-/pages
-/scenes
-/schema
+client/
+generated/
+pages/
+scenes/
+schema/
 
 # misc
 .DS_Store

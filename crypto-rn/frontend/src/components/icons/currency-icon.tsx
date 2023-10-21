@@ -1,6 +1,5 @@
 import React from 'react';
-import Svg, {Path} from 'react-native-svg';
-import type {SvgProps} from 'react-native-svg';
+import Svg, {Path, type SvgProps} from 'react-native-svg';
 
 export const CurrencyIcon: React.FC<SvgProps> = (props) => (
   <Svg viewBox="0 0 32 32" {...props}>

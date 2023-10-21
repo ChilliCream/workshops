@@ -1,8 +1,7 @@
 import styled from '@emotion/native';
 import {useTheme} from '@emotion/react';
 import {memo} from 'react';
-import {View} from 'react-native';
-import type {ImageSourcePropType} from 'react-native';
+import {View, type ImageSourcePropType} from 'react-native';
 
 import {Typography} from '../core';
 import {CryptoIcon} from '../icons';

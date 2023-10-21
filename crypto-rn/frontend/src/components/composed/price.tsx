@@ -2,8 +2,7 @@ import {memo} from 'react';
 
 import {formatCurrency} from '@/utils';
 
-import {Typography} from '../core';
-import type {TypographyVariant} from '../core';
+import {Typography, type TypographyVariant} from '../core';
 
 export interface PriceProps {
   value: number;

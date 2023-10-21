@@ -104,7 +104,9 @@ export default memo(function NotificationsListItem({fragmentRef}) {
           edge="end"
           checked={true}
           checkedIcon={<UnreadIcon fontSize="inherit" />}
-          inputProps={{'aria-labelledby': labelId}}
+          inputProps={{
+            'aria-labelledby': labelId,
+          }}
           onChange={handleRead}
         />
       }

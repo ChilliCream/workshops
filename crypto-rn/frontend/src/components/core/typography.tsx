@@ -1,8 +1,7 @@
 import styled from '@emotion/native';
 import {useTheme} from '@emotion/react';
 import React, {memo} from 'react';
-import {Text} from 'react-native';
-import type {TextProps} from 'react-native';
+import {Text, type TextProps} from 'react-native';
 
 import type {DefaultTheme} from '@/themes';
 

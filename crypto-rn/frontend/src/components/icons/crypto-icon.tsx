@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {Avatar} from '../core';
-import type {AvatarProps} from '../core';
+import {Avatar, type AvatarProps} from '../core';
 import {CurrencyIcon} from './currency-icon';
 
 type CryptoIconProps = AvatarProps;

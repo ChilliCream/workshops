@@ -11,7 +11,7 @@ import {initEnvironment} from '@/config/relay';
 
 import {ErrorBoundary, Root} from './root';
 import {defaultTheme} from './themes';
-import {I18nextProvider, i18n} from './translations';
+import {i18n, I18nextProvider} from './translations';
 
 const relayEnv = initEnvironment(undefined);
 

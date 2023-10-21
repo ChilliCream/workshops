@@ -1,6 +1,6 @@
 import {Checkbox} from '@mui/material';
 
-import {WatchIcon, WatchedIcon} from '@/icons';
+import {WatchedIcon, WatchIcon} from '@/icons';
 
 export const WatchCheckbox = (props) => (
   <Checkbox

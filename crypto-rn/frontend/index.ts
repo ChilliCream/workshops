@@ -1,9 +1,14 @@
 import '@azure/core-asynciterator-polyfill';
+
 import {Buffer} from '@craftzdog/react-native-buffer';
+
 import 'fastestsmallesttextencoderdecoder';
+
 import {AppRegistry} from 'react-native';
-import {Headers, Request, Response, fetch} from 'react-native-fetch-api';
+import {fetch, Headers, Request, Response} from 'react-native-fetch-api';
+
 import 'react-native-gesture-handler';
+
 import {polyfillGlobal} from 'react-native/Libraries/Utilities/PolyfillFunctions';
 import {
   ReadableStream,

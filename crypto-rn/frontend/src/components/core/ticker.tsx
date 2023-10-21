@@ -1,7 +1,6 @@
 import styled from '@emotion/native';
 import React, {memo} from 'react';
-import {FlatList, View} from 'react-native';
-import type {FlatListProps} from 'react-native';
+import {FlatList, View, type FlatListProps} from 'react-native';
 
 type TickerProps<T> = FlatListProps<T> &
   ('renderItem' | 'data' | 'keyExtractor');

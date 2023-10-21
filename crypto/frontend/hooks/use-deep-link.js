@@ -18,7 +18,9 @@ export const useDeepLink = (key) => {
       delete q[key];
     }
 
-    router.replace({pathname, query: q}, undefined, {shallow: true});
+    router.replace({pathname, query: q}, undefined, {
+      shallow: true,
+    });
 
     router.changeState;
   };

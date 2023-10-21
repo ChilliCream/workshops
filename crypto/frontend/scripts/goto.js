@@ -114,7 +114,10 @@ const run = async () => {
         const to = path.join(target, item.name);
 
         await fs.rm(to, {recursive: true, force: true});
-        await fs.cp(from, to, {recursive: true, force: true});
+        await fs.cp(from, to, {
+          recursive: true,
+          force: true,
+        });
       }
     }
 

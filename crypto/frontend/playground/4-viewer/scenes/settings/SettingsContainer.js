@@ -1,5 +1,4 @@
-import {memo} from 'react';
-import {useState} from 'react';
+import {memo, useState} from 'react';
 
 import SettingsCredentials from './SettingsCredentials';
 import SettingsLinks from './SettingsLinks';

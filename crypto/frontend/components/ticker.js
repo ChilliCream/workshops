@@ -1,6 +1,6 @@
 import {keyframes} from '@emotion/css';
 import styled from '@emotion/styled';
-import {Divider, Stack, alpha} from '@mui/material';
+import {alpha, Divider, Stack} from '@mui/material';
 
 import {useToggle} from '@/hooks';
 

@@ -16,8 +16,8 @@ import {
 } from 'react-native-gesture-handler';
 import {graphql, usePaginationFragment} from 'react-relay';
 
-import type {ScreenerListRefetchableQuery} from '@/__generated__/ScreenerListRefetchableQuery.graphql';
 import type {screenerListFragment_query$key} from '@/__generated__/screenerListFragment_query.graphql';
+import type {ScreenerListRefetchableQuery} from '@/__generated__/ScreenerListRefetchableQuery.graphql';
 import {OrderIcon, SearchIcon, Typography} from '@/components';
 
 import {ScreenerListItem} from './screener-list-item';

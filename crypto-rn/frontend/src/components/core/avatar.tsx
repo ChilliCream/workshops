@@ -1,7 +1,6 @@
 import styled from '@emotion/native';
 import React from 'react';
-import {Image, View} from 'react-native';
-import type {ImageProps} from 'react-native';
+import {Image, View, type ImageProps} from 'react-native';
 
 export type AvatarSize = 'small' | 'medium' | 'large';
 
