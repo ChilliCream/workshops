@@ -4,10 +4,10 @@
   "engines": {
     "node": ">=16.1.0"
   },
+  "packageManager": "yarn@3.6.4",
   "workspaces": [
     ".proactive/*"
   ],
-  "packageManager": "yarn@3.6.2",
   "dependencies": {
     "@emotion/cache": "latest",
     "@emotion/css": "latest",

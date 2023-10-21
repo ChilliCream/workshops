@@ -43,7 +43,9 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 1px 0 0 0 #4a4c50, 0 0 0 100vw #292a2d;
+  box-shadow:
+    1px 0 0 0 #4a4c50,
+    0 0 0 100vw #292a2d;
 `;
 
 const Menubar = styled(Stack)(

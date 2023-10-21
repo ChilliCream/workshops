@@ -1,12 +1,16 @@
-# dependencies
-node_modules/
-.pnp.*
+# yarn
 .yarn/*
+!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
 
 # testing
 reports/
@@ -33,6 +37,7 @@ tmp/
 # misc
 .DS_Store
 .env.local
+.env.*.local
 
 # logs
 *.log*
