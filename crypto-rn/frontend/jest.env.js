@@ -1,10 +1,9 @@
-//#region 1: Extend Jest matchers for RN
-
-import '@testing-library/jest-native/extend-expect';
-
 /* eslint-disable */
 
-('use strict');
+'use strict';
+
+//#region 1: Extend Jest matchers for RN
+import '@testing-library/jest-native/extend-expect';
 
 //#endregion
 

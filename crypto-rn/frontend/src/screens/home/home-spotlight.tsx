@@ -1,16 +1,16 @@
 import styled from '@emotion/native';
 import React, {
   memo,
-  Suspense,
+  Suspense, //@ts-ignore
   unstable_SuspenseList as SuspenseList,
 } from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {homeSpotlightFragment_query$key} from '@/__generated__/homeSpotlightFragment_query.graphql';
-import type {homeSpotlightGainersFragment_query$key} from '@/__generated__/homeSpotlightGainersFragment_query.graphql';
-import type {homeSpotlightLosersFragment_query$key} from '@/__generated__/homeSpotlightLosersFragment_query.graphql';
 import {BearishIcon, BullishIcon} from '@/components';
+import type {homeSpotlightFragment_query$key} from '@/generated/homeSpotlightFragment_query.graphql';
+import type {homeSpotlightGainersFragment_query$key} from '@/generated/homeSpotlightGainersFragment_query.graphql';
+import type {homeSpotlightLosersFragment_query$key} from '@/generated/homeSpotlightLosersFragment_query.graphql';
 
 import {HomeSpotlightCard} from './home-spotlight-card';
 

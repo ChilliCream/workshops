@@ -23,7 +23,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@env": ["react-native-dotenv"]
     }
   },
   "include": ["src/**/*", "jest.setup.js"]

@@ -6,7 +6,7 @@ import {graphql, useFragment, useSubscription} from 'react-relay';
 import type {
   homeTickerFragment_query$data,
   homeTickerFragment_query$key,
-} from '@/__generated__/homeTickerFragment_query.graphql';
+} from '@/generated/homeTickerFragment_query.graphql';
 
 import {HOME_TICKER_ITEM_WIDTH, HomeTickerItem} from './home-ticker-item';
 

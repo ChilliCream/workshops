@@ -1,38 +1,35 @@
 import {ThemeProvider} from '@emotion/react';
 import {NavigationContainer} from '@react-navigation/native';
-import React, {Suspense, useEffect} from 'react';
-import {Text} from 'react-native';
+import React, {Suspense} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
 import {RelayEnvironmentProvider} from 'react-relay';
 
-import {initEnvironment} from '@/config/relay';
+import {initEnvironment} from '@/client';
 
-import {ErrorBoundary, Root} from './root';
+import {ErrorBoundary, Spinner} from './components';
+import {Root} from './root';
 import {defaultTheme} from './themes';
-import {i18n, I18nextProvider} from './translations';
 
 const relayEnv = initEnvironment(undefined);
 
 export const App: React.FC<any> = () => {
-  useEffect(() => {
+  const handleReady = () => {
     SplashScreen.hide();
-  }, []);
+  };
 
   return (
     <ErrorBoundary>
       <GestureHandlerRootView style={{flex: 1}}>
         <SafeAreaProvider>
           <RelayEnvironmentProvider environment={relayEnv}>
-            <Suspense fallback={<Text>Loading ...</Text>}>
-              <I18nextProvider i18n={i18n}>
-                <ThemeProvider theme={defaultTheme}>
-                  <NavigationContainer>
-                    <Root />
-                  </NavigationContainer>
-                </ThemeProvider>
-              </I18nextProvider>
+            <Suspense fallback={<Spinner />}>
+              <ThemeProvider theme={defaultTheme}>
+                <NavigationContainer onReady={handleReady}>
+                  <Root />
+                </NavigationContainer>
+              </ThemeProvider>
             </Suspense>
           </RelayEnvironmentProvider>
         </SafeAreaProvider>

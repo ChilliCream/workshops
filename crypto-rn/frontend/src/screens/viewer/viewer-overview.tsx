@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {viewerOverviewFragment_asset$key} from '@/__generated__/viewerOverviewFragment_asset.graphql';
 import {Typography} from '@/components';
+import type {viewerOverviewFragment_asset$key} from '@/generated/viewerOverviewFragment_asset.graphql';
 
 type ViewerOverviewDataProp = viewerOverviewFragment_asset$key;
 

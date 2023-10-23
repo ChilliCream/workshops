@@ -4,8 +4,8 @@ import React, {memo} from 'react';
 import {Pressable, View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {screenerListItemFragment_asset$key} from '@/__generated__/screenerListItemFragment_asset.graphql';
 import {Change, Currency, Price} from '@/components';
+import type {screenerListItemFragment_asset$key} from '@/generated/screenerListItemFragment_asset.graphql';
 import {StackNavigationProps} from '@/root';
 
 type ScreenerListItemDataProp = screenerListItemFragment_asset$key;
@@ -64,10 +64,12 @@ export const ScreenerListItem = memo<ScreenerListItemProps>(
 
     const {price} = asset;
 
-    // const {onPress} = useLinkProps({to: {screen: 'Viewer', params: {symbol: asset.symbol}}});
+    const handlePress = () => {
+      navigate('Viewer', {symbol: asset.symbol});
+    };
 
     return (
-      <Root onPress={() => navigate('Viewer', {symbol: asset.symbol})}>
+      <Root onPress={handlePress}>
         <Stack>
           <$Currency
             symbol={asset.symbol}

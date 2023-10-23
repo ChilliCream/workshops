@@ -3,7 +3,7 @@ import {useTheme} from '@emotion/react';
 import React, {memo, useCallback, useEffect, useState} from 'react';
 import {Pressable, View} from 'react-native';
 
-import type {ChangeSpan} from '@/__generated__/ViewerSnapshotRefetchableQuery.graphql';
+import type {ChangeSpan} from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
 
 import {Typography} from './typography';
 

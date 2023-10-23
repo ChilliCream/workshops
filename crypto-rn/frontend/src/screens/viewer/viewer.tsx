@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {ScrollView} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
-import type {viewerQuery} from '@/__generated__/viewerQuery.graphql';
 import {Header, Typography} from '@/components';
+import type {viewerQuery} from '@/generated/viewerQuery.graphql';
 import type {StackScreenProps} from '@/root';
 
 import {ViewerHeader} from './viewer-header';
@@ -14,15 +14,17 @@ import {ViewerStats} from './viewer-stats';
 
 type ViewerDataProp = viewerQuery;
 
+export interface ViewerProps {
+  route: StackScreenProps<'Viewer'>['route'];
+}
+
 const Root = styled(ScrollView)`
   flex: 1;
   padding: 12px;
   background-color: ${({theme}) => theme.pallete.background.primary};
 `;
 
-export const Viewer = memo<StackScreenProps<'Viewer'>>(function Viewer({
-  route,
-}) {
+export const Viewer = memo<ViewerProps>(function Viewer({route}) {
   const {
     params: {symbol},
   } = route;
@@ -35,7 +37,6 @@ export const Viewer = memo<StackScreenProps<'Viewer'>>(function Viewer({
           ...viewerSnapshotFragment_asset
           ...viewerStatsFragment_asset
           ...viewerOverviewFragment_asset
-          # ...ViewerResourcesFragment_asset
         }
       }
     `,

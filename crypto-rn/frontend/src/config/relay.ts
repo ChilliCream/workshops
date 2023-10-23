@@ -34,6 +34,7 @@ class NetworkError extends Error {
     this.name = 'NetworkError';
 
     if (options) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {cause, ...meta} = options;
 
       Object.assign(this, meta);
@@ -228,6 +229,7 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
  * With `graphql-sse`.
  * @see https://github.com/enisdenjo/graphql-sse
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const subscribeFnWithSSE = (operation, variables) => {
   const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
   const authToken = undefined;

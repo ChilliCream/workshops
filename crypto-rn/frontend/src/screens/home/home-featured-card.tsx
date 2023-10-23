@@ -4,8 +4,8 @@ import React, {memo} from 'react';
 import {Dimensions, View} from 'react-native';
 import {FragmentRef, graphql, useFragment} from 'react-relay';
 
-import type {homeFeaturedCardFragment_asset$key} from '@/__generated__/homeFeaturedCardFragment_asset.graphql';
 import {Change, Price, SmallChart, Symbol} from '@/components';
+import type {homeFeaturedCardFragment_asset$key} from '@/generated/homeFeaturedCardFragment_asset.graphql';
 
 const WIDTH = Dimensions.get('screen').width;
 

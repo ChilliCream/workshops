@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {viewerStatsFragment_asset$key} from '@/__generated__/viewerStatsFragment_asset.graphql';
 import {Typography} from '@/components';
+import type {viewerStatsFragment_asset$key} from '@/generated/viewerStatsFragment_asset.graphql';
 import {formatDecimalUnitUsingCompactNotation} from '@/utils';
 
 type ViewerStatsDataProp = viewerStatsFragment_asset$key;
@@ -74,14 +74,7 @@ export const ViewerStats = memo<ViewerStatsProps>(function ViewerStats({
           <Typography variant="body">Market cap</Typography>
           <ValueBox>
             <$Typography variant="body" alignText="right">
-              {/* {JSON.stringify(asset.price)} */}
-              {/* {formatCurrency(asset.price.marketCap, {
-                currency: asset.price.currency,
-              })} */}
               {formatDecimalUnitUsingCompactNotation(asset.price.marketCap)}
-              {/* {formatCurrencyUsingCompactNotation(asset.price.marketCap, {
-                currency: asset.price.currency,
-              })} */}
             </$Typography>
           </ValueBox>
         </Stack>
@@ -92,9 +85,6 @@ export const ViewerStats = memo<ViewerStatsProps>(function ViewerStats({
           </Box>
           <ValueBox>
             <$Typography variant="body" alignText="right">
-              {/* {formatCurrencyUsingCompactNotation(asset.price.volume24Hour, {
-                currency: asset.price.currency,
-              })} */}
               {formatDecimalUnitUsingCompactNotation(asset.price.volume24Hour)}
             </$Typography>
           </ValueBox>

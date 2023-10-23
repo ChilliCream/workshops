@@ -4,9 +4,9 @@ import React from 'react';
 import {Pressable, View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import {homeSpotlightItemFragment_asset$key} from '@/__generated__/homeSpotlightItemFragment_asset.graphql';
 import {Change, Currency, Price} from '@/components';
-import {type StackNavigationProps} from '@/root';
+import type {homeSpotlightItemFragment_asset$key} from '@/generated/homeSpotlightItemFragment_asset.graphql';
+import type {StackNavigationProps} from '@/root';
 
 export type HomeSpotlightItemView = 'price' | 'change';
 type HomeSpotlightItemDataProp = homeSpotlightItemFragment_asset$key;

@@ -14,17 +14,15 @@ import {
   useSubscription,
 } from 'react-relay';
 
-import type {viewerSnapshotFragment_asset$key} from '@/__generated__/viewerSnapshotFragment_asset.graphql';
-import type {viewerSnapshotFragment_price$key} from '@/__generated__/viewerSnapshotFragment_price.graphql';
+import {BigChart, Typography} from '@/components';
+import {SpanSelector} from '@/components/core/span-selector';
+import type {viewerSnapshotFragment_asset$key} from '@/generated/viewerSnapshotFragment_asset.graphql';
+import type {viewerSnapshotFragment_price$key} from '@/generated/viewerSnapshotFragment_price.graphql';
 import type {
   ChangeSpan,
   ViewerSnapshotRefetchableQuery,
-} from '@/__generated__/ViewerSnapshotRefetchableQuery.graphql';
-import {BigChart, Typography} from '@/components';
-import {SpanSelector} from '@/components/core/span-selector';
+} from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
 import {formatPercent} from '@/utils';
-
-// import {formatCurrencyToParts} from '@/utils';
 
 type ViewerSnapshotAssetDataProp = viewerSnapshotFragment_asset$key;
 type ViewerSnapshotPriceDataProp = viewerSnapshotFragment_price$key;
@@ -128,15 +126,6 @@ export const ViewerSnapshot = memo<ViewerSnapshotProps>(
     return (
       <Root>
         <Stack layout="row">
-          {/* {formatCurrencyToParts(price.lastPrice, {
-            currency: price.currency,
-          }).map((item, index) =>
-            item.type === 'currency' ? (
-              <Typography key={`${item.value}:${index}`} variant="subtitle">
-                {item.value}
-              </Typography>
-            ) : null,
-          )} */}
           <Typography variant="subtitle">$</Typography>
           <Typography variant="title">{price.lastPrice}</Typography>
           <Typography variant="caption">

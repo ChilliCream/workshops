@@ -3,9 +3,8 @@ import React from 'react';
 import {Dimensions, ScrollView, View} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
-import type {homeQuery} from '@/__generated__/homeQuery.graphql';
 import {Header} from '@/components';
-import type {StackScreenProps} from '@/root';
+import type {homeQuery} from '@/generated/homeQuery.graphql';
 
 import {HomeFeatured} from './home-featured';
 import {HomeSpotlight} from './home-spotlight';
@@ -31,7 +30,7 @@ const Divider = styled(View)`
   background-color: ${({theme}) => theme.pallete.border.primary};
 `;
 
-export const Home: React.FC<StackScreenProps<'Home'>> = () => {
+export const Home: React.FC = () => {
   const data = useLazyLoadQuery<homeQuery>(
     graphql`
       query homeQuery {
@@ -54,7 +53,6 @@ export const Home: React.FC<StackScreenProps<'Home'>> = () => {
         <Divider />
         <HomeFeatured fragmentRef={data} />
         <Divider />
-        {/* TODO: Check React SuspenseList, why is crashing... */}
         <HomeSpotlight fragmentRef={data} />
       </Stack>
     </Root>
