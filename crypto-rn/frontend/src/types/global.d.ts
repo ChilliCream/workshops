@@ -1,4 +1,5 @@
 /// <reference types="react/experimental" />
+
 import type {RootStack} from '@/root';
 
 declare module '*.svg' {
