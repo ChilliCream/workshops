@@ -1,5 +1,6 @@
 import styled from '@emotion/native';
 import React, {
+  memo,
   Suspense, //@ts-ignore
   unstable_SuspenseList as SuspenseList,
 } from 'react';

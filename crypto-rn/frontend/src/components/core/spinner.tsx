@@ -1,8 +1,8 @@
 import styled from '@emotion/native';
 import React, {useEffect} from 'react';
 import Animated, {
-  Easing,
   cancelAnimation,
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,

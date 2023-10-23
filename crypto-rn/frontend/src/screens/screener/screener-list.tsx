@@ -17,8 +17,8 @@ import {
 import {graphql, usePaginationFragment} from 'react-relay';
 
 import {OrderIcon, SearchIcon, Typography} from '@/components';
-import type {ScreenerListRefetchableQuery} from '@/generated/ScreenerListRefetchableQuery.graphql';
 import type {screenerListFragment_query$key} from '@/generated/screenerListFragment_query.graphql';
+import type {ScreenerListRefetchableQuery} from '@/generated/ScreenerListRefetchableQuery.graphql';
 
 import {ScreenerListItem} from './screener-list-item';
 
