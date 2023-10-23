@@ -2,7 +2,7 @@ import styled from '@emotion/native';
 import {memo} from 'react';
 import {View} from 'react-native';
 
-import type {ChangeSpan} from '@/__generated__/ViewerSnapshotRefetchableQuery.graphql';
+import type {ChangeSpan} from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
 import {formatDateForSpan} from '@/utils';
 
 import d3 from './d3';

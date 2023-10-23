@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useLazyLoadQuery} from 'react-relay';
 
-import type {screenerQuery} from '@/__generated__/screenerQuery.graphql';
 import {Header} from '@/components';
+import type {screenerQuery} from '@/generated/screenerQuery.graphql';
 
 import {ScreenerList} from './screener-list';
 

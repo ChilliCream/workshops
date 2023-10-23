@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {viewerStatsFragment_asset$key} from '@/__generated__/viewerStatsFragment_asset.graphql';
 import {Typography} from '@/components';
+import type {viewerStatsFragment_asset$key} from '@/generated/viewerStatsFragment_asset.graphql';
 import {formatDecimalUnitUsingCompactNotation} from '@/utils';
 
 type ViewerStatsDataProp = viewerStatsFragment_asset$key;

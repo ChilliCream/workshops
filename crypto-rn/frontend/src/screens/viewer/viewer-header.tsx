@@ -3,8 +3,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {viewerHeaderFragment_asset$key} from '@/__generated__/viewerHeaderFragment_asset.graphql';
 import {Chip, CryptoIcon, Typography} from '@/components';
+import type {viewerHeaderFragment_asset$key} from '@/generated/viewerHeaderFragment_asset.graphql';
 
 type ViewerHeaderDataProp = viewerHeaderFragment_asset$key;
 

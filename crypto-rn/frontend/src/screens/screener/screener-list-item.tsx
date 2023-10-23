@@ -4,8 +4,8 @@ import React, {memo} from 'react';
 import {Pressable, View} from 'react-native';
 import {graphql, useFragment} from 'react-relay';
 
-import type {screenerListItemFragment_asset$key} from '@/__generated__/screenerListItemFragment_asset.graphql';
 import {Change, Currency, Price} from '@/components';
+import type {screenerListItemFragment_asset$key} from '@/generated/screenerListItemFragment_asset.graphql';
 import {StackNavigationProps} from '@/root';
 
 type ScreenerListItemDataProp = screenerListItemFragment_asset$key;

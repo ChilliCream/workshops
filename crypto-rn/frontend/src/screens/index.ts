@@ -1,3 +1,3 @@
-export * from './home/home';
-export * from './viewer/viewer';
-export * from './screener/screener';
+export * from './home';
+export * from './viewer';
+export * from './screener';

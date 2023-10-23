@@ -2,7 +2,7 @@
 node_modules/
 
 # generated
-__generated__/
+generated/
 __snapshots__/
 reports/
 coverage/
