@@ -2,8 +2,8 @@ import styled from '@emotion/native';
 import {memo} from 'react';
 import {Dimensions, View} from 'react-native';
 
-import type {ChangeSpan} from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
 import type {homeFeaturedCardFragment_asset$data} from '@/generated/homeFeaturedCardFragment_asset.graphql';
+import type {ChangeSpan} from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
 import {clamp} from '@/utils';
 
 import {Graph} from '../core/graph';

@@ -16,12 +16,12 @@ import {
 
 import {BigChart, Typography} from '@/components';
 import {SpanSelector} from '@/components/core/span-selector';
+import type {viewerSnapshotFragment_asset$key} from '@/generated/viewerSnapshotFragment_asset.graphql';
+import type {viewerSnapshotFragment_price$key} from '@/generated/viewerSnapshotFragment_price.graphql';
 import type {
   ChangeSpan,
   ViewerSnapshotRefetchableQuery,
 } from '@/generated/ViewerSnapshotRefetchableQuery.graphql';
-import type {viewerSnapshotFragment_asset$key} from '@/generated/viewerSnapshotFragment_asset.graphql';
-import type {viewerSnapshotFragment_price$key} from '@/generated/viewerSnapshotFragment_price.graphql';
 import {formatPercent} from '@/utils';
 
 type ViewerSnapshotAssetDataProp = viewerSnapshotFragment_asset$key;
