@@ -3,8 +3,7 @@ import {
   NativeStackNavigationProp,
   NativeStackScreenProps,
 } from '@react-navigation/native-stack';
-import React, {Suspense} from 'react';
-import {Text} from 'react-native';
+import React from 'react';
 
 import {Paths} from '@/paths';
 import {Home, Screener, Viewer} from '@/screens';
@@ -26,20 +25,17 @@ const {Navigator, Screen} = createNativeStackNavigator<RootStack>();
 export const Root: React.FC = () => {
   return (
     <Navigator initialRouteName={Paths.Home}>
-      <Screen name={Paths.Home} options={{headerShown: false}}>
-        {(props) => (
-          <Suspense fallback={<Text>Loading ...</Text>}>
-            <Home {...props} />
-          </Suspense>
-        )}
-      </Screen>
-      <Screen name={Paths.Viewer} options={{headerShown: false}}>
-        {(props) => (
-          <Suspense fallback={<Text>Loading ...</Text>}>
-            <Viewer {...props} />
-          </Suspense>
-        )}
-      </Screen>
+      <Screen
+        name={Paths.Home}
+        options={{headerShown: false}}
+        component={Home}
+      />
+      <Screen
+        name={Paths.Viewer}
+        options={{headerShown: false}}
+        component={Viewer}
+      />
+
       <Screen
         name={Paths.Screener}
         component={Screener}

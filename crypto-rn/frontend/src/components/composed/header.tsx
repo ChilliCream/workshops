@@ -1,5 +1,5 @@
 import styled from '@emotion/native';
-import {Link, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {memo} from 'react';
 import {View} from 'react-native';

@@ -4,8 +4,8 @@ import {Pressable, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {graphql, useFragment} from 'react-relay';
 
-import type {homeSpotlightCardFragment_asset$key} from '@/__generated__/homeSpotlightCardFragment_asset.graphql';
 import {SwapIcon, Typography} from '@/components';
+import type {homeSpotlightCardFragment_asset$key} from '@/generated/homeSpotlightCardFragment_asset.graphql';
 
 import {HomeSpotlightItem} from './home-spotlight-item';
 

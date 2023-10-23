@@ -1,7 +1,7 @@
 import {memo} from 'react';
 import {Dimensions} from 'react-native';
 
-import type {homeFeaturedCardFragment_asset$data} from '@/__generated__/homeFeaturedCardFragment_asset.graphql';
+import type {homeFeaturedCardFragment_asset$data} from '@/generated/homeFeaturedCardFragment_asset.graphql';
 
 import {Graph} from '../core/graph';
 

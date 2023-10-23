@@ -1,11 +1,5 @@
 //#region 1: Extend Jest matchers for RN
-
 import '@testing-library/jest-native/extend-expect';
-
-/* eslint-disable */
-
-('use strict');
-
 //#endregion
 
 //#region 2: Setup TL (React Native)

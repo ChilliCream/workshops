@@ -4,8 +4,8 @@ import React, {memo} from 'react';
 import {View} from 'react-native';
 import {graphql, useFragment, type FragmentRef} from 'react-relay';
 
-import type {homeTickerItemFragment_asset$key} from '@/__generated__/homeTickerItemFragment_asset.graphql';
 import {Change, Price, Symbol} from '@/components';
+import type {homeTickerItemFragment_asset$key} from '@/generated/homeTickerItemFragment_asset.graphql';
 
 export const HOME_TICKER_ITEM_WIDTH = 100;
 

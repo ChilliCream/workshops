@@ -1,5 +1,8 @@
 // @ts-nocheck
-
+import {
+  REACT_APP_PUBLIC_HTTP_ENDPOINT,
+  REACT_APP_PUBLIC_WS_ENDPOINT,
+} from '@env';
 import extractFiles from 'extract-files/extractFiles.mjs';
 import isExtractableFile from 'extract-files/isExtractableFile.mjs';
 import {createClient as createClientSSE} from 'graphql-sse';
@@ -33,6 +36,7 @@ class NetworkError extends Error {
     this.name = 'NetworkError';
 
     if (options) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const {cause, ...meta} = options;
 
       Object.assign(this, meta);
@@ -44,7 +48,7 @@ const nativeFetchFn = async (url, options) =>
   fetch(url, Object.assign({}, options, {reactNative: {textStreaming: true}}));
 
 const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
-  const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
+  const httpEndpoint = REACT_APP_PUBLIC_HTTP_ENDPOINT;
   const authToken = undefined;
 
   return Observable.create((sink) => {
@@ -227,8 +231,9 @@ const fetchFn = (operation, variables, _cacheConfig, _uploadables) => {
  * With `graphql-sse`.
  * @see https://github.com/enisdenjo/graphql-sse
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const subscribeFnWithSSE = (operation, variables) => {
-  const httpEndpoint = 'https://api-crypto-workshop.chillicream.com/graphql';
+  const httpEndpoint = REACT_APP_PUBLIC_HTTP_ENDPOINT;
   const authToken = undefined;
 
   const client = createClientSSE({
@@ -275,7 +280,7 @@ let wsClient;
  * @see https://github.com/enisdenjo/graphql-ws
  */
 const subscribeFnWithWS = (operation, variables) => {
-  const wsEndpoint = 'wss://api-crypto-workshop.chillicream.com/graphql';
+  const wsEndpoint = REACT_APP_PUBLIC_WS_ENDPOINT;
   const authToken = undefined;
 
   const client = (wsClient ??= createClientWS({

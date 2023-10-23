@@ -3,7 +3,7 @@ import {Dimensions} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {FragmentRef, graphql, useFragment} from 'react-relay';
 
-import type {homeFeaturedFragment_query$key} from '@/__generated__/homeFeaturedFragment_query.graphql';
+import type {homeFeaturedFragment_query$key} from '@/generated/homeFeaturedFragment_query.graphql';
 
 import {HomeFeaturedCard} from './home-featured-card';
 

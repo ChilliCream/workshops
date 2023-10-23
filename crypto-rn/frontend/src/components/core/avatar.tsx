@@ -34,7 +34,7 @@ export const Avatar: React.FC<React.PropsWithChildren<AvatarProps>> = ({
 
   return (
     <Root size={size}>
-      {src ? (
+      {source ? (
         <Image
           style={{width: getSize(size), height: getSize(size)}}
           source={source}
