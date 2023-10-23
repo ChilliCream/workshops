@@ -8,10 +8,9 @@ import {RelayEnvironmentProvider} from 'react-relay';
 
 import {initEnvironment} from '@/client';
 
-import {Spinner} from './components';
-import {ErrorBoundary, Root} from './root';
+import {ErrorBoundary, Spinner} from './components';
+import {Root} from './root';
 import {defaultTheme} from './themes';
-import {i18n, I18nextProvider} from './translations';
 
 const relayEnv = initEnvironment(undefined);
 
@@ -26,13 +25,11 @@ export const App: React.FC<any> = () => {
         <SafeAreaProvider>
           <RelayEnvironmentProvider environment={relayEnv}>
             <Suspense fallback={<Spinner />}>
-              <I18nextProvider i18n={i18n}>
-                <ThemeProvider theme={defaultTheme}>
-                  <NavigationContainer onReady={handleReady}>
-                    <Root />
-                  </NavigationContainer>
-                </ThemeProvider>
-              </I18nextProvider>
+              <ThemeProvider theme={defaultTheme}>
+                <NavigationContainer onReady={handleReady}>
+                  <Root />
+                </NavigationContainer>
+              </ThemeProvider>
             </Suspense>
           </RelayEnvironmentProvider>
         </SafeAreaProvider>

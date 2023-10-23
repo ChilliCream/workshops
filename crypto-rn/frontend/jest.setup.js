@@ -36,42 +36,11 @@ jest.mock('@react-navigation/native', () => {
 });
 //#endregion
 
-//#region 2: i18n mocks
-jest.mock('react-i18next', () => {
-  const RI18N = jest.requireActual('react-i18next');
-
-  return Object.assign({}, RI18N, {
-    useTranslation: () => {
-      return {
-        t: (str) => str,
-        i18n: {
-          changeLanguage: () => new Promise(() => {}),
-          language: 'de',
-        },
-      };
-    },
-    Trans: () => null,
-  });
-});
-jest.mock('i18next', () => {
-  const RI18N = jest.requireActual('i18next');
-
-  return Object.assign({}, RI18N, {
-    t: (str) => str,
-    use: () => {
-      return {
-        init: () => {},
-      };
-    },
-  });
-});
-//#endregion
-
-//#region 3: NativeEventEmitter mock
+//#region 2: NativeEventEmitter mock
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 //#endregion
 
-//#region 4: react-native-safe-area-context mock
+//#region 3: react-native-safe-area-context mock
 jest.mock(
   'react-native-safe-area-context',
   () => jest.requireActual('react-native-safe-area-context/jest/mock').default,
