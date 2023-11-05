@@ -4,7 +4,7 @@
   "engines": {
     "node": ">=16.1.0"
   },
-  "packageManager": "yarn@4.0.0-rc.53",
+  "packageManager": "yarn@4.0.1",
   "workspaces": [
     ".proactive/*"
   ],
@@ -29,7 +29,7 @@
     "graphql-ws": "latest",
     "lodash": "latest",
     "meros": "latest",
-    "next": "canary",
+    "next": "latest",
     "react": "experimental",
     "react-dom": "experimental",
     "react-dropzone": "latest",
