@@ -1,97 +1,75 @@
 {
-    "_query": {
-        "prefix": "_query",
+    "_UpdateUserProfileInput": {
+        "prefix": "_UpdateUserProfileInput",
         "body": [
-            "namespace Demo.Types;",
+            "namespace Demo.Types.Account;",
             "",
-            "public class Query",
+            "public record UpdateUserProfileInput(Optional<string?> DisplayName, Optional<IFile?> Image);"
+        ],
+        "description": "_UpdateUserProfileInput"
+    },
+    "_UserMutations": {
+        "prefix": "_UserMutations",
+        "body": [
+            "using Demo.Types.Errors;",
+            "",
+            "namespace Demo.Types.Account;",
+            "",
+            "[MutationType]",
+            "public static class UserMutations",
             "{",
-            "    ",
+            "",
             "}"
         ],
-        "description": "_query"
+        "description": "_UserMutations"
     },
-    "_GetAssets": {
-        "prefix": "_GetAssets",
+    "_TryStoreImage": {
+        "prefix": "_TryStoreImage",
         "body": [
-            "[UsePaging]",
-            "public IQueryable<Asset> GetAssets(AssetContext context)",
-            "    => context.Assets.OrderBy(t => t.Price!.TradableMarketCapRank);"
-        ],
-        "description": "_GetAssets"
-    },
-    "_GetAssetById": {
-        "prefix": "_GetAssetById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<Asset?> GetAssetById(",
-            "    int id,",
-            "    AssetContext context,",
+            "private static async Task<string?> TryStoreImage(",
+            "    IFile image,",
+            "    IFileStorage storage,",
             "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetById"
-    },
-    "_AssetNode": {
-        "prefix": "_AssetNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[ExtendObjectType<Asset>]",
-            "public class AssetNode",
             "{",
-            "    ",
-            "}",
-            ""
-        ],
-        "description": "_AssetNode"
-    },
-    "_GetAssetPriceById": {
-        "prefix": "_GetAssetPriceById",
-        "body": [
-            "[NodeResolver]",
-            "public static async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_GetAssetPriceById"
-    },
-    "_AssetPriceNode": {
-        "prefix": "_AssetPriceNode",
-        "body": [
-            "namespace Demo.Types;",
-            "",
-            "[Node]",
-            "[ExtendObjectType<AssetPrice>]",
-            "public class AssetPriceNode",
-            "{",
-            "    ",
+            "    await using Stream iconStream = image.OpenReadStream();",
+            "    return await storage.UploadAsync(iconStream, cancellationToken);",
             "}"
         ],
-        "description": "_AssetPriceNode"
+        "description": "_TryStoreImage"
     },
-    "_Query_GetAssetById": {
-        "prefix": "_Query_GetAssetById",
+    "_UpdateUserProfile": {
+        "prefix": "_UpdateUserProfile",
         "body": [
-            "public async Task<Asset?> GetAssetById(",
-            "    int id,",
+            "[Error<NotAuthenticatedException>]",
+            "[UseMutationConvention(PayloadFieldName = \"updatedUser\")]",
+            "public static async Task<User?> UpdateUserProfile(",
+            "    [GlobalState] string username,",
+            "    UpdateUserProfileInput input,",
+            "    IFileStorage storage,",
             "    AssetContext context,",
             "    CancellationToken cancellationToken)",
-            "    => await context.Assets.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
+            "{",
+            "    if (username is null)",
+            "    {",
+            "        throw new NotAuthenticatedException(\"User Profile\");",
+            "    }",
+            "",
+            "    User user = await context.Users.FirstAsync(t => t.Name == username, cancellationToken);",
+            "",
+            "    if (input.DisplayName.HasValue)",
+            "    {",
+            "        user.DisplayName = input.DisplayName.Value;",
+            "    }",
+            "",
+            "    if (input.Image.HasValue)",
+            "    {",
+            "        user.ImageKey = input.Image.Value is null ? null : await TryStoreImage(input.Image.Value, storage, cancellationToken);",
+            "    }",
+            "",
+            "    await context.SaveChangesAsync(cancellationToken);",
+            "    return user;",
+            "}"
         ],
-        "description": "_Query_GetAssetById"
-    },
-    "_Query_GetAssetPriceById": {
-        "prefix": "_Query_GetAssetPriceById",
-        "body": [
-            "public async Task<AssetPrice?> GetAssetPriceById(",
-            "    int id,",
-            "    AssetContext context,",
-            "    CancellationToken cancellationToken)",
-            "    => await context.AssetPrices.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);"
-        ],
-        "description": "_Query_GetAssetPriceById"
+        "description": "_UpdateUserProfile"
     }
 }
