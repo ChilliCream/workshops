@@ -1,5 +1,5 @@
 # yarn
-.yarn/*
+.yarn/
 !.yarn/cache
 !.yarn/patches
 !.yarn/plugins
@@ -16,16 +16,27 @@ node_modules/
 reports/
 coverage/
 
-# production
-build/
-lib/
-dist/
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# next.js
+.next/
+out/
+
+# vercel
+.vercel
+
+# local env files
+.env*.local
+
+# logs
+*.log*
 
 # temporary
 .tmp/
 tmp/
 *.tmp
-.next/
 
 # demo
 client/
@@ -36,13 +47,4 @@ schema/
 
 # misc
 .DS_Store
-.env.local
-.env.*.local
-
-# logs
-*.log*
-
-# vscode stuff
-.vscode/
-!.vscode/launch.json
-*.code-workspace
+*.pem

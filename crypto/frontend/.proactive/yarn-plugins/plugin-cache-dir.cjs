@@ -10,7 +10,7 @@ const plugin = {
             npath.fromPortablePath(
               configuration.projectCwd ?? configuration.startingCwd,
             ),
-            '.next',
+            '.tmp',
             'cache',
           );
         }

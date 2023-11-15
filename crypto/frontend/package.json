@@ -56,7 +56,6 @@
     "audit": "node scripts/audit.js",
     "build": "next build",
     "dev": "next dev",
-    "export": "next export",
     "get-schema": "node scripts/get-graphql-schema.js",
     "goto": "node scripts/goto.js",
     "lint": "next lint",
